@@ -99,21 +99,18 @@ Open that URL in your browser! 🌐
 
 ## 📊 Example Analysis
 
-```
-Input: https://example.com
+**Input:** `https://example.com`
 
-Output:
-┌──────────────────────────────────────┐
-│ 📊 Summary                            │
-├──────────────────────────────────────┤
-│ Total Images: 15                      │
-│ Images without Alt: 3 ❌              │
-│ Total Links: 42                        │
-│ Links without Accessibility: 5 ❌     │
-│ Total Buttons: 8                       │
-│ Buttons without Accessibility: 2 ❌   │
-└──────────────────────────────────────┘
-```
+**Output:**
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| Total Images | 15 | - |
+| Images without Alt | 3 | ❌ |
+| Total Links | 42 | - |
+| Links without Accessibility | 5 | ❌ |
+| Total Buttons | 8 | - |
+| Buttons without Accessibility | 2 | ❌ |
 
 ## 🏗️ Project Structure
 

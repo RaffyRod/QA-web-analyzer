@@ -268,6 +268,15 @@ function displayImages(images, options) {
           <span class="attr-value ${altStatus}">${altDisplay}</span>
         </div>`;
     }
+    if (options.checkFocusStates) {
+      const hasFocusState = img.hasFocusState !== false;
+      const focusStateInMissing = img.missingAttributes && img.missingAttributes.includes('focus-state');
+      attributesHtml += `
+        <div class="attr-item">
+          <span class="attr-name">Focus State:</span>
+          <span class="attr-value ${hasFocusState && !focusStateInMissing ? 'present' : 'missing'}">${hasFocusState && !focusStateInMissing ? 'Present' : 'Missing'}</span>
+        </div>`;
+    }
     attributesHtml += `
       <div class="attr-item full-width">
         <span class="attr-name">Source:</span>
@@ -384,6 +393,15 @@ function displayLinks(links, options) {
         <div class="attr-item">
           <span class="attr-name">lang:</span>
           <span class="attr-value present">${escapeHtml(link.lang)}</span>
+        </div>`;
+    }
+    if (options.checkFocusStates) {
+      const hasFocusState = link.hasFocusState !== false;
+      const focusStateInMissing = link.missingAttributes && link.missingAttributes.includes('focus-state');
+      attributesHtml += `
+        <div class="attr-item">
+          <span class="attr-name">Focus State:</span>
+          <span class="attr-value ${hasFocusState && !focusStateInMissing ? 'present' : 'missing'}">${hasFocusState && !focusStateInMissing ? 'Present' : 'Missing'}</span>
         </div>`;
     }
     attributesHtml += `
@@ -504,6 +522,15 @@ function displayButtons(buttons, options) {
           <span class="attr-value present">${escapeHtml(btn.lang)}</span>
         </div>`;
     }
+    if (options.checkFocusStates) {
+      const hasFocusState = btn.hasFocusState !== false;
+      const focusStateInMissing = btn.missingAttributes && btn.missingAttributes.includes('focus-state');
+      attributesHtml += `
+        <div class="attr-item">
+          <span class="attr-name">Focus State:</span>
+          <span class="attr-value ${hasFocusState && !focusStateInMissing ? 'present' : 'missing'}">${hasFocusState && !focusStateInMissing ? 'Present' : 'Missing'}</span>
+        </div>`;
+    }
     
     return `
     <div class="result-item ${statusClass}" data-has-attributes="${String(btn.hasAccessibility)}">
@@ -615,6 +642,14 @@ function displayInputs(inputs, options) {
         <div class="attr-item">
           <span class="attr-name">lang:</span>
           <span class="attr-value present">${escapeHtml(input.lang)}</span>
+        </div>`;
+    }
+    if (options.checkFocusStates) {
+      const focusStateInMissing = input.missingAttributes && input.missingAttributes.includes('focus-state');
+      attributesHtml += `
+        <div class="attr-item">
+          <span class="attr-name">Focus State:</span>
+          <span class="attr-value ${!focusStateInMissing ? 'present' : 'missing'}">${!focusStateInMissing ? 'Present' : 'Missing'}</span>
         </div>`;
     }
     

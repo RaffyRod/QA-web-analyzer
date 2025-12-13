@@ -99,21 +99,18 @@ QA Web Analyzer server running on http://localhost:3000
 
 ## 📊 Ejemplo de Análisis
 
-```
-Entrada: https://example.com
+**Entrada:** `https://example.com`
 
-Salida:
-┌──────────────────────────────────────┐
-│ 📊 Resumen                            │
-├──────────────────────────────────────┤
-│ Total Imágenes: 15                    │
-│ Imágenes sin Alt: 3 ❌                │
-│ Total Enlaces: 42                      │
-│ Enlaces sin Accesibilidad: 5 ❌      │
-│ Total Botones: 8                       │
-│ Botones sin Accesibilidad: 2 ❌       │
-└──────────────────────────────────────┘
-```
+**Salida:**
+
+| Métrica | Valor | Estado |
+|---------|-------|--------|
+| Total Imágenes | 15 | - |
+| Imágenes sin Alt | 3 | ❌ |
+| Total Enlaces | 42 | - |
+| Enlaces sin Accesibilidad | 5 | ❌ |
+| Total Botones | 8 | - |
+| Botones sin Accesibilidad | 2 | ❌ |
 
 ## 🏗️ Estructura del Proyecto
 
