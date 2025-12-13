@@ -47,29 +47,14 @@ QA Web Analyzer server running on http://localhost:3000
 
 ### Guía Paso a Paso
 
-```
-┌──────────────────────────────────────────┐
-│  1. Ingresa URL a analizar                │
-│     (ej: http://localhost:3000)          │
-├──────────────────────────────────────────┤
-│  2. Selecciona Elementos a Verificar      │
-│     ☑ Imágenes  ☑ Enlaces  ☑ Botones      │
-├──────────────────────────────────────────┤
-│  3. Selecciona Atributos a Verificar     │
-│     ☑ Alt Text  ☑ aria-label  etc.       │
-├──────────────────────────────────────────┤
-│  4. Haz clic en "Analizar"                │
-├──────────────────────────────────────────┤
-│  5. Revisa el Reporte                     │
-│     • Tarjetas de resumen                 │
-│     • Análisis detallado de elementos     │
-│     • Capturas de problemas               │
-├──────────────────────────────────────────┤
-│  6. Filtra y Exporta                     │
-│     • Filtra por faltantes/presentes      │
-│     • Exporta como PDF                    │
-└──────────────────────────────────────────┘
-```
+| Paso | Descripción |
+|------|-------------|
+| 1. Ingresa URL | Ingresa la URL a analizar (ej: `http://localhost:3000`) |
+| 2. Selecciona Elementos | Elige qué elementos verificar: ☑ Imágenes ☑ Enlaces ☑ Botones ☑ Inputs ☑ Roles |
+| 3. Selecciona Atributos | Elige qué atributos verificar: ☑ Alt Text ☑ aria-label ☑ Focus States etc. |
+| 4. Analizar | Haz clic en el botón "Analizar" para iniciar el análisis |
+| 5. Revisar Reporte | Examina los resultados: • Tarjetas de resumen • Análisis detallado • Capturas de problemas |
+| 6. Filtrar y Exportar | Usa filtros para mostrar atributos faltantes/presentes y exporta como PDF |
 
 ### 🎛️ Opciones de Configuración
 

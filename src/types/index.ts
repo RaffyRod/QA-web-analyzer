@@ -27,6 +27,7 @@ export interface ImageElement {
   alt: string | null;
   hasAlt: boolean;
   hasFocusState: boolean;
+  hasAccessibility: boolean;
   outerHTML: string;
   lineNumber?: number;
   selector?: string;

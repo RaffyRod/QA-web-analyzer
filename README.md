@@ -47,29 +47,14 @@ Open that URL in your browser! 🌐
 
 ### Step-by-Step Guide
 
-```
-┌──────────────────────────────────────────┐
-│  1. Enter URL to analyze                 │
-│     (e.g., http://localhost:3000)        │
-├──────────────────────────────────────────┤
-│  2. Select Elements to Check             │
-│     ☑ Images  ☑ Links  ☑ Buttons       │
-├──────────────────────────────────────────┤
-│  3. Select Attributes to Check           │
-│     ☑ Alt Text  ☑ aria-label  etc.      │
-├──────────────────────────────────────────┤
-│  4. Click "Analyze" button               │
-├──────────────────────────────────────────┤
-│  5. Review the Report                    │
-│     • Summary cards                      │
-│     • Detailed element analysis          │
-│     • Screenshots of issues              │
-├──────────────────────────────────────────┤
-│  6. Filter & Export                      │
-│     • Filter by missing/present          │
-│     • Export as PDF                      │
-└──────────────────────────────────────────┘
-```
+| Step | Description |
+|------|-------------|
+| 1. Enter URL | Enter the URL to analyze (e.g., `http://localhost:3000`) |
+| 2. Select Elements | Choose which elements to check: ☑ Images ☑ Links ☑ Buttons ☑ Inputs ☑ Roles |
+| 3. Select Attributes | Choose which attributes to verify: ☑ Alt Text ☑ aria-label ☑ Focus States etc. |
+| 4. Analyze | Click the "Analyze" button to start the analysis |
+| 5. Review Report | Examine the results: • Summary cards • Detailed element analysis • Screenshots of issues |
+| 6. Filter & Export | Use filters to show missing/present attributes and export as PDF |
 
 ### 🎛️ Configuration Options
 

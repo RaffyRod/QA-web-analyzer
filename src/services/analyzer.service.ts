@@ -167,12 +167,15 @@ export class AnalyzerService {
             }
             if (!hasFocusState && opts.checkFocusStates) missingAttributes.push('focus-state');
             
+            const hasAccessibility = missingAttributes.length === 0 && hasAlt;
+            
             analysis.images.push({
               index: i + 1,
               src: img.src,
               alt: img.alt || null,
               hasAlt,
               hasFocusState,
+              hasAccessibility,
               outerHTML,
               selector,
               missingAttributes,
@@ -228,12 +231,13 @@ export class AnalyzerService {
               }
             }
             
-            const hasAccessibility = missingAttributes.length === 0 && !!(text || (opts.checkAriaLabel ? ariaLabel : true) || (opts.checkAriaLabelledby ? ariaLabelledby : true) || (opts.checkTitle ? title : true));
             const hasFocusState = opts.checkFocusStates ? checkFocusState(link) : true;
             const outerHTML = link.outerHTML;
             const selector = generateSelector(link);
             
             if (!hasFocusState && opts.checkFocusStates) missingAttributes.push('focus-state');
+            
+            const hasAccessibility = missingAttributes.length === 0 && !!(text || (opts.checkAriaLabel ? ariaLabel : true) || (opts.checkAriaLabelledby ? ariaLabelledby : true) || (opts.checkTitle ? title : true));
             
             analysis.links.push({
               index: i + 1,
@@ -305,12 +309,13 @@ export class AnalyzerService {
               }
             }
             
-            const hasAccessibility = missingAttributes.length === 0 && (!!text || (opts.checkAriaLabel ? !!ariaLabel : true) || (opts.checkAriaLabelledby ? !!ariaLabelledby : true) || (opts.checkAriaDescribedby ? !!ariaDescribedby : true));
             const hasFocusState = opts.checkFocusStates ? checkFocusState(btn) : true;
             const outerHTML = btn.outerHTML;
             const selector = generateSelector(btn);
             
             if (!hasFocusState && opts.checkFocusStates) missingAttributes.push('focus-state');
+            
+            const hasAccessibility = missingAttributes.length === 0 && (!!text || (opts.checkAriaLabel ? !!ariaLabel : true) || (opts.checkAriaLabelledby ? !!ariaLabelledby : true) || (opts.checkAriaDescribedby ? !!ariaDescribedby : true));
             
             analysis.buttons.push({
               index: i + 1,
