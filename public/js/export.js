@@ -50,16 +50,32 @@ window.exportReportAsPDF = async function() {
   doc.setFont(undefined, 'normal');
   const summary = data.summary;
   
-  const summaryData = [
-    { label: 'Total Images', value: summary.totalImages, color: [30, 30, 30] },
-    { label: 'Images without Alt', value: summary.imagesWithoutAlt, color: summary.imagesWithoutAlt > 0 ? [220, 38, 38] : [16, 185, 129] },
-    { label: 'Total Links', value: summary.totalLinks, color: [30, 30, 30] },
-    { label: 'Links without Accessibility', value: summary.linksWithoutAccessibility, color: summary.linksWithoutAccessibility > 0 ? [220, 38, 38] : [16, 185, 129] },
-    { label: 'Total Buttons', value: summary.totalButtons, color: [30, 30, 30] },
-    { label: 'Buttons without Accessibility', value: summary.buttonsWithoutAccessibility, color: summary.buttonsWithoutAccessibility > 0 ? [220, 38, 38] : [16, 185, 129] },
-    { label: 'Total Inputs', value: summary.totalInputs, color: [30, 30, 30] },
-    { label: 'Inputs without Accessibility', value: summary.inputsWithoutAccessibility, color: summary.inputsWithoutAccessibility > 0 ? [220, 38, 38] : [16, 185, 129] },
-  ];
+  const showImages = document.getElementById('showImages')?.checked !== false;
+  const showLinks = document.getElementById('showLinks')?.checked !== false;
+  const showButtons = document.getElementById('showButtons')?.checked !== false;
+  const showInputs = document.getElementById('showInputs')?.checked !== false;
+  const showRoles = document.getElementById('showRoles')?.checked !== false;
+  
+  const filterMissing = document.getElementById('filterMissing')?.checked || false;
+  const filterHasAttributes = document.getElementById('filterHasAttributes')?.checked || false;
+  
+  const summaryData = [];
+  if (showImages) {
+    summaryData.push({ label: 'Total Images', value: summary.totalImages, color: [30, 30, 30] });
+    summaryData.push({ label: 'Images without Alt', value: summary.imagesWithoutAlt, color: summary.imagesWithoutAlt > 0 ? [220, 38, 38] : [16, 185, 129] });
+  }
+  if (showLinks) {
+    summaryData.push({ label: 'Total Links', value: summary.totalLinks, color: [30, 30, 30] });
+    summaryData.push({ label: 'Links without Accessibility', value: summary.linksWithoutAccessibility, color: summary.linksWithoutAccessibility > 0 ? [220, 38, 38] : [16, 185, 129] });
+  }
+  if (showButtons) {
+    summaryData.push({ label: 'Total Buttons', value: summary.totalButtons, color: [30, 30, 30] });
+    summaryData.push({ label: 'Buttons without Accessibility', value: summary.buttonsWithoutAccessibility, color: summary.buttonsWithoutAccessibility > 0 ? [220, 38, 38] : [16, 185, 129] });
+  }
+  if (showInputs) {
+    summaryData.push({ label: 'Total Inputs', value: summary.totalInputs, color: [30, 30, 30] });
+    summaryData.push({ label: 'Inputs without Accessibility', value: summary.inputsWithoutAccessibility, color: summary.inputsWithoutAccessibility > 0 ? [220, 38, 38] : [16, 185, 129] });
+  }
   
   summaryData.forEach(item => {
     doc.setTextColor(item.color[0], item.color[1], item.color[2]);
@@ -72,64 +88,103 @@ window.exportReportAsPDF = async function() {
   
   const items = [];
   
-  data.images.forEach(img => {
-    if (!img.hasAlt && img.screenshot) {
-      items.push({
-        type: 'Image',
-        screenshot: img.screenshot,
-        missingAttributes: ['Alt Text'],
-        index: img.index
-      });
-    }
-  });
+  if (showImages) {
+    data.images.forEach(img => {
+      const shouldInclude = !filterMissing && !filterHasAttributes ? true : 
+                           filterMissing && !img.hasAlt ? true :
+                           filterHasAttributes && img.hasAlt ? true : false;
+      
+      if (shouldInclude && img.screenshot) {
+        items.push({
+          type: 'Image',
+          screenshot: img.screenshot,
+          missingAttributes: img.hasAlt ? [] : ['Alt Text'],
+          index: img.index,
+          hasAccessibility: img.hasAlt
+        });
+      }
+    });
+  }
   
-  data.links.forEach(link => {
-    if (link.missingAttributes.length > 0 && link.screenshot) {
-      items.push({
-        type: 'Link',
-        screenshot: link.screenshot,
-        missingAttributes: link.missingAttributes,
-        index: link.index,
-        text: link.text
-      });
-    }
-  });
+  if (showLinks) {
+    data.links.forEach(link => {
+      const hasMissing = link.missingAttributes && link.missingAttributes.length > 0;
+      const shouldInclude = !filterMissing && !filterHasAttributes ? true :
+                           filterMissing && hasMissing ? true :
+                           filterHasAttributes && !hasMissing && link.hasAccessibility ? true : false;
+      
+      if (shouldInclude && link.screenshot) {
+        items.push({
+          type: 'Link',
+          screenshot: link.screenshot,
+          missingAttributes: link.missingAttributes || [],
+          index: link.index,
+          text: link.text,
+          hasAccessibility: link.hasAccessibility
+        });
+      }
+    });
+  }
   
-  data.buttons.forEach(btn => {
-    if (btn.missingAttributes.length > 0 && btn.screenshot) {
-      items.push({
-        type: 'Button',
-        screenshot: btn.screenshot,
-        missingAttributes: btn.missingAttributes,
-        index: btn.index,
-        text: btn.text
-      });
-    }
-  });
+  if (showButtons) {
+    data.buttons.forEach(btn => {
+      const hasMissing = btn.missingAttributes && btn.missingAttributes.length > 0;
+      const shouldInclude = !filterMissing && !filterHasAttributes ? true :
+                           filterMissing && hasMissing ? true :
+                           filterHasAttributes && !hasMissing && btn.hasAccessibility ? true : false;
+      
+      if (shouldInclude && btn.screenshot) {
+        items.push({
+          type: 'Button',
+          screenshot: btn.screenshot,
+          missingAttributes: btn.missingAttributes || [],
+          index: btn.index,
+          text: btn.text,
+          hasAccessibility: btn.hasAccessibility
+        });
+      }
+    });
+  }
   
-  data.inputs.forEach(input => {
-    if (input.missingAttributes.length > 0 && input.screenshot) {
-      items.push({
-        type: 'Input',
-        screenshot: input.screenshot,
-        missingAttributes: input.missingAttributes,
-        index: input.index,
-        typeName: input.type
-      });
-    }
-  });
+  if (showInputs) {
+    data.inputs.forEach(input => {
+      const hasMissing = input.missingAttributes && input.missingAttributes.length > 0;
+      const shouldInclude = !filterMissing && !filterHasAttributes ? true :
+                           filterMissing && hasMissing ? true :
+                           filterHasAttributes && !hasMissing && input.hasAccessibility ? true : false;
+      
+      if (shouldInclude && input.screenshot) {
+        items.push({
+          type: 'Input',
+          screenshot: input.screenshot,
+          missingAttributes: input.missingAttributes || [],
+          index: input.index,
+          typeName: input.type,
+          hasAccessibility: input.hasAccessibility
+        });
+      }
+    });
+  }
   
-  data.roles.forEach(role => {
-    if (role.missingAttributes.length > 0 && role.screenshot) {
-      items.push({
-        type: 'Role',
-        screenshot: role.screenshot,
-        missingAttributes: role.missingAttributes,
-        index: role.index,
-        role: role.role
-      });
-    }
-  });
+  if (showRoles) {
+    data.roles.forEach(role => {
+      const hasMissing = role.missingAttributes && role.missingAttributes.length > 0;
+      const shouldInclude = !filterMissing && !filterHasAttributes ? true :
+                           filterMissing && hasMissing ? true :
+                           filterHasAttributes && !hasMissing && role.hasAccessibility ? true : false;
+      
+      if (shouldInclude && role.screenshot) {
+        items.push({
+          type: 'Role',
+          screenshot: role.screenshot,
+          missingAttributes: role.missingAttributes || [],
+          index: role.index,
+          role: role.role,
+          hasAccessibility: role.hasAccessibility
+        });
+      }
+    });
+  }
   
   if (items.length > 0) {
     doc.setFillColor(241, 245, 249);
@@ -137,7 +192,8 @@ window.exportReportAsPDF = async function() {
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(14);
     doc.setFont(undefined, 'bold');
-    doc.text('Issues Found', margin + 2, yPos + 7);
+    const sectionTitle = filterMissing ? 'Issues Found' : filterHasAttributes ? 'Elements with Accessibility' : 'All Elements';
+    doc.text(sectionTitle, margin + 2, yPos + 7);
     yPos += 12;
   }
   
@@ -156,7 +212,8 @@ window.exportReportAsPDF = async function() {
     doc.setDrawColor(226, 232, 240);
     doc.setFillColor(255, 255, 255);
     
-    const rowHeight = Math.max(35, 15 + (item.missingAttributes.length * 5));
+    const attrCount = item.missingAttributes && item.missingAttributes.length > 0 ? item.missingAttributes.length : 1;
+    const rowHeight = Math.max(35, 15 + (attrCount * 5));
     let currentRowY = tableStartY;
     
     doc.roundedRect(margin, currentRowY, tableWidth, rowHeight, 3, 3, 'FD');
@@ -175,10 +232,16 @@ window.exportReportAsPDF = async function() {
     
     doc.setFont(undefined, 'normal');
     doc.setFontSize(10);
-    doc.setTextColor(220, 38, 38);
-    const missingText = `Missing: ${item.missingAttributes.join(', ')}`;
-    const missingLines = doc.splitTextToSize(missingText, textWidth - 4);
-    doc.text(missingLines, margin + imageWidth + 4, currentRowY + 15);
+    
+    if (item.missingAttributes && item.missingAttributes.length > 0) {
+      doc.setTextColor(220, 38, 38);
+      const missingText = `Missing: ${item.missingAttributes.join(', ')}`;
+      const missingLines = doc.splitTextToSize(missingText, textWidth - 4);
+      doc.text(missingLines, margin + imageWidth + 4, currentRowY + 15);
+    } else if (item.hasAccessibility) {
+      doc.setTextColor(16, 185, 129);
+      doc.text('All required attributes present', margin + imageWidth + 4, currentRowY + 15);
+    }
     
     if (item.text) {
       doc.setFontSize(9);

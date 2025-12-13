@@ -23,30 +23,6 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 
 ## 🚀 Quick Start
 
-### Option 1: One-Command Setup (Recommended) ⚡
-
-**Windows:**
-```bash
-start.bat
-```
-
-**Linux/Mac:**
-```bash
-chmod +x start.sh && ./start.sh
-```
-
-**Cross-platform:**
-```bash
-pnpm run
-```
-
-The script will automatically:
-1. ✅ Install dependencies (if needed)
-2. ✅ Build the project
-3. ✅ Start the server
-
-### Option 2: Manual Setup
-
 ```bash
 # 1. Install dependencies
 pnpm install
@@ -72,27 +48,27 @@ Open that URL in your browser! 🌐
 ### Step-by-Step Guide
 
 ```
-┌─────────────────────────────────────────┐
-│  1. Enter URL to analyze                │
+┌──────────────────────────────────────────┐
+│  1. Enter URL to analyze                 │
 │     (e.g., http://localhost:3000)       │
-├─────────────────────────────────────────┤
-│  2. Select Elements to Check            │
+├──────────────────────────────────────────┤
+│  2. Select Elements to Check             │
 │     ☑ Images  ☑ Links  ☑ Buttons        │
-├─────────────────────────────────────────┤
-│  3. Select Attributes to Check          │
-│     ☑ Alt Text  ☑ aria-label  etc.      │
-├─────────────────────────────────────────┤
-│  4. Click "Analyze" button              │
-├─────────────────────────────────────────┤
+├──────────────────────────────────────────┤
+│  3. Select Attributes to Check           │
+│     ☑ Alt Text  ☑ aria-label  etc.     │
+├──────────────────────────────────────────┤
+│  4. Click "Analyze" button               │
+├──────────────────────────────────────────┤
 │  5. Review the Report                    │
 │     • Summary cards                      │
 │     • Detailed element analysis          │
 │     • Screenshots of issues              │
-├─────────────────────────────────────────┤
-│  6. Filter & Export                     │
+├──────────────────────────────────────────┤
+│  6. Filter & Export                      │
 │     • Filter by missing/present          │
 │     • Export as PDF                      │
-└─────────────────────────────────────────┘
+└──────────────────────────────────────────┘
 ```
 
 ### 🎛️ Configuration Options
@@ -167,12 +143,7 @@ qa-web-analyzer/
 ├── 📄 tsconfig.json          # TypeScript config
 ├── 📄 .gitignore            # Git ignore rules
 ├── 📄 README.md             # This file
-├── 📄 README.es.md          # Spanish README
-│
-└── 🚀 start scripts
-    ├── start.js              # Cross-platform
-    ├── start.bat             # Windows
-    └── start.sh              # Linux/Mac
+└── 📄 README.es.md          # Spanish README
 ```
 
 ## 🛠️ Technologies Used
@@ -193,7 +164,7 @@ qa-web-analyzer/
 
 | Command | Description |
 |---------|-------------|
-| `pnpm run` | 🚀 Install, build & start (first time) |
+| `pnpm install` | 📦 Install dependencies |
 | `pnpm build` | 🔨 Compile TypeScript to JavaScript |
 | `pnpm start` | ▶️ Start production server |
 | `pnpm dev` | 🔄 Start with auto-reload |

@@ -23,30 +23,6 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 
 ## 🚀 Inicio Rápido
 
-### Opción 1: Configuración de Un Comando (Recomendado) ⚡
-
-**Windows:**
-```bash
-start.bat
-```
-
-**Linux/Mac:**
-```bash
-chmod +x start.sh && ./start.sh
-```
-
-**Multiplataforma:**
-```bash
-pnpm run
-```
-
-El script automáticamente:
-1. ✅ Instala dependencias (si es necesario)
-2. ✅ Compila el proyecto
-3. ✅ Inicia el servidor
-
-### Opción 2: Configuración Manual
-
 ```bash
 # 1. Instalar dependencias
 pnpm install
@@ -72,27 +48,27 @@ QA Web Analyzer server running on http://localhost:3000
 ### Guía Paso a Paso
 
 ```
-┌─────────────────────────────────────────┐
-│  1. Ingresa URL a analizar              │
-│     (ej: http://localhost:3000)         │
-├─────────────────────────────────────────┤
-│  2. Selecciona Elementos a Verificar    │
-│     ☑ Imágenes  ☑ Enlaces  ☑ Botones   │
-├─────────────────────────────────────────┤
-│  3. Selecciona Atributos a Verificar    │
-│     ☑ Alt Text  ☑ aria-label  etc.     │
-├─────────────────────────────────────────┤
-│  4. Haz clic en "Analizar"              │
-├─────────────────────────────────────────┤
-│  5. Revisa el Reporte                   │
-│     • Tarjetas de resumen               │
-│     • Análisis detallado de elementos   │
-│     • Capturas de problemas             │
-├─────────────────────────────────────────┤
-│  6. Filtra y Exporta                   │
-│     • Filtra por faltantes/presentes    │
-│     • Exporta como PDF                  │
-└─────────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│  1. Ingresa URL a analizar                │
+│     (ej: http://localhost:3000)          │
+├──────────────────────────────────────────┤
+│  2. Selecciona Elementos a Verificar      │
+│     ☑ Imágenes  ☑ Enlaces  ☑ Botones      │
+├──────────────────────────────────────────┤
+│  3. Selecciona Atributos a Verificar     │
+│     ☑ Alt Text  ☑ aria-label  etc.       │
+├──────────────────────────────────────────┤
+│  4. Haz clic en "Analizar"                │
+├──────────────────────────────────────────┤
+│  5. Revisa el Reporte                     │
+│     • Tarjetas de resumen                 │
+│     • Análisis detallado de elementos     │
+│     • Capturas de problemas               │
+├──────────────────────────────────────────┤
+│  6. Filtra y Exporta                     │
+│     • Filtra por faltantes/presentes      │
+│     • Exporta como PDF                    │
+└──────────────────────────────────────────┘
 ```
 
 ### 🎛️ Opciones de Configuración
@@ -167,12 +143,7 @@ qa-web-analyzer/
 ├── 📄 tsconfig.json          # Configuración TypeScript
 ├── 📄 .gitignore            # Reglas de Git ignore
 ├── 📄 README.md             # Este archivo
-├── 📄 README.es.md          # README en español
-│
-└── 🚀 Scripts de inicio
-    ├── start.js              # Multiplataforma
-    ├── start.bat             # Windows
-    └── start.sh              # Linux/Mac
+└── 📄 README.es.md          # README en español
 ```
 
 ## 🛠️ Tecnologías Utilizadas
@@ -193,7 +164,7 @@ qa-web-analyzer/
 
 | Comando | Descripción |
 |---------|-------------|
-| `pnpm run` | 🚀 Instalar, compilar e iniciar (primera vez) |
+| `pnpm install` | 📦 Instalar dependencias |
 | `pnpm build` | 🔨 Compilar TypeScript a JavaScript |
 | `pnpm start` | ▶️ Iniciar servidor de producción |
 | `pnpm dev` | 🔄 Iniciar con auto-recarga |
