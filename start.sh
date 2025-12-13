@@ -35,3 +35,4 @@ echo "🎯 Starting server..."
 echo ""
 pnpm start
 
+

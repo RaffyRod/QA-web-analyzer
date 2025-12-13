@@ -45,4 +45,3 @@ try {
   console.error('❌ Error starting server:', error.message);
   process.exit(1);
 }
-

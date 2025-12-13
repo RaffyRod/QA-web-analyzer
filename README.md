@@ -37,6 +37,7 @@ pnpm start
 ### 📍 Access the Application
 
 After starting, you'll see:
+
 ```
 QA Web Analyzer server running on http://localhost:3000
 ```
@@ -47,18 +48,19 @@ Open that URL in your browser! 🌐
 
 ### Step-by-Step Guide
 
-| Step | Description |
-|------|-------------|
-| 1. Enter URL | Enter the URL to analyze (e.g., `http://localhost:3000`) |
-| 2. Select Elements | Choose which elements to check: ☑ Images ☑ Links ☑ Buttons ☑ Inputs ☑ Roles |
-| 3. Select Attributes | Choose which attributes to verify: ☑ Alt Text ☑ aria-label ☑ Focus States etc. |
-| 4. Analyze | Click the "Analyze" button to start the analysis |
-| 5. Review Report | Examine the results: • Summary cards • Detailed element analysis • Screenshots of issues |
-| 6. Filter & Export | Use filters to show missing/present attributes and export as PDF |
+| Step                 | Description                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| 1. Enter URL         | Enter the URL to analyze (e.g., `http://localhost:3000`)                                 |
+| 2. Select Elements   | Choose which elements to check: ☑ Images ☑ Links ☑ Buttons ☑ Inputs ☑ Roles              |
+| 3. Select Attributes | Choose which attributes to verify: ☑ Alt Text ☑ aria-label ☑ Focus States etc.           |
+| 4. Analyze           | Click the "Analyze" button to start the analysis                                         |
+| 5. Review Report     | Examine the results: • Summary cards • Detailed element analysis • Screenshots of issues |
+| 6. Filter & Export   | Use filters to show missing/present attributes and export as PDF                         |
 
 ### 🎛️ Configuration Options
 
 #### Elements to Check
+
 - 🖼️ **Images**: Analyze `<img>` elements
 - 🔗 **Links**: Analyze `<a>` elements
 - 🔘 **Buttons**: Analyze `<button>` elements
@@ -66,6 +68,7 @@ Open that URL in your browser! 🌐
 - 🎭 **Roles**: Analyze elements with `role` attribute
 
 #### Attributes to Check
+
 - **Alt Text**: For images
 - **aria-label**: Accessible name
 - **aria-labelledby**: Reference to label
@@ -88,14 +91,14 @@ Open that URL in your browser! 🌐
 
 **Output:**
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Total Images | 15 | - |
-| Images without Alt | 3 | ❌ |
-| Total Links | 42 | - |
-| Links without Accessibility | 5 | ❌ |
-| Total Buttons | 8 | - |
-| Buttons without Accessibility | 2 | ❌ |
+| Metric                        | Value | Status |
+| ----------------------------- | ----- | ------ |
+| Total Images                  | 15    | -      |
+| Images without Alt            | 3     | ❌     |
+| Total Links                   | 42    | -      |
+| Links without Accessibility   | 5     | ❌     |
+| Total Buttons                 | 8     | -      |
+| Buttons without Accessibility | 2     | ❌     |
 
 ## 🏗️ Project Structure
 
@@ -131,12 +134,14 @@ qa-web-analyzer/
 ## 🛠️ Technologies Used
 
 ### Backend
+
 - **Node.js** - Runtime environment
 - **Express** - Web framework
 - **TypeScript** - Type-safe JavaScript
 - **Playwright** - Browser automation for analysis
 
 ### Frontend
+
 - **HTML5** - Structure
 - **CSS3** - Styling (with CSS variables & neomorphism)
 - **JavaScript (ES6+)** - Interactivity
@@ -144,13 +149,16 @@ qa-web-analyzer/
 
 ## 📝 Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm install` | 📦 Install dependencies |
-| `pnpm build` | 🔨 Compile TypeScript to JavaScript |
-| `pnpm start` | ▶️ Start production server |
-| `pnpm dev` | 🔄 Start with auto-reload |
-| `pnpm type-check` | ✅ Check types without compiling |
+| Command             | Description                         |
+| ------------------- | ----------------------------------- |
+| `pnpm install`      | 📦 Install dependencies             |
+| `pnpm build`        | 🔨 Compile TypeScript to JavaScript |
+| `pnpm start`        | ▶️ Start production server          |
+| `pnpm dev`          | 🔄 Start with auto-reload           |
+| `pnpm type-check`   | ✅ Check types without compiling    |
+| `pnpm format`       | 🎨 Format all files with Prettier   |
+| `pnpm format:check` | 🔍 Check code formatting            |
+| `pnpm lint`         | ✅ Check formatting and types       |
 
 ## 🎨 Features in Detail
 
@@ -158,14 +166,14 @@ qa-web-analyzer/
 
 The tool verifies compliance with **WCAG 2.2 AA standards**:
 
-| Element | Checks |
-|---------|--------|
-| 🖼️ **Images** | `alt` attribute (missing/empty detection) |
-| 🔗 **Links** | `aria-label`, `aria-labelledby`, `title`, text content |
-| 🔘 **Buttons** | `aria-label`, `aria-labelledby`, `aria-describedby`, text |
-| 📝 **Inputs** | `aria-label`, `aria-labelledby`, `<label>`, `aria-required` |
-| 🎭 **Roles** | `aria-label`, `aria-labelledby` for custom roles |
-| 🎯 **All** | Focus states, `tabindex` anti-patterns, `lang` attribute |
+| Element        | Checks                                                      |
+| -------------- | ----------------------------------------------------------- |
+| 🖼️ **Images**  | `alt` attribute (missing/empty detection)                   |
+| 🔗 **Links**   | `aria-label`, `aria-labelledby`, `title`, text content      |
+| 🔘 **Buttons** | `aria-label`, `aria-labelledby`, `aria-describedby`, text   |
+| 📝 **Inputs**  | `aria-label`, `aria-labelledby`, `<label>`, `aria-required` |
+| 🎭 **Roles**   | `aria-label`, `aria-labelledby` for custom roles            |
+| 🎯 **All**     | Focus states, `tabindex` anti-patterns, `lang` attribute    |
 
 ### 📊 Report Features
 
@@ -190,6 +198,7 @@ Switch languages using the language selector in the UI:
 - **pnpm** package manager
 
 Install pnpm:
+
 ```bash
 npm install -g pnpm
 ```
@@ -197,16 +206,47 @@ npm install -g pnpm
 ## 🔧 Development
 
 ### Development Mode
+
 ```bash
 pnpm dev
 ```
+
 Starts server with auto-reload on file changes.
 
 ### Type Checking
+
 ```bash
 pnpm type-check
 ```
+
 Validates TypeScript without compiling.
+
+### Code Formatting
+
+```bash
+# Format all files
+pnpm format
+
+# Check formatting without modifying files
+pnpm format:check
+```
+
+### Code Quality Tools
+
+This project uses automated code quality tools:
+
+- **Prettier** - Code formatter for consistent style
+- **lint-staged** - Run linters on staged files
+- **Husky** - Git hooks for pre-commit checks
+
+#### Pre-commit Hook
+
+Before each commit, the following checks run automatically:
+
+- ✅ Code formatting with Prettier
+- ✅ TypeScript type checking
+
+This ensures code quality and consistency. If checks fail, the commit is blocked.
 
 ## 🎯 Best Practices
 
@@ -219,6 +259,8 @@ This project follows:
 - ✅ **Error Handling** - Robust error management
 - ✅ **Code Organization** - Scalable structure
 - ✅ **Internationalization** - Multi-language ready
+- ✅ **Code Formatting** - Prettier for consistent style
+- ✅ **Pre-commit Hooks** - Automated quality checks with Husky
 
 ## 📄 License
 

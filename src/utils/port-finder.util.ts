@@ -17,11 +17,12 @@ export function findAvailablePort(startPort: number = 3000): Promise<number> {
 
     server.on('error', (err: NodeJS.ErrnoException) => {
       if (err.code === 'EADDRINUSE') {
-        findAvailablePort(startPort + 1).then(resolve).catch(reject);
+        findAvailablePort(startPort + 1)
+          .then(resolve)
+          .catch(reject);
       } else {
         reject(err);
       }
     });
   });
 }
-

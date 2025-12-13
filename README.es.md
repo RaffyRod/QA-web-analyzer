@@ -37,6 +37,7 @@ pnpm start
 ### 📍 Acceder a la Aplicación
 
 Después de iniciar, verás:
+
 ```
 QA Web Analyzer server running on http://localhost:3000
 ```
@@ -47,18 +48,19 @@ QA Web Analyzer server running on http://localhost:3000
 
 ### Guía Paso a Paso
 
-| Paso | Descripción |
-|------|-------------|
-| 1. Ingresa URL | Ingresa la URL a analizar (ej: `http://localhost:3000`) |
-| 2. Selecciona Elementos | Elige qué elementos verificar: ☑ Imágenes ☑ Enlaces ☑ Botones ☑ Inputs ☑ Roles |
-| 3. Selecciona Atributos | Elige qué atributos verificar: ☑ Alt Text ☑ aria-label ☑ Focus States etc. |
-| 4. Analizar | Haz clic en el botón "Analizar" para iniciar el análisis |
-| 5. Revisar Reporte | Examina los resultados: • Tarjetas de resumen • Análisis detallado • Capturas de problemas |
-| 6. Filtrar y Exportar | Usa filtros para mostrar atributos faltantes/presentes y exporta como PDF |
+| Paso                    | Descripción                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| 1. Ingresa URL          | Ingresa la URL a analizar (ej: `http://localhost:3000`)                                    |
+| 2. Selecciona Elementos | Elige qué elementos verificar: ☑ Imágenes ☑ Enlaces ☑ Botones ☑ Inputs ☑ Roles             |
+| 3. Selecciona Atributos | Elige qué atributos verificar: ☑ Alt Text ☑ aria-label ☑ Focus States etc.                 |
+| 4. Analizar             | Haz clic en el botón "Analizar" para iniciar el análisis                                   |
+| 5. Revisar Reporte      | Examina los resultados: • Tarjetas de resumen • Análisis detallado • Capturas de problemas |
+| 6. Filtrar y Exportar   | Usa filtros para mostrar atributos faltantes/presentes y exporta como PDF                  |
 
 ### 🎛️ Opciones de Configuración
 
 #### Elementos a Verificar
+
 - 🖼️ **Imágenes**: Analiza elementos `<img>`
 - 🔗 **Enlaces**: Analiza elementos `<a>`
 - 🔘 **Botones**: Analiza elementos `<button>`
@@ -66,6 +68,7 @@ QA Web Analyzer server running on http://localhost:3000
 - 🎭 **Roles**: Analiza elementos con atributo `role`
 
 #### Atributos a Verificar
+
 - **Alt Text**: Para imágenes
 - **aria-label**: Nombre accesible
 - **aria-labelledby**: Referencia a etiqueta
@@ -88,14 +91,14 @@ QA Web Analyzer server running on http://localhost:3000
 
 **Salida:**
 
-| Métrica | Valor | Estado |
-|---------|-------|--------|
-| Total Imágenes | 15 | - |
-| Imágenes sin Alt | 3 | ❌ |
-| Total Enlaces | 42 | - |
-| Enlaces sin Accesibilidad | 5 | ❌ |
-| Total Botones | 8 | - |
-| Botones sin Accesibilidad | 2 | ❌ |
+| Métrica                   | Valor | Estado |
+| ------------------------- | ----- | ------ |
+| Total Imágenes            | 15    | -      |
+| Imágenes sin Alt          | 3     | ❌     |
+| Total Enlaces             | 42    | -      |
+| Enlaces sin Accesibilidad | 5     | ❌     |
+| Total Botones             | 8     | -      |
+| Botones sin Accesibilidad | 2     | ❌     |
 
 ## 🏗️ Estructura del Proyecto
 
@@ -131,12 +134,14 @@ qa-web-analyzer/
 ## 🛠️ Tecnologías Utilizadas
 
 ### Backend
+
 - **Node.js** - Entorno de ejecución
 - **Express** - Framework web
 - **TypeScript** - JavaScript con tipos
 - **Playwright** - Automatización de navegador para análisis
 
 ### Frontend
+
 - **HTML5** - Estructura
 - **CSS3** - Estilos (con variables CSS y neomorfismo)
 - **JavaScript (ES6+)** - Interactividad
@@ -144,13 +149,16 @@ qa-web-analyzer/
 
 ## 📝 Scripts Disponibles
 
-| Comando | Descripción |
-|---------|-------------|
-| `pnpm install` | 📦 Instalar dependencias |
-| `pnpm build` | 🔨 Compilar TypeScript a JavaScript |
-| `pnpm start` | ▶️ Iniciar servidor de producción |
-| `pnpm dev` | 🔄 Iniciar con auto-recarga |
-| `pnpm type-check` | ✅ Verificar tipos sin compilar |
+| Comando             | Descripción                                  |
+| ------------------- | -------------------------------------------- |
+| `pnpm install`      | 📦 Instalar dependencias                     |
+| `pnpm build`        | 🔨 Compilar TypeScript a JavaScript          |
+| `pnpm start`        | ▶️ Iniciar servidor de producción            |
+| `pnpm dev`          | 🔄 Iniciar con auto-recarga                  |
+| `pnpm type-check`   | ✅ Verificar tipos sin compilar              |
+| `pnpm format`       | 🎨 Formatear todos los archivos con Prettier |
+| `pnpm format:check` | 🔍 Verificar formato del código              |
+| `pnpm lint`         | ✅ Verificar formato y tipos                 |
 
 ## 🎨 Características en Detalle
 
@@ -158,14 +166,14 @@ qa-web-analyzer/
 
 La herramienta verifica el cumplimiento de los **estándares WCAG 2.2 AA**:
 
-| Elemento | Verificaciones |
-|---------|----------------|
-| 🖼️ **Imágenes** | Atributo `alt` (detección de faltante/vacío) |
-| 🔗 **Enlaces** | `aria-label`, `aria-labelledby`, `title`, contenido de texto |
-| 🔘 **Botones** | `aria-label`, `aria-labelledby`, `aria-describedby`, texto |
-| 📝 **Inputs** | `aria-label`, `aria-labelledby`, `<label>`, `aria-required` |
-| 🎭 **Roles** | `aria-label`, `aria-labelledby` para roles personalizados |
-| 🎯 **Todos** | Estados de foco, anti-patrones `tabindex`, atributo `lang` |
+| Elemento        | Verificaciones                                               |
+| --------------- | ------------------------------------------------------------ |
+| 🖼️ **Imágenes** | Atributo `alt` (detección de faltante/vacío)                 |
+| 🔗 **Enlaces**  | `aria-label`, `aria-labelledby`, `title`, contenido de texto |
+| 🔘 **Botones**  | `aria-label`, `aria-labelledby`, `aria-describedby`, texto   |
+| 📝 **Inputs**   | `aria-label`, `aria-labelledby`, `<label>`, `aria-required`  |
+| 🎭 **Roles**    | `aria-label`, `aria-labelledby` para roles personalizados    |
+| 🎯 **Todos**    | Estados de foco, anti-patrones `tabindex`, atributo `lang`   |
 
 ### 📊 Características del Reporte
 
@@ -190,6 +198,7 @@ Cambia de idioma usando el selector en la interfaz:
 - **pnpm** gestor de paquetes
 
 Instalar pnpm:
+
 ```bash
 npm install -g pnpm
 ```
@@ -197,16 +206,47 @@ npm install -g pnpm
 ## 🔧 Desarrollo
 
 ### Modo Desarrollo
+
 ```bash
 pnpm dev
 ```
+
 Inicia el servidor con auto-recarga en cambios de archivos.
 
 ### Verificación de Tipos
+
 ```bash
 pnpm type-check
 ```
+
 Valida TypeScript sin compilar.
+
+### Formateo de Código
+
+```bash
+# Formatear todos los archivos
+pnpm format
+
+# Verificar formato sin modificar archivos
+pnpm format:check
+```
+
+### Herramientas de Calidad de Código
+
+Este proyecto utiliza herramientas automatizadas de calidad de código:
+
+- **Prettier** - Formateador de código para estilo consistente
+- **lint-staged** - Ejecuta linters en archivos staged
+- **Husky** - Git hooks para verificaciones pre-commit
+
+#### Hook Pre-commit
+
+Antes de cada commit, se ejecutan automáticamente las siguientes verificaciones:
+
+- ✅ Formateo de código con Prettier
+- ✅ Verificación de tipos TypeScript
+
+Esto asegura calidad y consistencia del código. Si las verificaciones fallan, el commit se bloquea.
 
 ## 🎯 Mejores Prácticas
 
@@ -219,6 +259,8 @@ Este proyecto sigue:
 - ✅ **Manejo de Errores** - Gestión robusta de errores
 - ✅ **Organización de Código** - Estructura escalable
 - ✅ **Internacionalización** - Listo para múltiples idiomas
+- ✅ **Formateo de Código** - Prettier para estilo consistente
+- ✅ **Hooks Pre-commit** - Verificaciones automatizadas con Husky
 
 ## 📄 Licencia
 
