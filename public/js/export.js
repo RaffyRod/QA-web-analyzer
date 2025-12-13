@@ -94,10 +94,10 @@ window.exportReportAsPDF = async function() {
                            filterMissing && !img.hasAlt ? true :
                            filterHasAttributes && img.hasAlt ? true : false;
       
-      if (shouldInclude && img.screenshot) {
+      if (shouldInclude) {
         items.push({
           type: 'Image',
-          screenshot: img.screenshot,
+          screenshot: img.screenshot || null,
           missingAttributes: img.hasAlt ? [] : ['Alt Text'],
           index: img.index,
           hasAccessibility: img.hasAlt
@@ -113,10 +113,10 @@ window.exportReportAsPDF = async function() {
                            filterMissing && hasMissing ? true :
                            filterHasAttributes && !hasMissing && link.hasAccessibility ? true : false;
       
-      if (shouldInclude && link.screenshot) {
+      if (shouldInclude) {
         items.push({
           type: 'Link',
-          screenshot: link.screenshot,
+          screenshot: link.screenshot || null,
           missingAttributes: link.missingAttributes || [],
           index: link.index,
           text: link.text,
@@ -133,10 +133,10 @@ window.exportReportAsPDF = async function() {
                            filterMissing && hasMissing ? true :
                            filterHasAttributes && !hasMissing && btn.hasAccessibility ? true : false;
       
-      if (shouldInclude && btn.screenshot) {
+      if (shouldInclude) {
         items.push({
           type: 'Button',
-          screenshot: btn.screenshot,
+          screenshot: btn.screenshot || null,
           missingAttributes: btn.missingAttributes || [],
           index: btn.index,
           text: btn.text,
@@ -153,10 +153,10 @@ window.exportReportAsPDF = async function() {
                            filterMissing && hasMissing ? true :
                            filterHasAttributes && !hasMissing && input.hasAccessibility ? true : false;
       
-      if (shouldInclude && input.screenshot) {
+      if (shouldInclude) {
         items.push({
           type: 'Input',
-          screenshot: input.screenshot,
+          screenshot: input.screenshot || null,
           missingAttributes: input.missingAttributes || [],
           index: input.index,
           typeName: input.type,
@@ -173,10 +173,10 @@ window.exportReportAsPDF = async function() {
                            filterMissing && hasMissing ? true :
                            filterHasAttributes && !hasMissing && role.hasAccessibility ? true : false;
       
-      if (shouldInclude && role.screenshot) {
+      if (shouldInclude) {
         items.push({
           type: 'Role',
-          screenshot: role.screenshot,
+          screenshot: role.screenshot || null,
           missingAttributes: role.missingAttributes || [],
           index: role.index,
           role: role.role,
@@ -251,68 +251,71 @@ window.exportReportAsPDF = async function() {
       doc.text(textLines, margin + imageWidth + 4, currentRowY + 22);
     }
     
-    try {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      
-      await new Promise((resolve) => {
-        img.onload = () => {
-          const maxImageHeight = rowHeight - 6;
-          const maxImageWidth = imageWidth - 2;
-          let imageHeight = maxImageHeight;
-          let imageWidthFinal = maxImageWidth;
-          
-          if (img.naturalWidth && img.naturalHeight) {
-            const aspectRatio = img.naturalWidth / img.naturalHeight;
-            if (aspectRatio > 1) {
-              imageWidthFinal = Math.min(maxImageWidth, maxImageHeight * aspectRatio);
-              imageHeight = imageWidthFinal / aspectRatio;
-            } else {
-              imageHeight = Math.min(maxImageHeight, maxImageWidth / aspectRatio);
-              imageWidthFinal = imageHeight * aspectRatio;
+    if (item.screenshot && (item.screenshot.startsWith('data:image') || item.screenshot.startsWith('http'))) {
+      try {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        
+        await new Promise((resolve) => {
+          img.onload = () => {
+            const maxImageHeight = rowHeight - 6;
+            const maxImageWidth = imageWidth - 2;
+            let imageHeight = maxImageHeight;
+            let imageWidthFinal = maxImageWidth;
+            
+            if (img.naturalWidth && img.naturalHeight) {
+              const aspectRatio = img.naturalWidth / img.naturalHeight;
+              if (aspectRatio > 1) {
+                imageWidthFinal = Math.min(maxImageWidth, maxImageHeight * aspectRatio);
+                imageHeight = imageWidthFinal / aspectRatio;
+              } else {
+                imageHeight = Math.min(maxImageHeight, maxImageWidth / aspectRatio);
+                imageWidthFinal = imageHeight * aspectRatio;
+              }
+            } else if (img.width && img.height) {
+              const aspectRatio = img.width / img.height;
+              if (aspectRatio > 1) {
+                imageWidthFinal = Math.min(maxImageWidth, maxImageHeight * aspectRatio);
+                imageHeight = imageWidthFinal / aspectRatio;
+              } else {
+                imageHeight = Math.min(maxImageHeight, maxImageWidth / aspectRatio);
+                imageWidthFinal = imageHeight * aspectRatio;
+              }
             }
-          } else if (img.width && img.height) {
-            const aspectRatio = img.width / img.height;
-            if (aspectRatio > 1) {
-              imageWidthFinal = Math.min(maxImageWidth, maxImageHeight * aspectRatio);
-              imageHeight = imageWidthFinal / aspectRatio;
-            } else {
-              imageHeight = Math.min(maxImageHeight, maxImageWidth / aspectRatio);
-              imageWidthFinal = imageHeight * aspectRatio;
+            
+            const imageX = margin + 1;
+            const imageY = currentRowY + (rowHeight - imageHeight) / 2;
+            
+            try {
+              doc.addImage(img, 'PNG', imageX, imageY, imageWidthFinal, imageHeight, undefined, 'FAST');
+            } catch (e) {
+              doc.setFontSize(10);
+              doc.setTextColor(180, 180, 180);
+              doc.text('Image', imageX + 5, imageY + maxImageHeight / 2);
             }
-          }
-          
-          const imageX = margin + 1;
-          const imageY = currentRowY + (rowHeight - imageHeight) / 2;
-          
-          try {
-            doc.addImage(img, 'PNG', imageX, imageY, imageWidthFinal, imageHeight, undefined, 'FAST');
-          } catch (e) {
+            
+            resolve();
+          };
+          img.onerror = () => {
             doc.setFontSize(10);
             doc.setTextColor(180, 180, 180);
-            doc.text('Image', imageX + 5, imageY + maxImageHeight / 2);
-          }
+            doc.text('No Image', margin + 8, currentRowY + rowHeight / 2);
+            resolve();
+          };
           
-          resolve();
-        };
-        img.onerror = () => {
-          doc.setFontSize(10);
-          doc.setTextColor(180, 180, 180);
-          doc.text('Image', margin + 8, currentRowY + rowHeight / 2);
-          resolve();
-        };
-        
-        if (item.screenshot && (item.screenshot.startsWith('data:image') || item.screenshot.startsWith('http'))) {
           img.src = item.screenshot;
-        } else {
-          resolve();
-        }
-      });
-    } catch (error) {
+        });
+      } catch (error) {
+        doc.setFontSize(10);
+        doc.setTextColor(180, 180, 180);
+        doc.setFont(undefined, 'normal');
+        doc.text('No Image', margin + 8, currentRowY + rowHeight / 2);
+      }
+    } else {
       doc.setFontSize(10);
       doc.setTextColor(180, 180, 180);
       doc.setFont(undefined, 'normal');
-      doc.text('Image', margin + 8, currentRowY + rowHeight / 2);
+      doc.text('No Image', margin + 8, currentRowY + rowHeight / 2);
     }
     
     yPos = currentRowY + rowHeight + 3;

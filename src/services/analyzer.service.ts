@@ -280,9 +280,9 @@ export class AnalyzerService {
             
             const missingAttributes: string[] = [];
             
-            if (opts.checkAriaLabel && !ariaLabel && !text) missingAttributes.push('aria-label');
-            if (opts.checkAriaLabelledby && !ariaLabelledby && !text) missingAttributes.push('aria-labelledby');
-            if (opts.checkAriaDescribedby && !ariaDescribedby && !text) missingAttributes.push('aria-describedby');
+            if (opts.checkAriaLabel && !ariaLabel) missingAttributes.push('aria-label');
+            if (opts.checkAriaLabelledby && !ariaLabelledby) missingAttributes.push('aria-labelledby');
+            if (opts.checkAriaDescribedby && !ariaDescribedby) missingAttributes.push('aria-describedby');
             
             if (opts.checkAriaHidden && ariaHidden === 'true' && (text || ariaLabel || ariaLabelledby)) {
               missingAttributes.push('aria-hidden (should not be true for accessible elements)');
@@ -305,7 +305,7 @@ export class AnalyzerService {
               }
             }
             
-            const hasAccessibility = missingAttributes.length === 0 && (!!text || !!ariaLabel || !!ariaLabelledby || !!ariaDescribedby);
+            const hasAccessibility = missingAttributes.length === 0 && (!!text || (opts.checkAriaLabel ? !!ariaLabel : true) || (opts.checkAriaLabelledby ? !!ariaLabelledby : true) || (opts.checkAriaDescribedby ? !!ariaDescribedby : true));
             const hasFocusState = opts.checkFocusStates ? checkFocusState(btn) : true;
             const outerHTML = btn.outerHTML;
             const selector = generateSelector(btn);
@@ -449,8 +449,8 @@ export class AnalyzerService {
             
             const missingAttributes: string[] = [];
             
-            if (opts.checkAriaLabel && !ariaLabel && !text) missingAttributes.push('aria-label');
-            if (opts.checkAriaLabelledby && !ariaLabelledby && !text) missingAttributes.push('aria-labelledby');
+            if (opts.checkAriaLabel && !ariaLabel) missingAttributes.push('aria-label');
+            if (opts.checkAriaLabelledby && !ariaLabelledby) missingAttributes.push('aria-labelledby');
             
             if (opts.checkAriaHidden && ariaHidden === 'true' && (text || ariaLabel || ariaLabelledby)) {
               missingAttributes.push('aria-hidden (should not be true for accessible elements)');
@@ -473,7 +473,7 @@ export class AnalyzerService {
               }
             }
             
-            const hasAccessibility = missingAttributes.length === 0 && (!!text || !!ariaLabel || !!ariaLabelledby);
+            const hasAccessibility = missingAttributes.length === 0 && (!!text || (opts.checkAriaLabel ? !!ariaLabel : true) || (opts.checkAriaLabelledby ? !!ariaLabelledby : true));
             const outerHTML = el.outerHTML;
             const selector = generateSelector(el);
             
