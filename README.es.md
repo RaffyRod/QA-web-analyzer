@@ -1,36 +1,29 @@
-# QA Web Analyzer
+# 🔍 QA Web Analyzer
 
-Herramienta web profesional para analizar la accesibilidad de páginas web, verificando elementos como imágenes, enlaces, botones, inputs y elementos con roles ARIA. Construida con TypeScript siguiendo las mejores prácticas de desarrollo.
+> **Herramienta profesional de análisis de accesibilidad** para páginas web. Construida con TypeScript siguiendo las mejores prácticas.
 
-## 🎯 Características
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat&logo=playwright&logoColor=white)
 
-- ✅ **Análisis Configurable**: Selecciona qué elementos y atributos quieres analizar
-- ✅ **Análisis de Imágenes**: Verifica atributos `alt` text
-- ✅ **Análisis de Enlaces**: Verifica `aria-label`, `aria-labelledby`, `title`
-- ✅ **Análisis de Botones**: Verifica `aria-label`, `aria-labelledby`, `aria-describedby`
-- ✅ **Análisis de Inputs**: Verifica `aria-label`, `aria-labelledby`, elementos `<label>`
-- ✅ **Análisis de Roles ARIA**: Verifica elementos con atributos `role`
-- ✅ **Reporte Detallado**: Muestra el código HTML de cada elemento analizado
-- ✅ **Filtros Inteligentes**: Filtra elementos con o sin atributos de accesibilidad
-- ✅ **Resumen Estadístico**: Vista general de los problemas encontrados
-- ✅ **Exportar como Imagen**: Exporta el reporte completo como imagen PNG
-- ✅ **Interfaz Moderna**: Diseño responsive y fácil de usar
-- ✅ **TypeScript**: Código tipado y mantenible
-- ✅ **Soporte Multi-idioma**: Inglés y Español
+## 🎯 ¿Qué es esto?
 
-## 📋 Requisitos Previos
+QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de **problemas de accesibilidad** según los **estándares WCAG 2.2 AA**. Verifica imágenes, enlaces, botones, inputs y elementos ARIA para asegurar que cumplan con los requisitos de accesibilidad.
 
-- Node.js (v18 o superior)
-- pnpm (gestor de paquetes)
+### ✨ Características Principales
+
+- 🔎 **Análisis Completo**: Verifica imágenes, enlaces, botones, inputs y roles ARIA
+- 🎛️ **Opciones Configurables**: Selecciona exactamente qué quieres analizar
+- 📊 **Reportes Detallados**: Ve código HTML, capturas de pantalla y atributos faltantes
+- 🎨 **Interfaz Hermosa**: Diseño neomórfico moderno con soporte de temas
+- 📄 **Exportación PDF**: Genera reportes profesionales en PDF
+- 🌍 **Multi-idioma**: Soporte para inglés y español
+- 🎯 **Filtrado Inteligente**: Filtra por atributos faltantes o presentes
+- 📸 **Retroalimentación Visual**: Capturas de pantalla de elementos problemáticos
 
 ## 🚀 Inicio Rápido
 
-### Configuración con un Solo Comando (Recomendado)
-
-Simplemente ejecuta el script de configuración. Automáticamente:
-- Instalará las dependencias (solo la primera vez)
-- Compilará el proyecto TypeScript
-- Iniciará el servidor
+### Opción 1: Configuración de Un Comando (Recomendado) ⚡
 
 **Windows:**
 ```bash
@@ -39,138 +32,240 @@ start.bat
 
 **Linux/Mac:**
 ```bash
-chmod +x start.sh
-./start.sh
+chmod +x start.sh && ./start.sh
 ```
 
-**O usando el script npm/pnpm:**
+**Multiplataforma:**
 ```bash
 pnpm run
 ```
 
-### Configuración Manual
+El script automáticamente:
+1. ✅ Instala dependencias (si es necesario)
+2. ✅ Compila el proyecto
+3. ✅ Inicia el servidor
 
-Si prefieres ejecutar los comandos manualmente:
-
-1. Instala las dependencias usando pnpm:
+### Opción 2: Configuración Manual
 
 ```bash
+# 1. Instalar dependencias
 pnpm install
-```
 
-2. Compila el proyecto TypeScript:
-
-```bash
+# 2. Compilar TypeScript
 pnpm build
-```
 
-3. Inicia el servidor:
-
-```bash
+# 3. Iniciar servidor
 pnpm start
 ```
 
-### Modo Desarrollo
+### 📍 Acceder a la Aplicación
 
-Inicia el servidor en modo desarrollo (con auto-reload):
-
-```bash
-pnpm dev
+Después de iniciar, verás:
+```
+QA Web Analyzer server running on http://localhost:3000
 ```
 
-3. El servidor buscará automáticamente un puerto disponible (comenzando desde 3000). Verás en la consola el puerto asignado, por ejemplo:
-   ```
-   QA Web Analyzer server running on http://localhost:3000
-   ```
-   Abre tu navegador en la URL mostrada en la consola.
+¡Abre esa URL en tu navegador! 🌐
 
-4. **Configura las opciones de análisis**: Selecciona qué elementos y atributos quieres verificar:
-   - **Elements to Check**: Imágenes, Enlaces, Botones, Inputs, Elementos con Role
-   - **Attributes to Check**: Alt Text, aria-label, aria-labelledby, aria-describedby, labels, title
+## 📖 Cómo Usar
 
-5. **Ingresa la URL** que deseas analizar (puede ser localhost o cualquier URL pública)
+### Guía Paso a Paso
 
-6. Haz clic en **"Analyze"** y espera los resultados
+```
+┌─────────────────────────────────────────┐
+│  1. Ingresa URL a analizar              │
+│     (ej: http://localhost:3000)         │
+├─────────────────────────────────────────┤
+│  2. Selecciona Elementos a Verificar    │
+│     ☑ Imágenes  ☑ Enlaces  ☑ Botones   │
+├─────────────────────────────────────────┤
+│  3. Selecciona Atributos a Verificar    │
+│     ☑ Alt Text  ☑ aria-label  etc.     │
+├─────────────────────────────────────────┤
+│  4. Haz clic en "Analizar"              │
+├─────────────────────────────────────────┤
+│  5. Revisa el Reporte                   │
+│     • Tarjetas de resumen               │
+│     • Análisis detallado de elementos   │
+│     • Capturas de problemas             │
+├─────────────────────────────────────────┤
+│  6. Filtra y Exporta                   │
+│     • Filtra por faltantes/presentes    │
+│     • Exporta como PDF                  │
+└─────────────────────────────────────────┘
+```
 
-7. **Revisa el reporte**: 
-   - Cada elemento muestra su código HTML completo
-   - Los elementos con problemas se marcan con badges rojos
-   - Usa los filtros para mostrar solo elementos con o sin atributos de accesibilidad
+### 🎛️ Opciones de Configuración
 
-8. **Exporta el reporte**: 
-   - Haz clic en el botón "📥 Export Report as Image" en la parte superior del reporte
-   - El reporte se descargará como una imagen PNG con un nombre descriptivo que incluye la URL analizada y la fecha
+#### Elementos a Verificar
+- 🖼️ **Imágenes**: Analiza elementos `<img>`
+- 🔗 **Enlaces**: Analiza elementos `<a>`
+- 🔘 **Botones**: Analiza elementos `<button>`
+- 📝 **Inputs**: Analiza `<input>`, `<textarea>`, `<select>`
+- 🎭 **Roles**: Analiza elementos con atributo `role`
 
-## 📊 Ejemplos de URLs
+#### Atributos a Verificar
+- **Alt Text**: Para imágenes
+- **aria-label**: Nombre accesible
+- **aria-labelledby**: Referencia a etiqueta
+- **aria-describedby**: Descripción adicional
+- **aria-hidden**: Detección de mal uso
+- **aria-expanded**: Para elementos expandibles
+- **aria-controls**: Relaciones de control
+- **aria-current**: Indicador de elemento actual
+- **aria-required**: Inputs requeridos
+- **aria-invalid**: Estado inválido
+- **tabindex**: Detección de anti-patrones
+- **lang**: Especificación de idioma
+- **Labels**: Elementos `<label>` para inputs
+- **Title**: Atributo title
+- **Focus States**: Cumplimiento WCAG 2.2 AA
 
-- `http://localhost:3000`
-- `http://localhost:8080`
-- `https://example.com`
-- `https://www.google.com`
+## 📊 Ejemplo de Análisis
+
+```
+Entrada: https://example.com
+
+Salida:
+┌─────────────────────────────────────┐
+│ 📊 Resumen                          │
+├─────────────────────────────────────┤
+│ Total Imágenes: 15                  │
+│ Imágenes sin Alt: 3 ❌              │
+│ Total Enlaces: 42                    │
+│ Enlaces sin Accesibilidad: 5 ❌      │
+│ Total Botones: 8                     │
+│ Botones sin Accesibilidad: 2 ❌      │
+└─────────────────────────────────────┘
+```
 
 ## 🏗️ Estructura del Proyecto
 
 ```
 qa-web-analyzer/
-├── src/
-│   ├── types/           # Definiciones de tipos TypeScript
-│   ├── services/        # Servicios de negocio
-│   ├── utils/           # Utilidades
-│   └── server.ts        # Servidor Express
-├── public/              # Archivos estáticos del frontend
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-├── dist/                # Código compilado (generado)
-├── package.json
-├── tsconfig.json
-└── README.md
+│
+├── 📁 src/                    # Código fuente TypeScript
+│   ├── 📁 types/             # Definiciones de tipos
+│   ├── 📁 services/          # Lógica de negocio
+│   │   └── analyzer.service.ts
+│   ├── 📁 utils/             # Utilidades
+│   │   └── port-finder.util.ts
+│   └── server.ts             # Servidor Express
+│
+├── 📁 public/                 # Archivos frontend
+│   ├── index.html            # HTML principal
+│   ├── styles.css            # Estilos
+│   ├── app.js                # JavaScript principal
+│   ├── i18n.js               # Traducciones
+│   └── 📁 js/
+│       ├── export.js         # Exportación PDF
+│       └── themes.js         # Gestión de temas
+│
+├── 📁 dist/                  # JavaScript compilado (auto-generado)
+│
+├── 📄 package.json           # Dependencias
+├── 📄 tsconfig.json          # Configuración TypeScript
+├── 📄 .gitignore            # Reglas de Git ignore
+├── 📄 README.md             # Este archivo
+├── 📄 README.es.md          # README en español
+│
+└── 🚀 Scripts de inicio
+    ├── start.js              # Multiplataforma
+    ├── start.bat             # Windows
+    └── start.sh              # Linux/Mac
 ```
 
-## 🛠️ Tecnologías
+## 🛠️ Tecnologías Utilizadas
 
-- **Backend**:
-  - Node.js
-  - Express
-  - TypeScript
-  - Playwright (para análisis de páginas)
+### Backend
+- **Node.js** - Entorno de ejecución
+- **Express** - Framework web
+- **TypeScript** - JavaScript con tipos
+- **Playwright** - Automatización de navegador para análisis
 
-- **Frontend**:
-  - HTML5
-  - CSS3 (con variables CSS)
-  - JavaScript (ES6+)
-  - html2canvas (para exportación de imágenes)
+### Frontend
+- **HTML5** - Estructura
+- **CSS3** - Estilos (con variables CSS y neomorfismo)
+- **JavaScript (ES6+)** - Interactividad
+- **jsPDF** - Generación de PDF
 
 ## 📝 Scripts Disponibles
 
-- `pnpm build` - Compila el proyecto TypeScript
-- `pnpm start` - Inicia el servidor en modo producción
-- `pnpm dev` - Inicia el servidor en modo desarrollo con auto-reload
-- `pnpm type-check` - Verifica tipos sin compilar
+| Comando | Descripción |
+|---------|-------------|
+| `pnpm run` | 🚀 Instalar, compilar e iniciar (primera vez) |
+| `pnpm build` | 🔨 Compilar TypeScript a JavaScript |
+| `pnpm start` | ▶️ Iniciar servidor de producción |
+| `pnpm dev` | 🔄 Iniciar con auto-recarga |
+| `pnpm type-check` | ✅ Verificar tipos sin compilar |
 
-## 🎨 Mejores Prácticas Implementadas
+## 🎨 Características en Detalle
 
-- ✅ **TypeScript Strict Mode**: Código completamente tipado
-- ✅ **Clean Code**: Separación de responsabilidades, funciones pequeñas y descriptivas
-- ✅ **SOLID Principles**: Servicios separados, responsabilidades únicas
-- ✅ **Accesibilidad**: La herramienta misma sigue buenas prácticas de accesibilidad
-- ✅ **Error Handling**: Manejo robusto de errores
-- ✅ **Code Organization**: Estructura modular y escalable
-- ✅ **Internacionalización**: Soporte multi-idioma
+### 🔍 Verificaciones de Accesibilidad
 
-## 🔍 Reglas de Accesibilidad Verificadas
+La herramienta verifica el cumplimiento de los **estándares WCAG 2.2 AA**:
 
-La herramienta verifica las siguientes reglas basadas en WCAG 2.1 y mejores prácticas:
+| Elemento | Verificaciones |
+|---------|----------------|
+| 🖼️ **Imágenes** | Atributo `alt` (detección de faltante/vacío) |
+| 🔗 **Enlaces** | `aria-label`, `aria-labelledby`, `title`, contenido de texto |
+| 🔘 **Botones** | `aria-label`, `aria-labelledby`, `aria-describedby`, texto |
+| 📝 **Inputs** | `aria-label`, `aria-labelledby`, `<label>`, `aria-required` |
+| 🎭 **Roles** | `aria-label`, `aria-labelledby` para roles personalizados |
+| 🎯 **Todos** | Estados de foco, anti-patrones `tabindex`, atributo `lang` |
 
-- **Imágenes**: Todas las imágenes deben tener atributo `alt` descriptivo
-- **Enlaces**: Enlaces deben tener texto descriptivo o `aria-label`
-- **Botones**: Botones deben tener texto visible o `aria-label`
-- **Inputs**: Inputs deben tener `<label>` asociado o `aria-label`
-- **Roles ARIA**: Elementos con `role` deben tener `aria-label` o `aria-labelledby`
+### 📊 Características del Reporte
+
+- ✅ **Tarjetas de Resumen**: Vista rápida con estado codificado por colores
+- 📸 **Capturas de Pantalla**: Resaltado visual de elementos problemáticos
+- 💻 **Código HTML**: Fragmentos de código expandibles para cada elemento
+- 🔍 **Filtros Inteligentes**: Mostrar solo atributos faltantes o presentes
+- 📄 **Exportación PDF**: Reportes profesionales con imágenes y detalles
+- 🎨 **Temas**: Modos Light, Dark, Blue, Green, Purple
+- 🌍 **i18n**: Soporte para inglés y español
 
 ## 🌐 Soporte de Idiomas
 
-La aplicación soporta múltiples idiomas. Puedes cambiar entre Inglés y Español usando el selector de idioma en la interfaz.
+Cambia de idioma usando el selector en la interfaz:
+
+- 🇺🇸 **English** - [View English README](./README.md)
+- 🇪🇸 **Español** (predeterminado)
+
+## 📋 Requisitos Previos
+
+- **Node.js** v18 o superior
+- **pnpm** gestor de paquetes
+
+Instalar pnpm:
+```bash
+npm install -g pnpm
+```
+
+## 🔧 Desarrollo
+
+### Modo Desarrollo
+```bash
+pnpm dev
+```
+Inicia el servidor con auto-recarga en cambios de archivos.
+
+### Verificación de Tipos
+```bash
+pnpm type-check
+```
+Valida TypeScript sin compilar.
+
+## 🎯 Mejores Prácticas
+
+Este proyecto sigue:
+
+- ✅ **Modo Estricto TypeScript** - Código completamente tipado
+- ✅ **Código Limpio** - Separación de responsabilidades
+- ✅ **Principios SOLID** - Responsabilidad única, diseño modular
+- ✅ **Accesibilidad Primero** - La herramienta misma es accesible
+- ✅ **Manejo de Errores** - Gestión robusta de errores
+- ✅ **Organización de Código** - Estructura escalable
+- ✅ **Internacionalización** - Listo para múltiples idiomas
 
 ## 📄 Licencia
 
@@ -178,11 +273,20 @@ ISC
 
 ## 🤝 Contribuciones
 
-Las contribuciones son bienvenidas. Por favor, asegúrate de seguir las mejores prácticas de TypeScript y mantener el código limpio y bien documentado.
+¡Las contribuciones son bienvenidas! Por favor:
+
+1. Haz fork del repositorio
+2. Crea una rama de funcionalidad
+3. Sigue las mejores prácticas de TypeScript
+4. Mantén el código limpio y documentado
+5. Envía un pull request
+
+## 📞 Soporte
+
+Para problemas o preguntas, por favor abre un issue en GitHub.
 
 ---
 
-## 📖 README in English
+**Hecho con ❤️ para mejor accesibilidad web**
 
-[View README in English](./README.md)
-
+[⬆ Volver arriba](#-qa-web-analyzer)

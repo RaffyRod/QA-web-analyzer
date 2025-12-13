@@ -947,5 +947,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-cl

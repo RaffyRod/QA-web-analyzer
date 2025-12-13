@@ -26,7 +26,7 @@ window.exportReportAsPDF = async function() {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(22);
   doc.setFont(undefined, 'bold');
-  doc.text('🔍 Accessibility Report', pageWidth / 2, 20, { align: 'center' });
+  doc.text('Accessibility Report', pageWidth / 2, 20, { align: 'center' });
   
   yPos = 35;
   doc.setTextColor(60, 60, 60);
@@ -43,7 +43,7 @@ window.exportReportAsPDF = async function() {
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(14);
   doc.setFont(undefined, 'bold');
-  doc.text('📊 Summary', margin + 2, yPos + 7);
+  doc.text('Summary', margin + 2, yPos + 7);
   yPos += 12;
   
   doc.setFontSize(11);
@@ -137,7 +137,7 @@ window.exportReportAsPDF = async function() {
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(14);
     doc.setFont(undefined, 'bold');
-    doc.text('⚠️ Issues Found', margin + 2, yPos + 7);
+    doc.text('Issues Found', margin + 2, yPos + 7);
     yPos += 12;
   }
   
@@ -183,7 +183,8 @@ window.exportReportAsPDF = async function() {
     if (item.text) {
       doc.setFontSize(9);
       doc.setTextColor(60, 60, 60);
-      const textLines = doc.splitTextToSize(`Text: ${item.text.substring(0, 60)}`, textWidth - 4);
+      const cleanText = item.text.replace(/[^\x20-\x7E]/g, '').substring(0, 60);
+      const textLines = doc.splitTextToSize(`Text: ${cleanText}`, textWidth - 4);
       doc.text(textLines, margin + imageWidth + 4, currentRowY + 22);
     }
     
@@ -247,6 +248,7 @@ window.exportReportAsPDF = async function() {
     } catch (error) {
       doc.setFontSize(10);
       doc.setTextColor(180, 180, 180);
+      doc.setFont(undefined, 'normal');
       doc.text('Image', margin + 8, currentRowY + rowHeight / 2);
     }
     

@@ -1,36 +1,29 @@
-# QA Web Analyzer
+# 🔍 QA Web Analyzer
 
-Professional web tool for analyzing web page accessibility, checking elements such as images, links, buttons, inputs, and ARIA role elements. Built with TypeScript following best development practices.
+> **Professional accessibility analysis tool** for web pages. Built with TypeScript following best practices.
 
-## 🎯 Features
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat&logo=playwright&logoColor=white)
 
-- ✅ **Configurable Analysis**: Select which elements and attributes you want to analyze
-- ✅ **Image Analysis**: Checks `alt` text attributes
-- ✅ **Link Analysis**: Checks `aria-label`, `aria-labelledby`, `title`
-- ✅ **Button Analysis**: Checks `aria-label`, `aria-labelledby`, `aria-describedby`
-- ✅ **Input Analysis**: Checks `aria-label`, `aria-labelledby`, `<label>` elements
-- ✅ **ARIA Role Analysis**: Checks elements with `role` attributes
-- ✅ **Detailed Report**: Shows the HTML code of each analyzed element
-- ✅ **Smart Filters**: Filter elements with or without accessibility attributes
-- ✅ **Statistical Summary**: Overview of found issues
-- ✅ **Export as Image**: Export the complete report as PNG image
-- ✅ **Modern Interface**: Responsive and easy-to-use design
-- ✅ **TypeScript**: Typed and maintainable code
-- ✅ **Multi-language Support**: English and Spanish
+## 🎯 What is this?
 
-## 📋 Prerequisites
+QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibility issues** according to **WCAG 2.2 AA standards**. It checks images, links, buttons, inputs, and ARIA elements to ensure they meet accessibility requirements.
 
-- Node.js (v18 or higher)
-- pnpm (package manager)
+### ✨ Key Features
+
+- 🔎 **Comprehensive Analysis**: Check images, links, buttons, inputs, and ARIA roles
+- 🎛️ **Configurable Options**: Select exactly what you want to analyze
+- 📊 **Detailed Reports**: See HTML code, screenshots, and missing attributes
+- 🎨 **Beautiful UI**: Modern neomorphism design with theme support
+- 📄 **PDF Export**: Generate professional PDF reports
+- 🌍 **Multi-language**: English and Spanish support
+- 🎯 **Smart Filtering**: Filter by missing or present attributes
+- 📸 **Visual Feedback**: Screenshots of problematic elements
 
 ## 🚀 Quick Start
 
-### One-Command Setup (Recommended)
-
-Simply run the setup script. It will automatically:
-- Install dependencies (only on first run)
-- Build the TypeScript project
-- Start the server
+### Option 1: One-Command Setup (Recommended) ⚡
 
 **Windows:**
 ```bash
@@ -39,149 +32,261 @@ start.bat
 
 **Linux/Mac:**
 ```bash
-chmod +x start.sh
-./start.sh
+chmod +x start.sh && ./start.sh
 ```
 
-**Or using npm/pnpm script:**
+**Cross-platform:**
 ```bash
 pnpm run
 ```
 
-### Manual Setup
+The script will automatically:
+1. ✅ Install dependencies (if needed)
+2. ✅ Build the project
+3. ✅ Start the server
 
-If you prefer to run commands manually:
-
-1. Install dependencies using pnpm:
+### Option 2: Manual Setup
 
 ```bash
+# 1. Install dependencies
 pnpm install
-```
 
-2. Build the TypeScript project:
-
-```bash
+# 2. Build TypeScript
 pnpm build
-```
 
-3. Start the server:
-
-```bash
+# 3. Start server
 pnpm start
 ```
 
-### Development Mode
+### 📍 Access the Application
 
-Start the server in development mode (with auto-reload):
-
-```bash
-pnpm dev
+After starting, you'll see:
+```
+QA Web Analyzer server running on http://localhost:3000
 ```
 
-3. The server will automatically find an available port (starting from 3000). You'll see the assigned port in the console, for example:
-   ```
-   QA Web Analyzer server running on http://localhost:3000
-   ```
-   Open your browser at the URL shown in the console.
+Open that URL in your browser! 🌐
 
-4. **Configure analysis options**: Select which elements and attributes you want to check:
-   - **Elements to Check**: Images, Links, Buttons, Inputs, Elements with Role
-   - **Attributes to Check**: Alt Text, aria-label, aria-labelledby, aria-describedby, labels, title
+## 📖 How to Use
 
-5. **Enter the URL** you want to analyze (can be localhost or any public URL)
+### Step-by-Step Guide
 
-6. Click **"Analyze"** and wait for the results
+```
+┌─────────────────────────────────────────┐
+│  1. Enter URL to analyze                │
+│     (e.g., http://localhost:3000)       │
+├─────────────────────────────────────────┤
+│  2. Select Elements to Check            │
+│     ☑ Images  ☑ Links  ☑ Buttons        │
+├─────────────────────────────────────────┤
+│  3. Select Attributes to Check          │
+│     ☑ Alt Text  ☑ aria-label  etc.      │
+├─────────────────────────────────────────┤
+│  4. Click "Analyze" button              │
+├─────────────────────────────────────────┤
+│  5. Review the Report                    │
+│     • Summary cards                      │
+│     • Detailed element analysis          │
+│     • Screenshots of issues              │
+├─────────────────────────────────────────┤
+│  6. Filter & Export                     │
+│     • Filter by missing/present          │
+│     • Export as PDF                      │
+└─────────────────────────────────────────┘
+```
 
-7. **Review the report**: 
-   - Each element shows its complete HTML code
-   - Elements with issues are marked with red badges
-   - Use filters to show only elements with or without accessibility attributes
+### 🎛️ Configuration Options
 
-8. **Export the report**: 
-   - Click the "📥 Export Report as Image" button at the top of the report
-   - The report will be downloaded as a PNG image with a descriptive name that includes the analyzed URL and date
+#### Elements to Check
+- 🖼️ **Images**: Analyze `<img>` elements
+- 🔗 **Links**: Analyze `<a>` elements
+- 🔘 **Buttons**: Analyze `<button>` elements
+- 📝 **Inputs**: Analyze `<input>`, `<textarea>`, `<select>`
+- 🎭 **Roles**: Analyze elements with `role` attribute
 
-## 📊 Example URLs
+#### Attributes to Check
+- **Alt Text**: For images
+- **aria-label**: Accessible name
+- **aria-labelledby**: Reference to label
+- **aria-describedby**: Additional description
+- **aria-hidden**: Misuse detection
+- **aria-expanded**: For expandable elements
+- **aria-controls**: Control relationships
+- **aria-current**: Current item indicator
+- **aria-required**: Required inputs
+- **aria-invalid**: Invalid state
+- **tabindex**: Anti-pattern detection
+- **lang**: Language specification
+- **Labels**: `<label>` elements for inputs
+- **Title**: Title attribute
+- **Focus States**: WCAG 2.2 AA compliance
 
-- `http://localhost:3000`
-- `http://localhost:8080`
-- `https://example.com`
-- `https://www.google.com`
+## 📊 Example Analysis
+
+```
+Input: https://example.com
+
+Output:
+┌─────────────────────────────────────┐
+│ 📊 Summary                          │
+├─────────────────────────────────────┤
+│ Total Images: 15                    │
+│ Images without Alt: 3 ❌            │
+│ Total Links: 42                      │
+│ Links without Accessibility: 5 ❌   │
+│ Total Buttons: 8                     │
+│ Buttons without Accessibility: 2 ❌ │
+└─────────────────────────────────────┘
+```
 
 ## 🏗️ Project Structure
 
 ```
 qa-web-analyzer/
-├── src/
-│   ├── types/           # TypeScript type definitions
-│   ├── services/        # Business services
-│   ├── utils/           # Utilities
-│   └── server.ts         # Express server
-├── public/              # Frontend static files
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-├── dist/                # Compiled code (generated)
-├── package.json
-├── tsconfig.json
-└── README.md
+│
+├── 📁 src/                    # TypeScript source code
+│   ├── 📁 types/             # Type definitions
+│   ├── 📁 services/          # Business logic
+│   │   └── analyzer.service.ts
+│   ├── 📁 utils/             # Utilities
+│   │   └── port-finder.util.ts
+│   └── server.ts             # Express server
+│
+├── 📁 public/                 # Frontend files
+│   ├── index.html            # Main HTML
+│   ├── styles.css            # Styling
+│   ├── app.js                # Main JavaScript
+│   ├── i18n.js               # Translations
+│   └── 📁 js/
+│       ├── export.js         # PDF export
+│       └── themes.js         # Theme management
+│
+├── 📁 dist/                  # Compiled JavaScript (auto-generated)
+│
+├── 📄 package.json           # Dependencies
+├── 📄 tsconfig.json          # TypeScript config
+├── 📄 .gitignore            # Git ignore rules
+├── 📄 README.md             # This file
+├── 📄 README.es.md          # Spanish README
+│
+└── 🚀 start scripts
+    ├── start.js              # Cross-platform
+    ├── start.bat             # Windows
+    └── start.sh              # Linux/Mac
 ```
 
-## 🛠️ Technologies
+## 🛠️ Technologies Used
 
-- **Backend**:
-  - Node.js
-  - Express
-  - TypeScript
-  - Playwright (for page analysis)
+### Backend
+- **Node.js** - Runtime environment
+- **Express** - Web framework
+- **TypeScript** - Type-safe JavaScript
+- **Playwright** - Browser automation for analysis
 
-- **Frontend**:
-  - HTML5
-  - CSS3 (with CSS variables)
-  - JavaScript (ES6+)
-  - html2canvas (for image export)
+### Frontend
+- **HTML5** - Structure
+- **CSS3** - Styling (with CSS variables & neomorphism)
+- **JavaScript (ES6+)** - Interactivity
+- **jsPDF** - PDF generation
 
 ## 📝 Available Scripts
 
-- `pnpm build` - Compiles the TypeScript project
-- `pnpm start` - Starts the server in production mode
-- `pnpm dev` - Starts the server in development mode with auto-reload
-- `pnpm type-check` - Checks types without compiling
+| Command | Description |
+|---------|-------------|
+| `pnpm run` | 🚀 Install, build & start (first time) |
+| `pnpm build` | 🔨 Compile TypeScript to JavaScript |
+| `pnpm start` | ▶️ Start production server |
+| `pnpm dev` | 🔄 Start with auto-reload |
+| `pnpm type-check` | ✅ Check types without compiling |
 
-## 🎨 Best Practices Implemented
+## 🎨 Features in Detail
 
-- ✅ **TypeScript Strict Mode**: Fully typed code
-- ✅ **Clean Code**: Separation of concerns, small and descriptive functions
-- ✅ **SOLID Principles**: Separated services, single responsibilities
-- ✅ **Accessibility**: The tool itself follows good accessibility practices
-- ✅ **Error Handling**: Robust error handling
-- ✅ **Code Organization**: Modular and scalable structure
-- ✅ **Internationalization**: Multi-language support
+### 🔍 Accessibility Checks
 
-## 🔍 Accessibility Rules Verified
+The tool verifies compliance with **WCAG 2.2 AA standards**:
 
-The tool verifies the following rules based on WCAG 2.1 and best practices:
+| Element | Checks |
+|---------|--------|
+| 🖼️ **Images** | `alt` attribute (missing/empty detection) |
+| 🔗 **Links** | `aria-label`, `aria-labelledby`, `title`, text content |
+| 🔘 **Buttons** | `aria-label`, `aria-labelledby`, `aria-describedby`, text |
+| 📝 **Inputs** | `aria-label`, `aria-labelledby`, `<label>`, `aria-required` |
+| 🎭 **Roles** | `aria-label`, `aria-labelledby` for custom roles |
+| 🎯 **All** | Focus states, `tabindex` anti-patterns, `lang` attribute |
 
-- **Images**: All images must have a descriptive `alt` attribute
-- **Links**: Links must have descriptive text or `aria-label`
-- **Buttons**: Buttons must have visible text or `aria-label`
-- **Inputs**: Inputs must have an associated `<label>` or `aria-label`
-- **ARIA Roles**: Elements with `role` must have `aria-label` or `aria-labelledby`
+### 📊 Report Features
+
+- ✅ **Summary Cards**: Quick overview with color-coded status
+- 📸 **Screenshots**: Visual highlighting of problematic elements
+- 💻 **HTML Code**: Expandable code snippets for each element
+- 🔍 **Smart Filters**: Show only missing or present attributes
+- 📄 **PDF Export**: Professional reports with images and details
+- 🎨 **Themes**: Light, Dark, Blue, Green, Purple modes
+- 🌍 **i18n**: English and Spanish support
 
 ## 🌐 Language Support
 
-The application supports multiple languages. You can switch between English and Spanish using the language selector in the interface.
+Switch languages using the language selector in the UI:
+
+- 🇺🇸 **English** (default)
+- 🇪🇸 **Español** - [Ver README en Español](./README.es.md)
+
+## 📋 Prerequisites
+
+- **Node.js** v18 or higher
+- **pnpm** package manager
+
+Install pnpm:
+```bash
+npm install -g pnpm
+```
+
+## 🔧 Development
+
+### Development Mode
+```bash
+pnpm dev
+```
+Starts server with auto-reload on file changes.
+
+### Type Checking
+```bash
+pnpm type-check
+```
+Validates TypeScript without compiling.
+
+## 🎯 Best Practices
+
+This project follows:
+
+- ✅ **TypeScript Strict Mode** - Fully typed codebase
+- ✅ **Clean Code** - Separation of concerns
+- ✅ **SOLID Principles** - Single responsibility, modular design
+- ✅ **Accessibility First** - Tool itself is accessible
+- ✅ **Error Handling** - Robust error management
+- ✅ **Code Organization** - Scalable structure
+- ✅ **Internationalization** - Multi-language ready
 
 ## 📄 License
 
 ISC
 
-## 🤝 Contributions
+## 🤝 Contributing
 
-Contributions are welcome. Please make sure to follow TypeScript best practices and keep the code clean and well-documented.
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Follow TypeScript best practices
+4. Keep code clean and documented
+5. Submit a pull request
+
+## 📞 Support
+
+For issues or questions, please open an issue on GitHub.
 
 ---
 
-## 📖 README en Español
+**Made with ❤️ for better web accessibility**
 
-[Ver README en Español](./README.es.md)
+[⬆ Back to top](#-qa-web-analyzer)
