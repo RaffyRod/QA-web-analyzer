@@ -77,6 +77,38 @@ const translations = {
     imagesWithoutFocusState: 'Images without Focus State',
     linksWithoutFocusState: 'Links without Focus State',
     buttonsWithoutFocusState: 'Buttons without Focus State',
+    selectAll: 'Select All',
+    deselectAll: 'Deselect All',
+    // PDF translations
+    pdfTitle: 'QA-web-analyzer Accessibility Report',
+    pdfSummary: 'Summary',
+    pdfTotalImages: 'Total Images',
+    pdfWithoutAlt: 'Without Alt',
+    pdfTotalLinks: 'Total Links',
+    pdfLinkIssues: 'Link Issues',
+    pdfIssuesFound: 'Issues Found',
+    pdfElementsWithAccessibility: 'Elements with Accessibility',
+    pdfAllElements: 'All Elements',
+    pdfFilters: 'Filters',
+    pdfMissingAttributes: 'Missing Attributes',
+    pdfWithAttributes: 'With Attributes',
+    pdfMissing: 'Missing',
+    pdfAllAttributesPresent: 'All attributes present',
+    pdfText: 'Text',
+    pdfAlt: 'Alt',
+    pdfURL: 'URL',
+    pdfType: 'Type',
+    pdfRole: 'Role',
+    pdfSelector: 'Selector',
+    pdfNoImage: 'No Image',
+    pdfImages: 'Images',
+    pdfLinks: 'Links',
+    pdfButtons: 'Buttons',
+    pdfInputs: 'Inputs',
+    pdfRoles: 'Roles',
+    pdfDate: 'Date',
+    pdfPassed: 'Passed',
+    pdfFailed: 'Failed',
   },
   es: {
     title: 'QA Web Analyzer',
@@ -156,6 +188,38 @@ const translations = {
     imagesWithoutFocusState: 'Imágenes sin Estado de Foco',
     linksWithoutFocusState: 'Enlaces sin Estado de Foco',
     buttonsWithoutFocusState: 'Botones sin Estado de Foco',
+    selectAll: 'Seleccionar Todo',
+    deselectAll: 'Deseleccionar Todo',
+    // PDF translations
+    pdfTitle: 'Reporte de Accesibilidad QA-web-analyzer',
+    pdfSummary: 'Resumen',
+    pdfTotalImages: 'Total de Imágenes',
+    pdfWithoutAlt: 'Sin Alt',
+    pdfTotalLinks: 'Total de Enlaces',
+    pdfLinkIssues: 'Problemas de Enlaces',
+    pdfIssuesFound: 'Problemas Encontrados',
+    pdfElementsWithAccessibility: 'Elementos con Accesibilidad',
+    pdfAllElements: 'Todos los Elementos',
+    pdfFilters: 'Filtros',
+    pdfMissingAttributes: 'Atributos Faltantes',
+    pdfWithAttributes: 'Con Atributos',
+    pdfMissing: 'Falta',
+    pdfAllAttributesPresent: 'Todos los atributos presentes',
+    pdfText: 'Texto',
+    pdfAlt: 'Alt',
+    pdfURL: 'URL',
+    pdfType: 'Tipo',
+    pdfRole: 'Rol',
+    pdfSelector: 'Selector',
+    pdfNoImage: 'Sin Imagen',
+    pdfImages: 'Imágenes',
+    pdfLinks: 'Enlaces',
+    pdfButtons: 'Botones',
+    pdfInputs: 'Inputs',
+    pdfRoles: 'Roles',
+    pdfDate: 'Fecha',
+    pdfPassed: 'Pasó',
+    pdfFailed: 'Falló',
   },
 };
 
@@ -188,7 +252,9 @@ function updateUI() {
         if (span) {
           span.textContent = translation;
         } else {
-          const textNode = Array.from(label.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+          const textNode = Array.from(label.childNodes).find(
+            (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim()
+          );
           if (textNode) {
             textNode.textContent = ' ' + translation;
           }
@@ -211,4 +277,3 @@ function initLanguage() {
   const savedLanguage = localStorage.getItem('language') || 'en';
   setLanguage(savedLanguage);
 }
-

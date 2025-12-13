@@ -3,6 +3,78 @@
  */
 
 /**
+ * Gets translation for PDF based on current language
+ */
+function getPdfTranslation(key) {
+  const currentLang = localStorage.getItem('language') || 'en';
+  if (typeof t === 'function') {
+    return t(`pdf${key.charAt(0).toUpperCase() + key.slice(1)}`) || key;
+  }
+  // Fallback translations
+  const translations = {
+    en: {
+      Title: 'QA-web-analyzer Accessibility Report',
+      Summary: 'Summary',
+      TotalImages: 'Total Images',
+      WithoutAlt: 'Without Alt',
+      TotalLinks: 'Total Links',
+      LinkIssues: 'Link Issues',
+      IssuesFound: 'Issues Found',
+      ElementsWithAccessibility: 'Elements with Accessibility',
+      AllElements: 'All Elements',
+      Filters: 'Filters',
+      MissingAttributes: 'Missing Attributes',
+      WithAttributes: 'With Attributes',
+      Missing: 'Missing',
+      AllAttributesPresent: 'All attributes present',
+      Text: 'Text',
+      Alt: 'Alt',
+      URL: 'URL',
+      Type: 'Type',
+      Role: 'Role',
+      Selector: 'Selector',
+      NoImage: 'No Image',
+      Images: 'Images',
+      Links: 'Links',
+      Buttons: 'Buttons',
+      Inputs: 'Inputs',
+      Roles: 'Roles',
+      Date: 'Date',
+    },
+    es: {
+      Title: 'Reporte de Accesibilidad QA-web-analyzer',
+      Summary: 'Resumen',
+      TotalImages: 'Total de Imágenes',
+      WithoutAlt: 'Sin Alt',
+      TotalLinks: 'Total de Enlaces',
+      LinkIssues: 'Problemas de Enlaces',
+      IssuesFound: 'Problemas Encontrados',
+      ElementsWithAccessibility: 'Elementos con Accesibilidad',
+      AllElements: 'Todos los Elementos',
+      Filters: 'Filtros',
+      MissingAttributes: 'Atributos Faltantes',
+      WithAttributes: 'Con Atributos',
+      Missing: 'Falta',
+      AllAttributesPresent: 'Todos los atributos presentes',
+      Text: 'Texto',
+      Alt: 'Alt',
+      URL: 'URL',
+      Type: 'Tipo',
+      Role: 'Rol',
+      Selector: 'Selector',
+      NoImage: 'Sin Imagen',
+      Images: 'Imágenes',
+      Links: 'Enlaces',
+      Buttons: 'Botones',
+      Inputs: 'Inputs',
+      Roles: 'Roles',
+      Date: 'Fecha',
+    },
+  };
+  return translations[currentLang]?.[key] || translations.en[key] || key;
+}
+
+/**
  * Exports report as interactive PDF with Vibrant Colorful Design
  * Enhanced with larger images and detailed information
  */
@@ -25,38 +97,69 @@ window.exportReportAsPDF = async function () {
   const bookmarks = [];
   const data = window.currentData;
 
-  // Vibrant Colorful Design - Header with gradient background
+  // Light theme colors
+  // Header gradient: #667eea to #764ba2
   const headerHeight = 40;
-  doc.setFillColor(102, 126, 234); // Purple gradient start
+  doc.setFillColor(102, 126, 234); // #667eea
   doc.rect(0, 0, pageWidth, headerHeight, 'F');
 
   // Add gradient effect with multiple rectangles
-  doc.setFillColor(118, 75, 162); // Purple gradient end
+  doc.setFillColor(118, 75, 162); // #764ba2
   doc.rect(0, 0, pageWidth, headerHeight * 0.5, 'F');
 
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(28);
+  doc.setFontSize(24);
   doc.setFont(undefined, 'bold');
-  doc.text('QA-web-analyzer Accessibility Report', pageWidth / 2, 25, { align: 'center' });
+  const title = getPdfTranslation('Title');
+  doc.text(title, pageWidth / 2, 25, { align: 'center', maxWidth: pageWidth - margin * 2 });
 
   yPos = headerHeight + 10;
 
-  // Meta information
-  doc.setFontSize(10);
+  // Meta information with better spacing and visual hierarchy
+  doc.setFontSize(9);
   doc.setFont(undefined, 'normal');
-  doc.setTextColor(30, 30, 30);
-  doc.text(`🌐 ${data.url}`, margin, yPos);
-  yPos += 6;
-  doc.text(`📅 ${new Date(data.analyzedAt).toLocaleString()}`, margin, yPos);
-  yPos += 15;
+  doc.setTextColor(100, 116, 139);
 
-  // Summary section with vibrant cards
-  doc.setFontSize(18);
+  // URL with icon-like styling
+  const urlText = String(data.url || 'N/A');
+  const urlLines = doc.splitTextToSize(urlText, pageWidth - margin * 2 - 20);
+  doc.text(`${getPdfTranslation('URL')}:`, margin, yPos);
+  doc.setTextColor(30, 30, 30);
+  doc.setFont(undefined, 'bold');
+  doc.text(urlLines, margin + 25, yPos);
+  yPos += urlLines.length * 4 + 4;
+
+  // Date with better formatting
+  doc.setFontSize(9);
+  doc.setFont(undefined, 'normal');
+  doc.setTextColor(100, 116, 139);
+  const analyzedDate = data.analyzedAt
+    ? new Date(data.analyzedAt).toLocaleString()
+    : new Date().toLocaleString();
+  doc.text(`${getPdfTranslation('Date')}:`, margin, yPos);
+  doc.setTextColor(30, 30, 30);
+  doc.setFont(undefined, 'bold');
+  doc.text(analyzedDate, margin + 25, yPos);
+  yPos += 18;
+
+  // Summary section with better visual hierarchy
+  doc.setFontSize(20);
   doc.setFont(undefined, 'bold');
   doc.setTextColor(30, 30, 30);
-  doc.text('📊 Summary', margin, yPos);
-  bookmarks.push({ title: 'Summary', page: doc.internal.getCurrentPageInfo().pageNumber, y: yPos });
-  yPos += 10;
+  const summaryTitle = getPdfTranslation('Summary');
+
+  // Add subtle underline for section title
+  doc.text(summaryTitle, margin, yPos);
+  doc.setLineWidth(0.5);
+  doc.setDrawColor(200, 200, 200);
+  doc.line(margin, yPos + 2, margin + 40, yPos + 2);
+
+  bookmarks.push({
+    title: summaryTitle,
+    page: doc.internal.getCurrentPageInfo().pageNumber,
+    y: yPos,
+  });
+  yPos += 12;
 
   const summary = data.summary;
   // Respect the "Show Sections" checkboxes - only include sections that are checked
@@ -76,70 +179,71 @@ window.exportReportAsPDF = async function () {
   let cardX = margin;
   const cardStartY = yPos;
 
+  // Light theme colors: primary #3b82f6, success #10b981, danger #ef4444
   if (showImages) {
-    // Purple gradient card
-    doc.setFillColor(102, 126, 234);
+    // Primary color card (#3b82f6)
+    doc.setFillColor(59, 130, 246); // #3b82f6
     doc.roundedRect(cardX, cardStartY, cardWidth, cardHeight, 3, 3, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.setFont(undefined, 'bold');
-    doc.text('🖼️', cardX + cardWidth / 2, cardStartY + 8, { align: 'center' });
     doc.setFontSize(20);
-    doc.text(String(summary.totalImages), cardX + cardWidth / 2, cardStartY + 18, {
+    doc.setFont(undefined, 'bold');
+    doc.text(String(summary.totalImages || 0), cardX + cardWidth / 2, cardStartY + 15, {
       align: 'center',
     });
     doc.setFontSize(9);
     doc.setFont(undefined, 'normal');
-    doc.text('Total Images', cardX + cardWidth / 2, cardStartY + 28, { align: 'center' });
+    doc.text(getPdfTranslation('TotalImages'), cardX + cardWidth / 2, cardStartY + 28, {
+      align: 'center',
+    });
     cardX += cardWidth + 5;
 
-    // Pink gradient card for issues
-    doc.setFillColor(240, 147, 251);
+    // Danger color card for issues (#ef4444)
+    doc.setFillColor(239, 68, 68); // #ef4444
     doc.roundedRect(cardX, cardStartY, cardWidth, cardHeight, 3, 3, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.setFont(undefined, 'bold');
-    doc.text('⚠️', cardX + cardWidth / 2, cardStartY + 8, { align: 'center' });
     doc.setFontSize(20);
-    doc.text(String(summary.imagesWithoutAlt), cardX + cardWidth / 2, cardStartY + 18, {
+    doc.setFont(undefined, 'bold');
+    doc.text(String(summary.imagesWithoutAlt || 0), cardX + cardWidth / 2, cardStartY + 15, {
       align: 'center',
     });
     doc.setFontSize(9);
     doc.setFont(undefined, 'normal');
-    doc.text('Without Alt', cardX + cardWidth / 2, cardStartY + 28, { align: 'center' });
+    doc.text(getPdfTranslation('WithoutAlt'), cardX + cardWidth / 2, cardStartY + 28, {
+      align: 'center',
+    });
     cardX += cardWidth + 5;
   }
 
   if (showLinks) {
-    // Cyan gradient card
-    doc.setFillColor(79, 172, 254);
+    // Primary color card (#3b82f6)
+    doc.setFillColor(59, 130, 246); // #3b82f6
     doc.roundedRect(cardX, cardStartY, cardWidth, cardHeight, 3, 3, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.setFont(undefined, 'bold');
-    doc.text('🔗', cardX + cardWidth / 2, cardStartY + 8, { align: 'center' });
     doc.setFontSize(20);
-    doc.text(String(summary.totalLinks), cardX + cardWidth / 2, cardStartY + 18, {
+    doc.setFont(undefined, 'bold');
+    doc.text(String(summary.totalLinks || 0), cardX + cardWidth / 2, cardStartY + 15, {
       align: 'center',
     });
     doc.setFontSize(9);
     doc.setFont(undefined, 'normal');
-    doc.text('Total Links', cardX + cardWidth / 2, cardStartY + 28, { align: 'center' });
+    doc.text(getPdfTranslation('TotalLinks'), cardX + cardWidth / 2, cardStartY + 28, {
+      align: 'center',
+    });
     cardX += cardWidth + 5;
 
-    // Green gradient card
-    doc.setFillColor(67, 233, 123);
+    // Danger color card for issues (#ef4444)
+    doc.setFillColor(239, 68, 68); // #ef4444
     doc.roundedRect(cardX, cardStartY, cardWidth, cardHeight, 3, 3, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.setFont(undefined, 'bold');
-    doc.text('✅', cardX + cardWidth / 2, cardStartY + 8, { align: 'center' });
     doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
     const linkIssues = summary.linksWithoutAccessibility || 0;
-    doc.text(String(linkIssues), cardX + cardWidth / 2, cardStartY + 18, { align: 'center' });
+    doc.text(String(linkIssues), cardX + cardWidth / 2, cardStartY + 15, { align: 'center' });
     doc.setFontSize(9);
     doc.setFont(undefined, 'normal');
-    doc.text('Link Issues', cardX + cardWidth / 2, cardStartY + 28, { align: 'center' });
+    doc.text(getPdfTranslation('LinkIssues'), cardX + cardWidth / 2, cardStartY + 28, {
+      align: 'center',
+    });
   }
 
   yPos = cardStartY + cardHeight + 20;
@@ -322,24 +426,24 @@ window.exportReportAsPDF = async function () {
 
   if (items.length > 0) {
     // Determine section title based on active filters
-    let sectionTitle = 'All Elements';
+    let sectionTitle = getPdfTranslation('AllElements');
     if (filterMissing && !filterHasAttributes) {
-      sectionTitle = 'Issues Found';
+      sectionTitle = getPdfTranslation('IssuesFound');
     } else if (!filterMissing && filterHasAttributes) {
-      sectionTitle = 'Elements with Accessibility';
+      sectionTitle = getPdfTranslation('ElementsWithAccessibility');
     } else if (filterMissing && filterHasAttributes) {
-      sectionTitle = 'All Elements';
+      sectionTitle = getPdfTranslation('AllElements');
     }
 
     // Add filter info to header
     if (filterMissing || filterHasAttributes) {
       const filterInfo = [];
-      if (filterMissing) filterInfo.push('Missing Attributes');
-      if (filterHasAttributes) filterInfo.push('With Attributes');
+      if (filterMissing) filterInfo.push(getPdfTranslation('MissingAttributes'));
+      if (filterHasAttributes) filterInfo.push(getPdfTranslation('WithAttributes'));
       doc.setFontSize(10);
       doc.setFont(undefined, 'normal');
       doc.setTextColor(100, 116, 139);
-      doc.text(`Filters: ${filterInfo.join(' + ')}`, margin, yPos);
+      doc.text(`${getPdfTranslation('Filters')}: ${filterInfo.join(' + ')}`, margin, yPos);
       yPos += 6;
     }
 
@@ -348,40 +452,39 @@ window.exportReportAsPDF = async function () {
       yPos = margin;
     }
 
+    // Light theme colors for sections
+    // Primary: #3b82f6 (59, 130, 246)
+    // Success: #10b981 (16, 185, 129)
+    // Danger: #ef4444 (239, 68, 68)
     const sections = [
       {
-        name: 'Images',
+        name: getPdfTranslation('Images'),
         items: sectionItems.Images,
-        icon: '🖼️',
-        gradient: [250, 112, 154, 254, 225, 64],
+        color: [59, 130, 246], // Primary blue
         enabled: showImages,
       },
       {
-        name: 'Links',
+        name: getPdfTranslation('Links'),
         items: sectionItems.Links,
-        icon: '🔗',
-        gradient: [79, 172, 254, 0, 242, 254],
+        color: [59, 130, 246], // Primary blue
         enabled: showLinks,
       },
       {
-        name: 'Buttons',
+        name: getPdfTranslation('Buttons'),
         items: sectionItems.Buttons,
-        icon: '🔘',
-        gradient: [102, 126, 234, 118, 75, 162],
+        color: [59, 130, 246], // Primary blue
         enabled: showButtons,
       },
       {
-        name: 'Inputs',
+        name: getPdfTranslation('Inputs'),
         items: sectionItems.Inputs,
-        icon: '📝',
-        gradient: [67, 233, 123, 56, 249, 215],
+        color: [59, 130, 246], // Primary blue
         enabled: showInputs,
       },
       {
-        name: 'Roles',
+        name: getPdfTranslation('Roles'),
         items: sectionItems.Roles,
-        icon: '🎭',
-        gradient: [240, 147, 251, 245, 87, 108],
+        color: [59, 130, 246], // Primary blue
         enabled: showRoles,
       },
     ];
@@ -389,265 +492,493 @@ window.exportReportAsPDF = async function () {
     for (const section of sections) {
       // Only show section if it's enabled (checkbox checked) and has items
       if (section.enabled && section.items.length > 0) {
-        if (yPos > pageHeight - 80) {
-          doc.addPage();
-          yPos = margin;
-        }
+        // Group items by status (passed/failed)
+        const passedItems = section.items.filter(
+          (item) =>
+            item.hasAccessibility &&
+            (!item.missingAttributes || item.missingAttributes.length === 0)
+        );
+        const failedItems = section.items.filter(
+          (item) => item.missingAttributes && item.missingAttributes.length > 0
+        );
 
-        // Section header with vibrant gradient
-        const sectionHeaderHeight = 12;
-        doc.setFillColor(section.gradient[0], section.gradient[1], section.gradient[2]);
-        doc.roundedRect(margin, yPos, pageWidth - margin * 2, sectionHeaderHeight, 3, 3, 'F');
+        // Render Failed items first, then Passed items
+        const statusGroups = [
+          { items: failedItems, status: 'Failed', color: [239, 68, 68] }, // Danger red
+          { items: passedItems, status: 'Passed', color: [16, 185, 129] }, // Success green
+        ];
 
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(14);
-        doc.setFont(undefined, 'bold');
-        doc.text(`${section.icon} ${section.name} (${section.items.length})`, margin + 3, yPos + 8);
+        for (const statusGroup of statusGroups) {
+          if (statusGroup.items.length === 0) continue;
 
-        const sectionY = yPos;
-        const sectionPage = doc.internal.getCurrentPageInfo().pageNumber;
-        bookmarks.push({
-          title: section.name,
-          page: sectionPage,
-          y: sectionY,
-          parent: sectionTitle,
-        });
-        yPos += sectionHeaderHeight + 8;
-
-        for (const item of section.items) {
-          // Check if we need a new page
-          const estimatedItemHeight = 70; // Base height for item with large image
-          if (yPos + estimatedItemHeight > pageHeight - margin) {
+          if (yPos > pageHeight - 80) {
             doc.addPage();
             yPos = margin;
-            // Redraw section header on new page
-            doc.setFillColor(section.gradient[0], section.gradient[1], section.gradient[2]);
-            doc.roundedRect(margin, yPos, pageWidth - margin * 2, sectionHeaderHeight, 3, 3, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text(
-              `${section.icon} ${section.name} (${section.items.length})`,
-              margin + 3,
-              yPos + 8
-            );
-            yPos += sectionHeaderHeight + 8;
           }
 
-          const isError = item.missingAttributes && item.missingAttributes.length > 0;
-          const imageWidth = 50; // Larger image width
-          const textStartX = margin + imageWidth + 12;
-          const textWidth = pageWidth - margin * 2 - imageWidth - 12;
+          // Section header with status grouping - improved design
+          const sectionHeaderHeight = 14;
+          doc.setFillColor(section.color[0], section.color[1], section.color[2]);
+          doc.roundedRect(margin, yPos, pageWidth - margin * 2, sectionHeaderHeight, 4, 4, 'F');
 
-          // Calculate item height based on content
-          let itemHeight = 60; // Base height
-          let contentY = yPos + 8;
+          // Add subtle shadow effect with darker rectangle at top
+          doc.setFillColor(
+            Math.max(0, section.color[0] - 15),
+            Math.max(0, section.color[1] - 15),
+            Math.max(0, section.color[2] - 15)
+          );
+          doc.roundedRect(margin, yPos, pageWidth - margin * 2, 2, 4, 4, 'F');
 
-          // Item background with border
-          doc.setFillColor(255, 255, 255);
-          doc.setDrawColor(isError ? 245 : 67, isError ? 87 : 233, isError ? 108 : 123);
-          doc.setLineWidth(isError ? 2 : 1.5);
-          doc.roundedRect(margin, yPos, pageWidth - margin * 2, itemHeight, 4, 4, 'FD');
-
-          // Left border accent
-          doc.setFillColor(isError ? 245 : 67, isError ? 87 : 233, isError ? 108 : 123);
-          doc.rect(margin, yPos, 4, itemHeight, 'F');
-
-          // Item title
+          doc.setTextColor(255, 255, 255);
           doc.setFontSize(13);
           doc.setFont(undefined, 'bold');
-          doc.setTextColor(30, 30, 30);
-          doc.text(`#${item.index} - ${item.type}`, textStartX, contentY);
-          contentY += 7;
+          const statusText = getPdfTranslation(statusGroup.status);
+          doc.text(
+            `${section.name}: ${statusText} (${statusGroup.items.length})`,
+            margin + 5,
+            yPos + 9
+          );
 
-          // Status badge
-          doc.setFontSize(9);
-          doc.setFont(undefined, 'normal');
-          if (isError) {
-            doc.setFillColor(254, 226, 226);
-            doc.setTextColor(220, 38, 38);
-            const missingText = `❌ Missing: ${item.missingAttributes.join(', ')}`;
-            const badgeWidth = Math.min(doc.getTextWidth(missingText) + 8, textWidth - 4);
-            doc.roundedRect(textStartX, contentY - 2, badgeWidth, 7, 2, 2, 'F');
-            doc.text(missingText, textStartX + 4, contentY + 3);
-          } else if (item.hasAccessibility) {
-            doc.setFillColor(209, 250, 229);
-            doc.setTextColor(5, 150, 105);
-            const badgeWidth = Math.min(
-              doc.getTextWidth('✅ All attributes present') + 8,
-              textWidth - 4
-            );
-            doc.roundedRect(textStartX, contentY - 2, badgeWidth, 7, 2, 2, 'F');
-            doc.text('✅ All attributes present', textStartX + 4, contentY + 3);
-          }
-          contentY += 10;
+          const sectionY = yPos;
+          const sectionPage = doc.internal.getCurrentPageInfo().pageNumber;
+          bookmarks.push({
+            title: `${section.name} - ${statusText}`,
+            page: sectionPage,
+            y: sectionY,
+            parent: section.name,
+          });
+          yPos += sectionHeaderHeight + 8;
 
-          // Detailed information
-          doc.setFontSize(8);
-          doc.setTextColor(100, 116, 139);
+          for (const item of statusGroup.items) {
+            // Check if we need a new page - compact
+            const estimatedItemHeight = 50; // Reduced base height for compact items
+            if (yPos + estimatedItemHeight > pageHeight - margin) {
+              doc.addPage();
+              yPos = margin;
+              // Redraw section header on new page
+              doc.setFillColor(section.color[0], section.color[1], section.color[2]);
+              doc.roundedRect(margin, yPos, pageWidth - margin * 2, sectionHeaderHeight, 4, 4, 'F');
 
-          // Text content
-          if (item.text) {
-            const cleanText = item.text.replace(/[^\x20-\x7E]/g, '').trim();
-            if (cleanText) {
-              const textLines = doc.splitTextToSize(
-                `📝 Text: ${cleanText.substring(0, 80)}`,
+              // Add subtle shadow effect
+              doc.setFillColor(
+                Math.max(0, section.color[0] - 15),
+                Math.max(0, section.color[1] - 15),
+                Math.max(0, section.color[2] - 15)
+              );
+              doc.roundedRect(margin, yPos, pageWidth - margin * 2, 2, 4, 4, 'F');
+
+              doc.setTextColor(255, 255, 255);
+              doc.setFontSize(13);
+              doc.setFont(undefined, 'bold');
+              const statusTextRedraw = getPdfTranslation(statusGroup.status);
+              doc.text(
+                `${section.name}: ${statusTextRedraw} (${statusGroup.items.length})`,
+                margin + 5,
+                yPos + 9
+              );
+              yPos += sectionHeaderHeight + 8;
+            }
+
+            const isError = item.missingAttributes && item.missingAttributes.length > 0;
+            // Compact image area - smaller to save space
+            const imageWidth = 35; // Reduced width for compact cards
+            const maxImageHeight = 30; // Reduced height for compact cards
+            const textStartX = margin + imageWidth + 8;
+            const textWidth = pageWidth - margin * 2 - imageWidth - 8;
+
+            // Calculate content height first to determine item height
+            // Account for image height (max 75mm) + padding
+            let contentY = yPos + 8;
+
+            // Title height
+            contentY += 7;
+
+            // Badge height
+            if (isError || item.hasAccessibility) {
+              contentY += 10;
+            }
+
+            // Text content height estimation
+            if (item.text) {
+              const cleanText = String(item.text)
+                .replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g, '')
+                .trim();
+              if (cleanText) {
+                const maxLength = 100;
+                const truncatedText =
+                  cleanText.length > maxLength
+                    ? cleanText.substring(0, maxLength) + '...'
+                    : cleanText;
+                const textLines = doc.splitTextToSize(
+                  `${getPdfTranslation('Text')}: ${truncatedText}`,
+                  textWidth - 4
+                );
+                contentY += textLines.length * 4.5 + 2;
+              }
+            }
+
+            // Type-specific information height
+            if (item.type === 'Image' && item.alt !== undefined) {
+              const altText =
+                item.alt === null
+                  ? 'MISSING'
+                  : String(item.alt).trim() === ''
+                    ? 'EMPTY'
+                    : String(item.alt).substring(0, 80);
+              const altLines = doc.splitTextToSize(
+                `${getPdfTranslation('Alt')}: ${altText}`,
                 textWidth - 4
               );
-              doc.text(textLines, textStartX, contentY);
-              contentY += textLines.length * 4 + 2;
+              contentY += altLines.length * 4.5 + 2;
             }
-          }
 
-          // Type-specific information
-          if (item.type === 'Image' && item.alt !== undefined) {
-            const altText =
-              item.alt === null ? 'MISSING' : item.alt.trim() === '' ? 'EMPTY' : item.alt;
-            const altLines = doc.splitTextToSize(
-              `🖼️ Alt: ${altText.substring(0, 60)}`,
-              textWidth - 4
-            );
-            doc.text(altLines, textStartX, contentY);
-            contentY += altLines.length * 4 + 2;
-          }
+            if (item.type === 'Link' && item.href) {
+              const hrefText = String(item.href);
+              const truncatedHref =
+                hrefText.length > 60 ? hrefText.substring(0, 60) + '...' : hrefText;
+              const hrefLines = doc.splitTextToSize(
+                `${getPdfTranslation('URL')}: ${truncatedHref}`,
+                textWidth - 4
+              );
+              contentY += hrefLines.length * 4.5 + 2;
+            }
 
-          if (item.type === 'Link' && item.href) {
-            const hrefText = item.href.length > 50 ? item.href.substring(0, 50) + '...' : item.href;
-            doc.text(`🔗 URL: ${hrefText}`, textStartX, contentY);
-            contentY += 5;
-          }
+            if (item.type === 'Input' && item.typeName) {
+              contentY += 5;
+            }
 
-          if (item.type === 'Input' && item.typeName) {
-            doc.text(`📝 Type: ${item.typeName}`, textStartX, contentY);
-            contentY += 5;
-          }
+            if (item.type === 'Role' && item.role) {
+              contentY += 5;
+            }
 
-          if (item.type === 'Role' && item.role) {
-            doc.text(`🎭 Role: ${item.role}`, textStartX, contentY);
-            contentY += 5;
-          }
+            if (item.selector) {
+              const selectorText = String(item.selector);
+              const truncatedSelector =
+                selectorText.length > 50 ? selectorText.substring(0, 50) + '...' : selectorText;
+              const selectorLines = doc.splitTextToSize(
+                `${getPdfTranslation('Selector')}: ${truncatedSelector}`,
+                textWidth - 4
+              );
+              contentY += selectorLines.length * 3.5 + 2;
+            }
 
-          // Selector information
-          if (item.selector) {
-            const selectorText =
-              item.selector.length > 40 ? item.selector.substring(0, 40) + '...' : item.selector;
-            doc.setFontSize(7);
-            doc.setTextColor(148, 163, 184);
-            doc.text(`📍 ${selectorText}`, textStartX, contentY);
-          }
+            // Calculate final item height - compact
+            const screenshot = item.screenshot || null;
+            const hasValidScreenshot =
+              screenshot &&
+              (screenshot.startsWith('data:image') ||
+                screenshot.startsWith('http://') ||
+                screenshot.startsWith('https://') ||
+                (typeof screenshot === 'string' && screenshot.length > 0));
+            const imageAreaHeight = hasValidScreenshot ? maxImageHeight + 8 : 25;
+            const itemHeight = Math.max(Math.max(contentY - yPos + 6, imageAreaHeight), 35);
 
-          // Adjust item height based on content
-          const actualContentHeight = contentY - yPos + 8;
-          if (actualContentHeight > itemHeight) {
-            itemHeight = actualContentHeight;
-            // Redraw border with correct height
-            doc.setFillColor(255, 255, 255);
-            doc.setDrawColor(isError ? 245 : 67, isError ? 87 : 233, isError ? 108 : 123);
-            doc.setLineWidth(isError ? 2 : 1.5);
-            doc.roundedRect(margin, yPos, pageWidth - margin * 2, itemHeight, 4, 4, 'FD');
-            doc.setFillColor(isError ? 245 : 67, isError ? 87 : 233, isError ? 108 : 123);
-            doc.rect(margin, yPos, 4, itemHeight, 'F');
-          }
+            // Reset contentY for actual drawing - compact spacing
+            contentY = yPos + 5;
 
-          // Large image on the left
-          if (
-            item.screenshot &&
-            (item.screenshot.startsWith('data:image') || item.screenshot.startsWith('http'))
-          ) {
-            try {
-              const img = new Image();
-              img.crossOrigin = 'anonymous';
+            // Item background with border - Light theme colors (compact)
+            doc.setFillColor(245, 247, 250); // Card bg
+            doc.setDrawColor(isError ? 239 : 203, isError ? 68 : 213, isError ? 68 : 225);
+            doc.setLineWidth(isError ? 1.5 : 0.8); // Thinner borders
+            doc.roundedRect(margin, yPos, pageWidth - margin * 2, itemHeight, 3, 3, 'FD'); // Smaller radius
 
-              await new Promise((resolve) => {
-                img.onload = () => {
-                  const maxImageHeight = itemHeight - 8;
-                  const maxImageWidth = imageWidth - 4;
-                  let imageHeight = maxImageHeight;
-                  let imageWidthFinal = maxImageWidth;
+            // Left border accent - thinner
+            doc.setFillColor(isError ? 239 : 16, isError ? 68 : 185, isError ? 68 : 129);
+            doc.rect(margin, yPos, 3, itemHeight, 'F'); // Thinner border
 
-                  if (img.naturalWidth && img.naturalHeight) {
-                    const aspectRatio = img.naturalWidth / img.naturalHeight;
-                    if (aspectRatio > 1) {
-                      imageWidthFinal = Math.min(maxImageWidth, maxImageHeight * aspectRatio);
-                      imageHeight = imageWidthFinal / aspectRatio;
-                    } else {
-                      imageHeight = Math.min(maxImageHeight, maxImageWidth / aspectRatio);
-                      imageWidthFinal = imageHeight * aspectRatio;
+            // Item title - smaller font
+            doc.setFontSize(11); // Reduced from 13
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(30, 30, 30);
+            doc.text(`#${item.index} - ${item.type}`, textStartX, contentY);
+            contentY += 5; // Reduced from 7
+
+            // Status badge - Light theme colors (compact)
+            doc.setFontSize(8); // Reduced from 9
+            doc.setFont(undefined, 'normal');
+            if (isError) {
+              // Danger color: #ef4444 with light background
+              doc.setFillColor(254, 242, 242); // Light red background
+              doc.setTextColor(239, 68, 68); // Danger color
+              const missingAttrs = Array.isArray(item.missingAttributes)
+                ? item.missingAttributes.join(', ')
+                : String(item.missingAttributes || '');
+              const missingText = `${getPdfTranslation('Missing')}: ${missingAttrs}`;
+              const badgeWidth = Math.min(doc.getTextWidth(missingText) + 6, textWidth - 4);
+              doc.roundedRect(textStartX, contentY - 1.5, badgeWidth, 5.5, 1.5, 1.5, 'F'); // Smaller badge
+              doc.text(missingText, textStartX + 3, contentY + 2.5);
+            } else if (item.hasAccessibility) {
+              // Success color: #10b981 with light background
+              doc.setFillColor(236, 253, 245); // Light green background
+              doc.setTextColor(16, 185, 129); // Success color
+              const successText = getPdfTranslation('AllAttributesPresent');
+              const badgeWidth = Math.min(doc.getTextWidth(successText) + 6, textWidth - 4);
+              doc.roundedRect(textStartX, contentY - 1.5, badgeWidth, 5.5, 1.5, 1.5, 'F'); // Smaller badge
+              doc.text(successText, textStartX + 3, contentY + 2.5);
+            }
+            contentY += 7; // Reduced from 10
+
+            // Detailed information - Light theme text secondary color (compact)
+            doc.setFontSize(7); // Reduced from 8
+            doc.setTextColor(71, 85, 105); // #475569 - text-secondary
+
+            // Text content - clean and sanitize
+            if (item.text) {
+              const cleanText = String(item.text)
+                .replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g, '')
+                .trim();
+              if (cleanText) {
+                const maxLength = 100;
+                const truncatedText =
+                  cleanText.length > maxLength
+                    ? cleanText.substring(0, maxLength) + '...'
+                    : cleanText;
+                const textLines = doc.splitTextToSize(
+                  `${getPdfTranslation('Text')}: ${truncatedText}`,
+                  textWidth - 4
+                );
+                doc.text(textLines, textStartX, contentY);
+                contentY += textLines.length * 3.5 + 1; // Reduced spacing
+              }
+            }
+
+            // Type-specific information
+            if (item.type === 'Image' && item.alt !== undefined) {
+              const altText =
+                item.alt === null
+                  ? 'MISSING'
+                  : String(item.alt).trim() === ''
+                    ? 'EMPTY'
+                    : String(item.alt).substring(0, 80);
+              const altLines = doc.splitTextToSize(
+                `${getPdfTranslation('Alt')}: ${altText}`,
+                textWidth - 4
+              );
+              doc.text(altLines, textStartX, contentY);
+              contentY += altLines.length * 3.5 + 1; // Reduced spacing
+            }
+
+            if (item.type === 'Link' && item.href) {
+              const hrefText = String(item.href);
+              const truncatedHref =
+                hrefText.length > 60 ? hrefText.substring(0, 60) + '...' : hrefText;
+              const hrefLines = doc.splitTextToSize(
+                `${getPdfTranslation('URL')}: ${truncatedHref}`,
+                textWidth - 4
+              );
+              doc.text(hrefLines, textStartX, contentY);
+              contentY += hrefLines.length * 3.5 + 1; // Reduced spacing
+            }
+
+            if (item.type === 'Input' && item.typeName) {
+              doc.text(
+                `${getPdfTranslation('Type')}: ${String(item.typeName)}`,
+                textStartX,
+                contentY
+              );
+              contentY += 4; // Reduced from 5
+            }
+
+            if (item.type === 'Role' && item.role) {
+              doc.text(`${getPdfTranslation('Role')}: ${String(item.role)}`, textStartX, contentY);
+              contentY += 4; // Reduced from 5
+            }
+
+            // Selector information
+            if (item.selector) {
+              const selectorText = String(item.selector);
+              const truncatedSelector =
+                selectorText.length > 50 ? selectorText.substring(0, 50) + '...' : selectorText;
+              const selectorLines = doc.splitTextToSize(
+                `${getPdfTranslation('Selector')}: ${truncatedSelector}`,
+                textWidth - 4
+              );
+              doc.setFontSize(7);
+              doc.setTextColor(148, 163, 184); // Lighter text secondary
+              doc.text(selectorLines, textStartX, contentY);
+              contentY += selectorLines.length * 3 + 1; // Reduced spacing
+            }
+
+            // Item height already calculated above, no need to adjust
+
+            // Image on the left - compact size and positioning
+            const imageX = margin + 3;
+            const imageY = yPos + 4;
+            const maxImageWidth = imageWidth - 6;
+            const maxImageHeightCalc = Math.min(maxImageHeight, itemHeight - 8);
+
+            if (
+              item.screenshot &&
+              (item.screenshot.startsWith('data:image') || item.screenshot.startsWith('http'))
+            ) {
+              try {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+
+                await new Promise((resolve) => {
+                  const timeout = setTimeout(() => {
+                    console.warn('Image load timeout for item:', item.index);
+                    // Show placeholder on timeout - compact
+                    doc.setFillColor(245, 247, 250);
+                    doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'F');
+                    doc.setDrawColor(203, 213, 225);
+                    doc.setLineWidth(0.8);
+                    doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'D');
+                    doc.setFontSize(6);
+                    doc.setTextColor(148, 163, 184);
+                    doc.text(
+                      getPdfTranslation('NoImage'),
+                      imageX + maxImageWidth / 2 - 5,
+                      imageY + 15
+                    );
+                    resolve();
+                  }, 8000); // Increased timeout to 8 seconds
+
+                  img.onload = () => {
+                    clearTimeout(timeout);
+                    try {
+                      // Calculate image dimensions maintaining aspect ratio
+                      let imageWidthFinal = maxImageWidth;
+                      let imageHeightFinal = maxImageHeightCalc;
+
+                      // Use natural dimensions if available, otherwise use displayed dimensions
+                      const imgWidth = img.naturalWidth || img.width || maxImageWidth;
+                      const imgHeight = img.naturalHeight || img.height || maxImageHeightCalc;
+
+                      if (imgWidth > 0 && imgHeight > 0) {
+                        const aspectRatio = imgWidth / imgHeight;
+
+                        if (aspectRatio > 1) {
+                          // Landscape: fit to width
+                          imageWidthFinal = maxImageWidth;
+                          imageHeightFinal = maxImageWidth / aspectRatio;
+                          // Don't exceed max height
+                          if (imageHeightFinal > maxImageHeightCalc) {
+                            imageHeightFinal = maxImageHeightCalc;
+                            imageWidthFinal = maxImageHeightCalc * aspectRatio;
+                          }
+                        } else {
+                          // Portrait or square: fit to height
+                          imageHeightFinal = maxImageHeightCalc;
+                          imageWidthFinal = maxImageHeightCalc * aspectRatio;
+                          // Don't exceed max width
+                          if (imageWidthFinal > maxImageWidth) {
+                            imageWidthFinal = maxImageWidth;
+                            imageHeightFinal = maxImageWidth / aspectRatio;
+                          }
+                        }
+                      }
+
+                      // Center image vertically in available space
+                      const verticalOffset = (maxImageHeightCalc - imageHeightFinal) / 2;
+                      const finalImageY = imageY + verticalOffset;
+
+                      // Add colored border to image - Light theme colors (compact)
+                      doc.setDrawColor(isError ? 239 : 59, isError ? 68 : 130, isError ? 68 : 246);
+                      doc.setLineWidth(1);
+                      doc.roundedRect(
+                        imageX - 0.5,
+                        finalImageY - 0.5,
+                        imageWidthFinal + 1,
+                        imageHeightFinal + 1,
+                        2,
+                        2,
+                        'D'
+                      );
+
+                      // Add image with best quality - smaller size maintains quality better
+                      doc.addImage(
+                        img,
+                        'PNG',
+                        imageX,
+                        finalImageY,
+                        imageWidthFinal,
+                        imageHeightFinal,
+                        undefined,
+                        'SLOW' // Best quality for smaller images to maintain clarity
+                      );
+                    } catch (e) {
+                      console.warn('Error adding image to PDF:', e);
+                      // Fallback placeholder - compact
+                      doc.setFillColor(245, 247, 250);
+                      doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'F');
+                      doc.setDrawColor(203, 213, 225);
+                      doc.setLineWidth(0.8);
+                      doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'D');
+                      doc.setFontSize(6);
+                      doc.setTextColor(148, 163, 184);
+                      doc.text(
+                        getPdfTranslation('NoImage'),
+                        imageX + maxImageWidth / 2 - 5,
+                        imageY + 15
+                      );
                     }
-                  } else if (img.width && img.height) {
-                    const aspectRatio = img.width / img.height;
-                    if (aspectRatio > 1) {
-                      imageWidthFinal = Math.min(maxImageWidth, maxImageHeight * aspectRatio);
-                      imageHeight = imageWidthFinal / aspectRatio;
-                    } else {
-                      imageHeight = Math.min(maxImageHeight, maxImageWidth / aspectRatio);
-                      imageWidthFinal = imageHeight * aspectRatio;
+                    resolve();
+                  };
+
+                  img.onerror = (err) => {
+                    clearTimeout(timeout);
+                    console.warn('Image load error for item:', item.index, err);
+                    // Placeholder for failed image load - compact
+                    doc.setFillColor(245, 247, 250);
+                    doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'F');
+                    doc.setDrawColor(203, 213, 225);
+                    doc.setLineWidth(0.8);
+                    doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'D');
+                    doc.setFontSize(6);
+                    doc.setTextColor(148, 163, 184);
+                    doc.text(
+                      getPdfTranslation('NoImage'),
+                      imageX + maxImageWidth / 2 - 5,
+                      imageY + 15
+                    );
+                    resolve();
+                  };
+
+                  // Load image - handle different formats
+                  let imageSrc = item.screenshot;
+
+                  // If it's a base64 string without data: prefix, add it
+                  if (
+                    typeof imageSrc === 'string' &&
+                    imageSrc.length > 0 &&
+                    !imageSrc.startsWith('data:') &&
+                    !imageSrc.startsWith('http')
+                  ) {
+                    // Check if it looks like base64
+                    if (/^[A-Za-z0-9+/=]+$/.test(imageSrc.substring(0, 100))) {
+                      imageSrc = `data:image/png;base64,${imageSrc}`;
                     }
                   }
 
-                  const imageX = margin + 4;
-                  const imageY = yPos + (itemHeight - imageHeight) / 2;
-
-                  try {
-                    // Add colored border to image
-                    doc.setDrawColor(isError ? 245 : 67, isError ? 87 : 233, isError ? 108 : 123);
-                    doc.setLineWidth(1.5);
-                    doc.roundedRect(
-                      imageX - 2,
-                      imageY - 2,
-                      imageWidthFinal + 4,
-                      imageHeight + 4,
-                      3,
-                      3,
-                      'D'
-                    );
-
-                    doc.addImage(
-                      img,
-                      'PNG',
-                      imageX,
-                      imageY,
-                      imageWidthFinal,
-                      imageHeight,
-                      undefined,
-                      'FAST'
-                    );
-                  } catch (e) {
-                    doc.setFontSize(8);
-                    doc.setTextColor(180, 180, 180);
-                    doc.text('Image', imageX + imageWidthFinal / 2 - 5, imageY + imageHeight / 2);
-                  }
-
-                  resolve();
-                };
-                img.onerror = () => {
-                  doc.setFontSize(8);
-                  doc.setTextColor(180, 180, 180);
-                  doc.text('No Image', margin + imageWidth / 2 - 5, yPos + itemHeight / 2);
-                  resolve();
-                };
-
-                img.src = item.screenshot;
-              });
-            } catch (error) {
-              doc.setFontSize(8);
-              doc.setTextColor(180, 180, 180);
-              doc.setFont(undefined, 'normal');
-              doc.text('No Image', margin + imageWidth / 2 - 5, yPos + itemHeight / 2);
+                  img.src = imageSrc;
+                });
+              } catch (error) {
+                console.warn('Error processing image:', error);
+                // Placeholder for error - compact
+                doc.setFillColor(245, 247, 250);
+                doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'F');
+                doc.setDrawColor(203, 213, 225);
+                doc.setLineWidth(0.8);
+                doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'D');
+                doc.setFontSize(6);
+                doc.setTextColor(148, 163, 184);
+                doc.text(getPdfTranslation('NoImage'), imageX + maxImageWidth / 2 - 5, imageY + 15);
+              }
+            } else {
+              // Placeholder for no image - compact
+              doc.setFillColor(245, 247, 250);
+              doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'F');
+              doc.setDrawColor(203, 213, 225);
+              doc.setLineWidth(0.8);
+              doc.roundedRect(imageX, imageY, maxImageWidth, 25, 2, 2, 'D');
+              doc.setFontSize(6);
+              doc.setTextColor(148, 163, 184);
+              doc.text(getPdfTranslation('NoImage'), imageX + maxImageWidth / 2 - 5, imageY + 15);
             }
-          } else {
-            // Placeholder for no image
-            doc.setFillColor(241, 245, 249);
-            doc.roundedRect(margin + 4, yPos + 4, imageWidth - 8, itemHeight - 8, 3, 3, 'F');
-            doc.setDrawColor(226, 232, 240);
-            doc.setLineWidth(1);
-            doc.roundedRect(margin + 4, yPos + 4, imageWidth - 8, itemHeight - 8, 3, 3, 'D');
-            doc.setFontSize(8);
-            doc.setTextColor(180, 180, 180);
-            doc.text('No Image', margin + imageWidth / 2 - 5, yPos + itemHeight / 2);
-          }
 
-          yPos += itemHeight + 8;
+            yPos += itemHeight + 5; // Reduced spacing between items
+          }
         }
       }
     }
