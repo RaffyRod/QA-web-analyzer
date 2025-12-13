@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA Web Analyzer - Accessibility Checker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="language-selector">
+                    <button id="langEn" class="lang-btn active" data-lang="en">🇺🇸 EN</button>
+                    <button id="langEs" class="lang-btn" data-lang="es">🇪🇸 ES</button>
+                </div>
+                <div class="theme-selector">
+                    <label for="themeSelect" data-i18n="selectTheme">Theme:</label>
+                    <select id="themeSelect" class="theme-select">
+                        <option value="light">Light Mode</option>
+                        <option value="dark">Dark Mode</option>
+                        <option value="blue">Blue Theme</option>
+                        <option value="green">Green Theme</option>
+                        <option value="purple">Purple Theme</option>
+                    </select>
+                </div>
+            </div>
+            <h1 data-i18n="title">🔍 QA Web Analyzer</h1>
+            <p class="subtitle" data-i18n="subtitle">Accessibility Analysis Tool</p>
+        </header>
+
+        <div class="input-section">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="urlInput" 
+                    data-i18n="urlPlaceholder"
+                    placeholder="Enter URL (e.g., http://localhost:3000 or https://example.com)"
+                    value=""
+                >
+                <div class="button-group">
+                    <button id="analyzeBtn" class="btn-primary" data-i18n="analyzeBtn">Analyze</button>
+                    <button id="stopBtn" class="btn-stop hidden" data-i18n="stopBtn">Stop</button>
+                </div>
+            </div>
+
+            <div class="options-section">
+                <h3 data-i18n="analysisOptions">Analysis Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <h4 data-i18n="elementsToCheck">Elements to Check</h4>
+                        <label>
+                            <input type="checkbox" id="checkImages" checked>
+                            <span data-i18n="images">Images</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkLinks" checked>
+                            <span data-i18n="links">Links</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkButtons" checked>
+                            <span data-i18n="buttons">Buttons</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkInputs" checked>
+                            <span data-i18n="inputs">Inputs</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkRoles" checked>
+                            <span data-i18n="elementsWithRole">Elements with Role</span>
+                        </label>
+                    </div>
+                    <div class="option-group attributes-group">
+                        <h4 data-i18n="attributesToCheck">Attributes to Check</h4>
+                        <label>
+                            <input type="checkbox" id="checkAltText" checked>
+                            <span data-i18n="altText">Alt Text</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaLabel" checked>
+                            <span data-i18n="ariaLabel">aria-label</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaLabelledby" checked>
+                            <span data-i18n="ariaLabelledby">aria-labelledby</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaDescribedby" checked>
+                            <span data-i18n="ariaDescribedby">aria-describedby</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaHidden">
+                            <span data-i18n="ariaHidden">aria-hidden (misuse check)</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaExpanded">
+                            <span data-i18n="ariaExpanded">aria-expanded</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaControls">
+                            <span data-i18n="ariaControls">aria-controls</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaCurrent">
+                            <span data-i18n="ariaCurrent">aria-current</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaRequired">
+                            <span data-i18n="ariaRequired">aria-required</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkAriaInvalid">
+                            <span data-i18n="ariaInvalid">aria-invalid</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkTabIndex">
+                            <span data-i18n="tabIndex">tabindex (anti-pattern check)</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkLang">
+                            <span data-i18n="lang">lang attribute</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkLabels" checked>
+                            <span data-i18n-html="labelElements">&lt;label&gt; elements</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkTitle" checked>
+                            <span data-i18n="titleAttribute">title attribute</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="checkFocusStates" checked>
+                            <span data-i18n="focusStates">Focus States (WCAG 2.2 AA)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <span data-i18n="analyzing">Analyzing page...</span>
+            </div>
+        </div>
+
+        <div id="error" class="error hidden"></div>
+
+        <div id="results" class="results hidden">
+            <div class="export-section">
+                <div class="export-buttons">
+                    <button id="exportPdfBtn" class="btn-export" data-i18n="exportAsPDF">
+                        📄 Export as PDF
+                    </button>
+                </div>
+            </div>
+            <div class="summary-section">
+                <h2 data-i18n="summary">Summary</h2>
+                <div class="summary-grid" id="summaryGrid"></div>
+            </div>
+
+            <div class="filters-section">
+                <h2 data-i18n="filters">Filters</h2>
+                <div class="filter-group">
+                    <label>
+                        <input type="checkbox" id="filterMissing" checked>
+                        <span data-i18n="showMissing">Show only missing accessibility attributes</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="filterHasAttributes" checked>
+                        <span data-i18n="showHasAttributes">Show elements with accessibility attributes</span>
+                    </label>
+                </div>
+                <div class="section-filters">
+                    <h3 data-i18n="showSections">Show Sections</h3>
+                    <div class="section-filter-group">
+                        <label>
+                            <input type="checkbox" id="showImages" checked>
+                            <span>🖼️ <span data-i18n="imagesAltText">Images</span></span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showLinks" checked>
+                            <span>🔗 <span data-i18n="links">Links</span></span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showButtons" checked>
+                            <span>🔘 <span data-i18n="buttons">Buttons</span></span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showInputs" checked>
+                            <span>📝 <span data-i18n="inputs">Inputs</span></span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showRoles" checked>
+                            <span>🎭 <span data-i18n="elementsWithRole">Roles</span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sections">
+                <section class="result-section" id="imagesSection" data-section="images">
+                    <h2 class="section-header" data-section-toggle="images">
+                        <span class="toggle-icon">▼</span>
+                        <span class="icon">🖼️</span>
+                        <span data-i18n="imagesAltText">Images (Alt Text)</span>
+                        <span class="count" id="imagesCount"></span>
+                    </h2>
+                    <div class="results-list" id="imagesList"></div>
+                </section>
+
+                <section class="result-section" id="linksSection" data-section="links">
+                    <h2 class="section-header" data-section-toggle="links">
+                        <span class="toggle-icon">▼</span>
+                        <span class="icon">🔗</span>
+                        <span data-i18n="links">Links</span>
+                        <span class="count" id="linksCount"></span>
+                    </h2>
+                    <div class="results-list" id="linksList"></div>
+                </section>
+
+                <section class="result-section" id="buttonsSection" data-section="buttons">
+                    <h2 class="section-header" data-section-toggle="buttons">
+                        <span class="toggle-icon">▼</span>
+                        <span class="icon">🔘</span>
+                        <span data-i18n="buttons">Buttons</span>
+                        <span class="count" id="buttonsCount"></span>
+                    </h2>
+                    <div class="results-list" id="buttonsList"></div>
+                </section>
+
+                <section class="result-section" id="inputsSection" data-section="inputs">
+                    <h2 class="section-header" data-section-toggle="inputs">
+                        <span class="toggle-icon">▼</span>
+                        <span class="icon">📝</span>
+                        <span data-i18n="inputs">Inputs</span>
+                        <span class="count" id="inputsCount"></span>
+                    </h2>
+                    <div class="results-list" id="inputsList"></div>
+                </section>
+
+                <section class="result-section" id="rolesSection" data-section="roles">
+                    <h2 class="section-header" data-section-toggle="roles">
+                        <span class="toggle-icon">▼</span>
+                        <span class="icon">🎭</span>
+                        <span data-i18n="elementsWithRole">Elements with Role</span>
+                        <span class="count" id="rolesCount"></span>
+                    </h2>
+                    <div class="results-list" id="rolesList"></div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/export.js"></script>
+    <script src="i18n.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
