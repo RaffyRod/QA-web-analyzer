@@ -2,11 +2,14 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+    />
     <title>QA Web Analyzer - Accessibility Checker</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="alternate icon" href="favicon.ico" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="css/main.css" />
   </head>
   <body>
     <div class="container">
@@ -21,9 +24,22 @@
             <select id="themeSelect" class="theme-select">
               <option value="light">Light Mode</option>
               <option value="dark">Dark Mode</option>
+              <option value="flat">Flat Design</option>
+              <option value="material">Material Design</option>
+              <option value="glassmorphism">Glassmorphism</option>
+              <option value="cyberpunk">Cyberpunk</option>
+              <option value="minimal">Minimal</option>
+              <option value="ocean">Ocean</option>
+              <option value="sunset">Sunset</option>
+              <option value="forest">Forest</option>
+              <option value="monochrome">Monochrome</option>
+              <option value="highContrast">High Contrast</option>
               <option value="blue">Blue Theme</option>
               <option value="green">Green Theme</option>
               <option value="purple">Purple Theme</option>
+              <option value="rose">Rose</option>
+              <option value="amber">Amber</option>
+              <option value="teal">Teal</option>
             </select>
           </div>
         </div>
@@ -36,207 +52,227 @@
           <input
             type="text"
             id="urlInput"
+            class="url-input-compact"
             data-i18n="urlPlaceholder"
             placeholder="Enter URL (e.g., http://localhost:3000 or https://example.com)"
             value=""
           />
           <div class="button-group">
             <button id="analyzeBtn" class="btn-primary" data-i18n="analyzeBtn">Analyze</button>
+            <button
+              id="wcagInfoToggle"
+              class="btn-info"
+              aria-expanded="false"
+              title="WCAG Information"
+            >
+              <span>ℹ️</span>
+            </button>
             <button id="stopBtn" class="btn-stop hidden" data-i18n="stopBtn">Stop</button>
           </div>
         </div>
 
         <div class="options-section">
-          <div class="section-header-with-info">
-            <h3 data-i18n="analysisOptions">Analysis Options</h3>
-            <button class="info-toggle-btn" id="wcagInfoToggle" aria-expanded="false">
-              <span>ℹ️</span>
-              <span class="info-toggle-text" data-i18n="wcagInfo">WCAG Information</span>
-              <span class="toggle-arrow">▼</span>
-            </button>
-          </div>
-          <div class="wcag-info-section hidden" id="wcagInfoSection">
-            <div class="wcag-info-content">
-              <h4>📚 WCAG 2.2 AA Guidelines Reference</h4>
-              <div class="wcag-info-grid">
-                <div class="wcag-item">
-                  <strong>Alt Text</strong>
-                  <p>
-                    <strong>WCAG 1.1.1 (Level A):</strong> Images must have alt text. Decorative
-                    images should have empty alt="". Informative images must have descriptive alt
-                    text.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-label</strong>
-                  <p>
-                    <strong>WCAG 4.1.2 (Level A):</strong> Provides an accessible name for elements.
-                    Must be present when element lacks visible text or when text is not descriptive
-                    enough.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-labelledby</strong>
-                  <p>
-                    <strong>WCAG 4.1.2 (Level A):</strong> References element IDs that provide the
-                    accessible name. Alternative to aria-label when label exists elsewhere in DOM.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-describedby</strong>
-                  <p>
-                    <strong>WCAG 4.1.2 (Level A):</strong> References element IDs providing
-                    additional descriptive information. Complements accessible name with extended
-                    description.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-hidden</strong>
-                  <p>
-                    <strong>WCAG 4.1.2 (Level A):</strong> Should be "true" only for decorative
-                    elements. Misuse: aria-hidden="true" on elements with accessible content or
-                    interactive elements.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-expanded</strong>
-                  <p>
-                    <strong>WCAG 4.1.2 (Level A):</strong> Indicates expandable/collapsible state
-                    (true/false). Should be used with aria-controls to establish relationship with
-                    controlled element.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-controls</strong>
-                  <p>
-                    <strong>WCAG 4.1.2 (Level A):</strong> Establishes relationship between
-                    controlling element and controlled content. References ID of controlled element.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-current</strong>
-                  <p>
-                    <strong>WCAG 4.1.2 (Level A):</strong> Indicates current item in set (page,
-                    step, location). Values: "page", "step", "location", "date", "time", "true".
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-required</strong>
-                  <p>
-                    <strong>WCAG 3.3.2 (Level A):</strong> Indicates user input is required. Should
-                    be "true" for required form fields. Must be paired with visual indication.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>aria-invalid</strong>
-                  <p>
-                    <strong>WCAG 3.3.1 (Level A):</strong> Indicates invalid input state. Values:
-                    "true", "false", "grammar", "spelling". Should be set when validation fails.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>tabindex</strong>
-                  <p>
-                    <strong>WCAG 2.4.3 (Level A):</strong> Positive tabindex values (tabindex="1"+)
-                    are anti-patterns. Use tabindex="0" for programmatic focus or -1 to remove from
-                    tab order.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>lang attribute</strong>
-                  <p>
-                    <strong>WCAG 3.1.1 (Level A):</strong> Specifies language of content. Required
-                    on &lt;html&gt; element. Use for content in different language than page
-                    default.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>&lt;label&gt; elements</strong>
-                  <p>
-                    <strong>WCAG 1.3.1, 3.3.2 (Level A):</strong> Form inputs must have associated
-                    &lt;label&gt; elements. Labels provide accessible names and improve form
-                    usability.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>title attribute</strong>
-                  <p>
-                    <strong>WCAG 2.4.6 (Level AAA):</strong> Provides additional tooltip
-                    information. Not sufficient alone for accessibility - should complement other
-                    accessible names.
-                  </p>
-                </div>
-                <div class="wcag-item">
-                  <strong>Focus States</strong>
-                  <p>
-                    <strong>WCAG 2.4.7 (Level AA):</strong> Interactive elements must have visible
-                    focus indicators. Focus must be clearly distinguishable with at least 2:1
-                    contrast ratio.
-                  </p>
+          <h3 data-i18n="analysisOptions">Analysis Options</h3>
+          <!-- WCAG Info Modal - Discreet but notable -->
+          <div class="wcag-info-modal hidden" id="wcagInfoSection">
+            <div class="wcag-modal-overlay"></div>
+            <div class="wcag-modal-content">
+              <div class="wcag-modal-header">
+                <h4>📚 WCAG 2.2 AA Guidelines Reference</h4>
+                <button class="wcag-modal-close" id="wcagInfoClose" aria-label="Close">×</button>
+              </div>
+              <div class="wcag-info-content">
+                <div class="wcag-info-grid">
+                  <div class="wcag-item">
+                    <strong>Alt Text</strong>
+                    <p>
+                      <strong>WCAG 1.1.1 (Level A):</strong> Images must have alt text. Decorative
+                      images should have empty alt="". Informative images must have descriptive alt
+                      text.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-label</strong>
+                    <p>
+                      <strong>WCAG 4.1.2 (Level A):</strong> Provides an accessible name for
+                      elements. Must be present when element lacks visible text or when text is not
+                      descriptive enough.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-labelledby</strong>
+                    <p>
+                      <strong>WCAG 4.1.2 (Level A):</strong> References element IDs that provide the
+                      accessible name. Alternative to aria-label when label exists elsewhere in DOM.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-describedby</strong>
+                    <p>
+                      <strong>WCAG 4.1.2 (Level A):</strong> References element IDs providing
+                      additional descriptive information. Complements accessible name with extended
+                      description.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-hidden</strong>
+                    <p>
+                      <strong>WCAG 4.1.2 (Level A):</strong> Should be "true" only for decorative
+                      elements. Misuse: aria-hidden="true" on elements with accessible content or
+                      interactive elements.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-expanded</strong>
+                    <p>
+                      <strong>WCAG 4.1.2 (Level A):</strong> Indicates expandable/collapsible state
+                      (true/false). Should be used with aria-controls to establish relationship with
+                      controlled element.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-controls</strong>
+                    <p>
+                      <strong>WCAG 4.1.2 (Level A):</strong> Establishes relationship between
+                      controlling element and controlled content. References ID of controlled
+                      element.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-current</strong>
+                    <p>
+                      <strong>WCAG 4.1.2 (Level A):</strong> Indicates current item in set (page,
+                      step, location). Values: "page", "step", "location", "date", "time", "true".
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-required</strong>
+                    <p>
+                      <strong>WCAG 3.3.2 (Level A):</strong> Indicates user input is required.
+                      Should be "true" for required form fields. Must be paired with visual
+                      indication.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>aria-invalid</strong>
+                    <p>
+                      <strong>WCAG 3.3.1 (Level A):</strong> Indicates invalid input state. Values:
+                      "true", "false", "grammar", "spelling". Should be set when validation fails.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>tabindex</strong>
+                    <p>
+                      <strong>WCAG 2.4.3 (Level A):</strong> Positive tabindex values
+                      (tabindex="1"+) are anti-patterns. Use tabindex="0" for programmatic focus or
+                      -1 to remove from tab order.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>lang attribute</strong>
+                    <p>
+                      <strong>WCAG 3.1.1 (Level A):</strong> Specifies language of content. Required
+                      on &lt;html&gt; element. Use for content in different language than page
+                      default.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>&lt;label&gt; elements</strong>
+                    <p>
+                      <strong>WCAG 1.3.1, 3.3.2 (Level A):</strong> Form inputs must have associated
+                      &lt;label&gt; elements. Labels provide accessible names and improve form
+                      usability.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>title attribute</strong>
+                    <p>
+                      <strong>WCAG 2.4.6 (Level AAA):</strong> Provides additional tooltip
+                      information. Not sufficient alone for accessibility - should complement other
+                      accessible names.
+                    </p>
+                  </div>
+                  <div class="wcag-item">
+                    <strong>Focus States</strong>
+                    <p>
+                      <strong>WCAG 2.4.7 (Level AA):</strong> Interactive elements must have visible
+                      focus indicators. Focus must be clearly distinguishable with at least 2:1
+                      contrast ratio.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="options-grid">
             <div class="option-group">
-              <h4 data-i18n="elementsToCheck">Elements to Check</h4>
+              <div class="option-group-header">
+                <h4 data-i18n="elementsToCheck">Elements to Check</h4>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="elementsSelection" value="all" id="elementsAll" />
+                    <span>All</span>
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="elementsSelection" value="none" id="elementsNone" />
+                    <span>None</span>
+                  </label>
+                </div>
+              </div>
               <label>
-                <input type="checkbox" id="checkImages" checked />
+                <input type="checkbox" id="checkImages" />
                 <span data-i18n="images">Images</span>
               </label>
               <label>
-                <input type="checkbox" id="checkLinks" checked />
+                <input type="checkbox" id="checkLinks" />
                 <span data-i18n="links">Links</span>
               </label>
               <label>
-                <input type="checkbox" id="checkButtons" checked />
+                <input type="checkbox" id="checkButtons" />
                 <span data-i18n="buttons">Buttons</span>
               </label>
               <label>
-                <input type="checkbox" id="checkInputs" checked />
+                <input type="checkbox" id="checkInputs" />
                 <span data-i18n="inputs">Inputs</span>
               </label>
               <label>
-                <input type="checkbox" id="checkRoles" checked />
+                <input type="checkbox" id="checkRoles" />
                 <span data-i18n="elementsWithRole">Elements with Role</span>
               </label>
             </div>
             <div class="option-group attributes-group">
               <div class="option-group-header">
                 <h4 data-i18n="attributesToCheck">Attributes to Check</h4>
-                <div class="select-all-buttons">
-                  <button
-                    type="button"
-                    class="btn-select-all"
-                    id="selectAllAttributes"
-                    data-i18n="selectAll"
-                  >
-                    Select All
-                  </button>
-                  <button
-                    type="button"
-                    class="btn-deselect-all"
-                    id="deselectAllAttributes"
-                    data-i18n="deselectAll"
-                  >
-                    Deselect All
-                  </button>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="attributesSelection" value="all" id="attributesAll" />
+                    <span>All</span>
+                  </label>
+                  <label class="radio-label">
+                    <input
+                      type="radio"
+                      name="attributesSelection"
+                      value="none"
+                      id="attributesNone"
+                    />
+                    <span>None</span>
+                  </label>
                 </div>
               </div>
               <label>
-                <input type="checkbox" id="checkAltText" checked />
+                <input type="checkbox" id="checkAltText" />
                 <span data-i18n="altText">Alt Text</span>
               </label>
               <label>
-                <input type="checkbox" id="checkAriaLabel" checked />
+                <input type="checkbox" id="checkAriaLabel" />
                 <span data-i18n="ariaLabel">aria-label</span>
               </label>
               <label>
-                <input type="checkbox" id="checkAriaLabelledby" checked />
+                <input type="checkbox" id="checkAriaLabelledby" />
                 <span data-i18n="ariaLabelledby">aria-labelledby</span>
               </label>
               <label>
-                <input type="checkbox" id="checkAriaDescribedby" checked />
+                <input type="checkbox" id="checkAriaDescribedby" />
                 <span data-i18n="ariaDescribedby">aria-describedby</span>
               </label>
               <label>
@@ -272,15 +308,15 @@
                 <span data-i18n="lang">lang attribute</span>
               </label>
               <label>
-                <input type="checkbox" id="checkLabels" checked />
+                <input type="checkbox" id="checkLabels" />
                 <span data-i18n-html="labelElements">&lt;label&gt; elements</span>
               </label>
               <label>
-                <input type="checkbox" id="checkTitle" checked />
+                <input type="checkbox" id="checkTitle" />
                 <span data-i18n="titleAttribute">title attribute</span>
               </label>
               <label>
-                <input type="checkbox" id="checkFocusStates" checked />
+                <input type="checkbox" id="checkFocusStates" />
                 <span data-i18n="focusStates">Focus States (WCAG 2.2 AA)</span>
               </label>
             </div>
@@ -404,7 +440,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="js/themes.js"></script>
     <script src="js/export.js"></script>
-    <script src="i18n.js"></script>
-    <script src="app.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>

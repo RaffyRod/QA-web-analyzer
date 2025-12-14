@@ -15,11 +15,13 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - 🔎 **Análisis Completo**: Verifica imágenes, enlaces, botones, inputs y roles ARIA
 - 🎛️ **Opciones Configurables**: Selecciona exactamente qué quieres analizar
 - 📊 **Reportes Detallados**: Ve código HTML, capturas de pantalla y atributos faltantes
-- 🎨 **Interfaz Hermosa**: Diseño neomórfico moderno con soporte de temas
-- 📄 **Exportación PDF**: Genera reportes profesionales en PDF
+- 🎨 **15+ Temas Visuales**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk y más
+- 📄 **Exportación PDF Profesional**: Genera reportes elegantes con diseño neomórfico
 - 🌍 **Multi-idioma**: Soporte para inglés y español
 - 🎯 **Filtrado Inteligente**: Filtra por atributos faltantes o presentes
 - 📸 **Retroalimentación Visual**: Capturas de pantalla de elementos problemáticos
+- 📱 **Totalmente Responsive**: Optimizado para smartphones, tablets y desktop
+- 🎭 **Modal de Información WCAG**: Guía de referencia rápida para estándares de accesibilidad
 
 ## 🚀 Inicio Rápido
 
@@ -85,6 +87,12 @@ QA Web Analyzer server running on http://localhost:3000
 - **Title**: Atributo title
 - **Focus States**: Cumplimiento WCAG 2.2 AA
 
+#### Controles de Selección
+
+- **Botones de Radio**: Usa "All" o "None" para seleccionar/deseleccionar rápidamente todos los elementos o atributos
+- **Filtros de Sección**: Activa/desactiva la visibilidad de secciones de resultados (Imágenes, Enlaces, Botones, etc.)
+- **Filtros de Estado**: Muestra solo atributos faltantes, solo presentes, o ambos
+
 ## 📊 Ejemplo de Análisis
 
 **Entrada:** `https://example.com`
@@ -115,20 +123,34 @@ qa-web-analyzer/
 │
 ├── 📁 public/                 # Archivos frontend
 │   ├── index.html            # HTML principal
-│   ├── styles.css            # Estilos
-│   ├── app.js                # JavaScript principal
-│   ├── i18n.js               # Traducciones
-│   └── 📁 js/
-│       ├── export.js         # Exportación PDF
-│       └── themes.js         # Gestión de temas
+│   ├── favicon.svg           # Icono de la aplicación
+│   │
+│   ├── 📁 css/               # Arquitectura CSS modular
+│   │   ├── main.css          # Hoja de estilos principal (importa todo)
+│   │   ├── variables.css     # Variables CSS y reset
+│   │   ├── base.css          # Estilos base
+│   │   ├── layout.css        # Componentes de layout
+│   │   ├── components.css    # Componentes UI (botones, inputs)
+│   │   ├── options.css        # Estilos de sección de opciones
+│   │   ├── modal.css         # Modal de información WCAG
+│   │   ├── results.css       # Resultados y filtros
+│   │   └── responsive.css    # Diseño responsive (mobile-first)
+│   │
+│   └── 📁 js/                # Módulos JavaScript
+│       ├── app.js            # Lógica principal de la aplicación
+│       ├── export.js         # Funcionalidad de exportación PDF
+│       ├── themes.js         # Gestión de temas (15+ temas)
+│       └── i18n.js           # Internacionalización
 │
 ├── 📁 dist/                  # JavaScript compilado (auto-generado)
 │
 ├── 📄 package.json           # Dependencias
 ├── 📄 tsconfig.json          # Configuración TypeScript
 ├── 📄 .gitignore            # Reglas de Git ignore
-├── 📄 README.md             # Este archivo
-└── 📄 README.es.md          # README en español
+├── 📄 .prettierrc.json      # Configuración de Prettier
+├── 📄 .lintstagedrc.json     # Configuración de lint-staged
+├── 📄 README.md             # README en inglés
+└── 📄 README.es.md          # Este archivo
 ```
 
 ## 🛠️ Tecnologías Utilizadas
@@ -143,9 +165,9 @@ qa-web-analyzer/
 ### Frontend
 
 - **HTML5** - Estructura
-- **CSS3** - Estilos (con variables CSS y neomorfismo)
+- **CSS3** - Estilos modulares con variables CSS, neomorfismo y diseño responsive
 - **JavaScript (ES6+)** - Interactividad
-- **jsPDF** - Generación de PDF
+- **jsPDF** - Generación de PDF con renderizado personalizado de tablas
 
 ## 📝 Scripts Disponibles
 
@@ -166,14 +188,14 @@ qa-web-analyzer/
 
 La herramienta verifica el cumplimiento de los **estándares WCAG 2.2 AA**:
 
-| Elemento        | Verificaciones                                               |
-| --------------- | ------------------------------------------------------------ |
-| 🖼️ **Imágenes** | Atributo `alt` (detección de faltante/vacío)                 |
-| 🔗 **Enlaces**  | `aria-label`, `aria-labelledby`, `title`, contenido de texto |
-| 🔘 **Botones**  | `aria-label`, `aria-labelledby`, `aria-describedby`, texto   |
-| 📝 **Inputs**   | `aria-label`, `aria-labelledby`, `<label>`, `aria-required`  |
-| 🎭 **Roles**    | `aria-label`, `aria-labelledby` para roles personalizados    |
-| 🎯 **Todos**    | Estados de foco, anti-patrones `tabindex`, atributo `lang`   |
+| Elemento        | Verificaciones                                                                     |
+| --------------- | ---------------------------------------------------------------------------------- |
+| 🖼️ **Imágenes** | Atributo `alt` (detección de faltante/vacío)                                       |
+| 🔗 **Enlaces**  | `aria-label`, `aria-labelledby`, `title`, contenido de texto, validación de `href` |
+| 🔘 **Botones**  | `aria-label`, `aria-labelledby`, `aria-describedby`, texto                         |
+| 📝 **Inputs**   | `aria-label`, `aria-labelledby`, `<label>`, `aria-required`                        |
+| 🎭 **Roles**    | `aria-label`, `aria-labelledby` para roles personalizados                          |
+| 🎯 **Todos**    | Estados de foco, anti-patrones `tabindex`, atributo `lang`                         |
 
 ### 📊 Características del Reporte
 
@@ -181,9 +203,48 @@ La herramienta verifica el cumplimiento de los **estándares WCAG 2.2 AA**:
 - 📸 **Capturas de Pantalla**: Resaltado visual de elementos problemáticos
 - 💻 **Código HTML**: Fragmentos de código expandibles para cada elemento
 - 🔍 **Filtros Inteligentes**: Mostrar solo atributos faltantes o presentes
-- 📄 **Exportación PDF**: Reportes profesionales con imágenes y detalles
-- 🎨 **Temas**: Modos Light, Dark, Blue, Green, Purple
+- 📄 **Exportación PDF**: Reportes profesionales con diseño neomórfico, tablas e imágenes
+- 🎨 **15+ Temas**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk, Minimal, Ocean, Sunset, Forest, Monochrome, High Contrast, Rose, Amber, Teal
 - 🌍 **i18n**: Soporte para inglés y español
+- 📱 **Responsive**: Totalmente optimizado para móvil, tablet y desktop
+
+### 🎨 Temas Visuales
+
+La aplicación incluye 15+ temas cuidadosamente diseñados:
+
+- **Light Mode** - Limpio y brillante
+- **Dark Mode** - Cómodo para la vista
+- **Flat Design** - Sombras mínimas, aspecto moderno
+- **Material Design** - Principios de Material Design de Google
+- **Glassmorphism** - Efecto de vidrio esmerilado
+- **Cyberpunk** - Estética neón futurista
+- **Minimal** - Interfaz ultra-limpia
+- **Ocean** - Tema azul océano
+- **Sunset** - Tonos cálidos naranja/rosa
+- **Forest** - Tema verde natural
+- **Monochrome** - Blanco y negro
+- **High Contrast** - Enfocado en accesibilidad
+- **Rose** - Tema rosa suave
+- **Amber** - Tema amarillo dorado
+- **Teal** - Esquema de colores cian/teal
+
+### 📱 Diseño Responsive
+
+La aplicación es totalmente responsive con enfoque mobile-first:
+
+- **Smartphones** (hasta 480px): Layout vertical optimizado
+- **Smartphones Landscape** (481px - 767px): Optimización horizontal
+- **Tablets** (768px - 1024px): Layout balanceado
+- **Tablets Landscape** (1025px - 1279px): Espaciado mejorado
+- **Desktop** (1280px+): Layout completo con todas las funciones
+
+Características:
+
+- Objetivos táctiles (mínimo 44x44px)
+- Escalado de tipografía optimizado
+- Layouts de grid flexibles
+- Diálogos modales responsive
+- Scrolling suave en móvil
 
 ## 🌐 Soporte de Idiomas
 
@@ -257,10 +318,12 @@ Este proyecto sigue:
 - ✅ **Principios SOLID** - Responsabilidad única, diseño modular
 - ✅ **Accesibilidad Primero** - La herramienta misma es accesible
 - ✅ **Manejo de Errores** - Gestión robusta de errores
-- ✅ **Organización de Código** - Estructura escalable
+- ✅ **Organización de Código** - Estructura escalable con CSS modular
 - ✅ **Internacionalización** - Listo para múltiples idiomas
 - ✅ **Formateo de Código** - Prettier para estilo consistente
 - ✅ **Hooks Pre-commit** - Verificaciones automatizadas con Husky
+- ✅ **Diseño Responsive** - Enfoque mobile-first
+- ✅ **Arquitectura Modular** - CSS y JS organizados por funcionalidad
 
 ## 📄 Licencia
 

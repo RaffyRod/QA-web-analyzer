@@ -41,6 +41,196 @@ const themes = {
     '--header-text': '#f1f5f9',
     '--header-controls-bg': 'rgba(255, 255, 255, 0.1)',
   },
+  flat: {
+    name: 'Flat Design',
+    '--bg-color': '#f5f5f5',
+    '--card-bg': '#ffffff',
+    '--text-primary': '#212121',
+    '--text-secondary': '#757575',
+    '--border-color': '#e0e0e0',
+    '--primary-color': '#2196f3',
+    '--primary-hover': '#1976d2',
+    '--success-color': '#4caf50',
+    '--warning-color': '#ff9800',
+    '--danger-color': '#f44336',
+    '--shadow': 'none',
+    '--shadow-inset': 'none',
+    '--shadow-lg': '0 2px 4px rgba(0,0,0,0.1)',
+    '--header-bg': '#2196f3',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
+  material: {
+    name: 'Material Design',
+    '--bg-color': '#fafafa',
+    '--card-bg': '#ffffff',
+    '--text-primary': '#212121',
+    '--text-secondary': '#757575',
+    '--border-color': '#e0e0e0',
+    '--primary-color': '#6200ea',
+    '--primary-hover': '#3700b3',
+    '--success-color': '#00c853',
+    '--warning-color': '#ff6d00',
+    '--danger-color': '#d50000',
+    '--shadow': '0 2px 4px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.1)',
+    '--shadow-inset': 'inset 0 1px 2px rgba(0,0,0,0.1)',
+    '--shadow-lg': '0 8px 16px rgba(0,0,0,0.15), 0 16px 32px rgba(0,0,0,0.1)',
+    '--header-bg': 'linear-gradient(135deg, #6200ea 0%, #3700b3 100%)',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
+  glassmorphism: {
+    name: 'Glassmorphism',
+    '--bg-color': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    '--card-bg': 'rgba(255, 255, 255, 0.1)',
+    '--text-primary': '#ffffff',
+    '--text-secondary': 'rgba(255, 255, 255, 0.8)',
+    '--border-color': 'rgba(255, 255, 255, 0.2)',
+    '--primary-color': '#ffffff',
+    '--primary-hover': 'rgba(255, 255, 255, 0.9)',
+    '--success-color': '#4ade80',
+    '--warning-color': '#fbbf24',
+    '--danger-color': '#f87171',
+    '--shadow': '0 8px 32px rgba(0, 0, 0, 0.1)',
+    '--shadow-inset': 'inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+    '--shadow-lg': '0 8px 32px rgba(0, 0, 0, 0.2)',
+    '--header-bg': 'rgba(255, 255, 255, 0.15)',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
+  cyberpunk: {
+    name: 'Cyberpunk',
+    '--bg-color': '#0a0e27',
+    '--card-bg': '#1a1f3a',
+    '--text-primary': '#00ff88',
+    '--text-secondary': '#00d9ff',
+    '--border-color': '#ff0080',
+    '--primary-color': '#00ff88',
+    '--primary-hover': '#00d9ff',
+    '--success-color': '#00ff88',
+    '--warning-color': '#ffaa00',
+    '--danger-color': '#ff0080',
+    '--shadow': '0 0 20px rgba(0, 255, 136, 0.3), 0 0 40px rgba(0, 217, 255, 0.2)',
+    '--shadow-inset': 'inset 0 0 10px rgba(0, 255, 136, 0.2)',
+    '--shadow-lg': '0 0 30px rgba(0, 255, 136, 0.4), 0 0 60px rgba(0, 217, 255, 0.3)',
+    '--header-bg': 'linear-gradient(135deg, #ff0080 0%, #00d9ff 100%)',
+    '--header-text': '#0a0e27',
+    '--header-controls-bg': 'rgba(0, 255, 136, 0.2)',
+  },
+  minimal: {
+    name: 'Minimal',
+    '--bg-color': '#ffffff',
+    '--card-bg': '#fafafa',
+    '--text-primary': '#000000',
+    '--text-secondary': '#666666',
+    '--border-color': '#e5e5e5',
+    '--primary-color': '#000000',
+    '--primary-hover': '#333333',
+    '--success-color': '#000000',
+    '--warning-color': '#666666',
+    '--danger-color': '#000000',
+    '--shadow': 'none',
+    '--shadow-inset': 'none',
+    '--shadow-lg': '0 1px 3px rgba(0,0,0,0.05)',
+    '--header-bg': '#000000',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.1)',
+  },
+  ocean: {
+    name: 'Ocean',
+    '--bg-color': '#e0f2fe',
+    '--card-bg': '#f0f9ff',
+    '--text-primary': '#0c4a6e',
+    '--text-secondary': '#075985',
+    '--border-color': '#7dd3fc',
+    '--primary-color': '#0284c7',
+    '--primary-hover': '#0369a1',
+    '--success-color': '#06b6d4',
+    '--warning-color': '#f59e0b',
+    '--danger-color': '#ef4444',
+    '--shadow': '8px 8px 16px #b3d9f0, -8px -8px 16px #ffffff',
+    '--shadow-inset': 'inset 4px 4px 8px #b3d9f0, inset -4px -4px 8px #ffffff',
+    '--shadow-lg': '12px 12px 24px #b3d9f0, -12px -12px 24px #ffffff',
+    '--header-bg': 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
+  sunset: {
+    name: 'Sunset',
+    '--bg-color': '#fff5e6',
+    '--card-bg': '#fffaf0',
+    '--text-primary': '#7c2d12',
+    '--text-secondary': '#9a3412',
+    '--border-color': '#fdba74',
+    '--primary-color': '#ea580c',
+    '--primary-hover': '#c2410c',
+    '--success-color': '#f59e0b',
+    '--warning-color': '#f97316',
+    '--danger-color': '#dc2626',
+    '--shadow': '8px 8px 16px #ffe0b3, -8px -8px 16px #ffffff',
+    '--shadow-inset': 'inset 4px 4px 8px #ffe0b3, inset -4px -4px 8px #ffffff',
+    '--shadow-lg': '12px 12px 24px #ffe0b3, -12px -12px 24px #ffffff',
+    '--header-bg': 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
+  forest: {
+    name: 'Forest',
+    '--bg-color': '#f0fdf4',
+    '--card-bg': '#f7fef9',
+    '--text-primary': '#14532d',
+    '--text-secondary': '#166534',
+    '--border-color': '#86efac',
+    '--primary-color': '#16a34a',
+    '--primary-hover': '#15803d',
+    '--success-color': '#22c55e',
+    '--warning-color': '#eab308',
+    '--danger-color': '#dc2626',
+    '--shadow': '8px 8px 16px #c8e6d1, -8px -8px 16px #ffffff',
+    '--shadow-inset': 'inset 4px 4px 8px #c8e6d1, inset -4px -4px 8px #ffffff',
+    '--shadow-lg': '12px 12px 24px #c8e6d1, -12px -12px 24px #ffffff',
+    '--header-bg': 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
+  monochrome: {
+    name: 'Monochrome',
+    '--bg-color': '#f5f5f5',
+    '--card-bg': '#ffffff',
+    '--text-primary': '#1a1a1a',
+    '--text-secondary': '#666666',
+    '--border-color': '#cccccc',
+    '--primary-color': '#1a1a1a',
+    '--primary-hover': '#333333',
+    '--success-color': '#4a4a4a',
+    '--warning-color': '#808080',
+    '--danger-color': '#1a1a1a',
+    '--shadow': '0 2px 8px rgba(0,0,0,0.1)',
+    '--shadow-inset': 'inset 0 1px 2px rgba(0,0,0,0.1)',
+    '--shadow-lg': '0 4px 16px rgba(0,0,0,0.15)',
+    '--header-bg': '#1a1a1a',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.1)',
+  },
+  highContrast: {
+    name: 'High Contrast',
+    '--bg-color': '#ffffff',
+    '--card-bg': '#ffffff',
+    '--text-primary': '#000000',
+    '--text-secondary': '#000000',
+    '--border-color': '#000000',
+    '--primary-color': '#0000ff',
+    '--primary-hover': '#0000cc',
+    '--success-color': '#008000',
+    '--warning-color': '#ff8c00',
+    '--danger-color': '#ff0000',
+    '--shadow': '0 0 0 2px #000000',
+    '--shadow-inset': 'inset 0 0 0 2px #000000',
+    '--shadow-lg': '0 0 0 3px #000000',
+    '--header-bg': '#000000',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
   blue: {
     name: 'Blue Theme',
     '--bg-color': '#d4e4f7',
@@ -98,6 +288,63 @@ const themes = {
     '--header-text': '#ffffff',
     '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
   },
+  rose: {
+    name: 'Rose',
+    '--bg-color': '#fff1f2',
+    '--card-bg': '#fff5f7',
+    '--text-primary': '#881337',
+    '--text-secondary': '#9f1239',
+    '--border-color': '#fda4af',
+    '--primary-color': '#e11d48',
+    '--primary-hover': '#be123c',
+    '--success-color': '#10b981',
+    '--warning-color': '#f59e0b',
+    '--danger-color': '#dc2626',
+    '--shadow': '8px 8px 16px #ffe0e6, -8px -8px 16px #ffffff',
+    '--shadow-inset': 'inset 4px 4px 8px #ffe0e6, inset -4px -4px 8px #ffffff',
+    '--shadow-lg': '12px 12px 24px #ffe0e6, -12px -12px 24px #ffffff',
+    '--header-bg': 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
+  amber: {
+    name: 'Amber',
+    '--bg-color': '#fffbeb',
+    '--card-bg': '#fefce8',
+    '--text-primary': '#78350f',
+    '--text-secondary': '#92400e',
+    '--border-color': '#fde68a',
+    '--primary-color': '#f59e0b',
+    '--primary-hover': '#d97706',
+    '--success-color': '#10b981',
+    '--warning-color': '#f59e0b',
+    '--danger-color': '#ef4444',
+    '--shadow': '8px 8px 16px #ffe4b3, -8px -8px 16px #ffffff',
+    '--shadow-inset': 'inset 4px 4px 8px #ffe4b3, inset -4px -4px 8px #ffffff',
+    '--shadow-lg': '12px 12px 24px #ffe4b3, -12px -12px 24px #ffffff',
+    '--header-bg': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
+  teal: {
+    name: 'Teal',
+    '--bg-color': '#f0fdfa',
+    '--card-bg': '#f5fffe',
+    '--text-primary': '#134e4a',
+    '--text-secondary': '#0f766e',
+    '--border-color': '#5eead4',
+    '--primary-color': '#14b8a6',
+    '--primary-hover': '#0d9488',
+    '--success-color': '#10b981',
+    '--warning-color': '#f59e0b',
+    '--danger-color': '#ef4444',
+    '--shadow': '8px 8px 16px #c8f0ea, -8px -8px 16px #ffffff',
+    '--shadow-inset': 'inset 4px 4px 8px #c8f0ea, inset -4px -4px 8px #ffffff',
+    '--shadow-lg': '12px 12px 24px #c8f0ea, -12px -12px 24px #ffffff',
+    '--header-bg': 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
+    '--header-text': '#ffffff',
+    '--header-controls-bg': 'rgba(255, 255, 255, 0.2)',
+  },
 };
 
 let currentTheme = localStorage.getItem('theme') || 'light';
@@ -105,25 +352,25 @@ let currentTheme = localStorage.getItem('theme') || 'light';
 /**
  * Applies a theme to the document
  */
-window.applyTheme = function(themeName) {
+window.applyTheme = function (themeName) {
   if (!themes[themeName]) {
     themeName = 'light';
   }
-  
+
   currentTheme = themeName;
   localStorage.setItem('theme', themeName);
-  
+
   const theme = themes[themeName];
   const root = document.documentElement;
-  
-  Object.keys(theme).forEach(key => {
+
+  Object.keys(theme).forEach((key) => {
     if (key !== 'name') {
       root.style.setProperty(key, theme[key]);
     }
   });
-  
+
   document.body.setAttribute('data-theme', themeName);
-  
+
   const themeSelect = document.getElementById('themeSelect');
   if (themeSelect) {
     themeSelect.value = themeName;
@@ -133,7 +380,7 @@ window.applyTheme = function(themeName) {
 /**
  * Initializes theme on page load
  */
-window.initTheme = function() {
+window.initTheme = function () {
   window.applyTheme(currentTheme);
 };
 
@@ -141,8 +388,8 @@ window.initTheme = function() {
  * Gets available themes for dropdown
  */
 function getThemes() {
-  return Object.keys(themes).map(key => ({
+  return Object.keys(themes).map((key) => ({
     value: key,
-    label: themes[key].name
+    label: themes[key].name,
   }));
 }

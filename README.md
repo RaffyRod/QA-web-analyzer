@@ -15,11 +15,13 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - 🔎 **Comprehensive Analysis**: Check images, links, buttons, inputs, and ARIA roles
 - 🎛️ **Configurable Options**: Select exactly what you want to analyze
 - 📊 **Detailed Reports**: See HTML code, screenshots, and missing attributes
-- 🎨 **Beautiful UI**: Modern neomorphism design with theme support
-- 📄 **PDF Export**: Generate professional PDF reports
+- 🎨 **15+ Visual Themes**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk, and more
+- 📄 **Professional PDF Export**: Generate elegant PDF reports with neomorphism design
 - 🌍 **Multi-language**: English and Spanish support
 - 🎯 **Smart Filtering**: Filter by missing or present attributes
 - 📸 **Visual Feedback**: Screenshots of problematic elements
+- 📱 **Fully Responsive**: Optimized for smartphones, tablets, and desktop
+- 🎭 **WCAG Information Modal**: Quick reference guide for accessibility standards
 
 ## 🚀 Quick Start
 
@@ -85,6 +87,12 @@ Open that URL in your browser! 🌐
 - **Title**: Title attribute
 - **Focus States**: WCAG 2.2 AA compliance
 
+#### Selection Controls
+
+- **Radio Buttons**: Use "All" or "None" to quickly select/deselect all elements or attributes
+- **Section Filters**: Toggle visibility of result sections (Images, Links, Buttons, etc.)
+- **Status Filters**: Show only missing attributes, only present attributes, or both
+
 ## 📊 Example Analysis
 
 **Input:** `https://example.com`
@@ -115,18 +123,32 @@ qa-web-analyzer/
 │
 ├── 📁 public/                 # Frontend files
 │   ├── index.html            # Main HTML
-│   ├── styles.css            # Styling
-│   ├── app.js                # Main JavaScript
-│   ├── i18n.js               # Translations
-│   └── 📁 js/
-│       ├── export.js         # PDF export
-│       └── themes.js         # Theme management
+│   ├── favicon.svg           # Application icon
+│   │
+│   ├── 📁 css/               # Modular CSS architecture
+│   │   ├── main.css          # Main stylesheet (imports all)
+│   │   ├── variables.css     # CSS variables & reset
+│   │   ├── base.css          # Base styles
+│   │   ├── layout.css        # Layout components
+│   │   ├── components.css    # UI components (buttons, inputs)
+│   │   ├── options.css       # Options section styles
+│   │   ├── modal.css         # WCAG info modal
+│   │   ├── results.css       # Results & filters
+│   │   └── responsive.css    # Responsive design (mobile-first)
+│   │
+│   └── 📁 js/                # JavaScript modules
+│       ├── app.js            # Main application logic
+│       ├── export.js         # PDF export functionality
+│       ├── themes.js         # Theme management (15+ themes)
+│       └── i18n.js           # Internationalization
 │
 ├── 📁 dist/                  # Compiled JavaScript (auto-generated)
 │
 ├── 📄 package.json           # Dependencies
 ├── 📄 tsconfig.json          # TypeScript config
 ├── 📄 .gitignore            # Git ignore rules
+├── 📄 .prettierrc.json      # Prettier configuration
+├── 📄 .lintstagedrc.json     # lint-staged configuration
 ├── 📄 README.md             # This file
 └── 📄 README.es.md          # Spanish README
 ```
@@ -143,9 +165,9 @@ qa-web-analyzer/
 ### Frontend
 
 - **HTML5** - Structure
-- **CSS3** - Styling (with CSS variables & neomorphism)
+- **CSS3** - Modular styling with CSS variables, neomorphism, and responsive design
 - **JavaScript (ES6+)** - Interactivity
-- **jsPDF** - PDF generation
+- **jsPDF** - PDF generation with custom table rendering
 
 ## 📝 Available Scripts
 
@@ -166,14 +188,14 @@ qa-web-analyzer/
 
 The tool verifies compliance with **WCAG 2.2 AA standards**:
 
-| Element        | Checks                                                      |
-| -------------- | ----------------------------------------------------------- |
-| 🖼️ **Images**  | `alt` attribute (missing/empty detection)                   |
-| 🔗 **Links**   | `aria-label`, `aria-labelledby`, `title`, text content      |
-| 🔘 **Buttons** | `aria-label`, `aria-labelledby`, `aria-describedby`, text   |
-| 📝 **Inputs**  | `aria-label`, `aria-labelledby`, `<label>`, `aria-required` |
-| 🎭 **Roles**   | `aria-label`, `aria-labelledby` for custom roles            |
-| 🎯 **All**     | Focus states, `tabindex` anti-patterns, `lang` attribute    |
+| Element        | Checks                                                                    |
+| -------------- | ------------------------------------------------------------------------- |
+| 🖼️ **Images**  | `alt` attribute (missing/empty detection)                                 |
+| 🔗 **Links**   | `aria-label`, `aria-labelledby`, `title`, text content, `href` validation |
+| 🔘 **Buttons** | `aria-label`, `aria-labelledby`, `aria-describedby`, text                 |
+| 📝 **Inputs**  | `aria-label`, `aria-labelledby`, `<label>`, `aria-required`               |
+| 🎭 **Roles**   | `aria-label`, `aria-labelledby` for custom roles                          |
+| 🎯 **All**     | Focus states, `tabindex` anti-patterns, `lang` attribute                  |
 
 ### 📊 Report Features
 
@@ -181,9 +203,48 @@ The tool verifies compliance with **WCAG 2.2 AA standards**:
 - 📸 **Screenshots**: Visual highlighting of problematic elements
 - 💻 **HTML Code**: Expandable code snippets for each element
 - 🔍 **Smart Filters**: Show only missing or present attributes
-- 📄 **PDF Export**: Professional reports with images and details
-- 🎨 **Themes**: Light, Dark, Blue, Green, Purple modes
+- 📄 **PDF Export**: Professional reports with neomorphism design, tables, and images
+- 🎨 **15+ Themes**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk, Minimal, Ocean, Sunset, Forest, Monochrome, High Contrast, Rose, Amber, Teal
 - 🌍 **i18n**: English and Spanish support
+- 📱 **Responsive**: Fully optimized for mobile, tablet, and desktop
+
+### 🎨 Visual Themes
+
+The application includes 15+ carefully designed themes:
+
+- **Light Mode** - Clean and bright
+- **Dark Mode** - Easy on the eyes
+- **Flat Design** - Minimal shadows, modern look
+- **Material Design** - Google's Material Design principles
+- **Glassmorphism** - Frosted glass effect
+- **Cyberpunk** - Futuristic neon aesthetic
+- **Minimal** - Ultra-clean interface
+- **Ocean** - Blue ocean theme
+- **Sunset** - Warm orange/pink tones
+- **Forest** - Natural green theme
+- **Monochrome** - Black and white
+- **High Contrast** - Accessibility-focused
+- **Rose** - Soft pink theme
+- **Amber** - Golden yellow theme
+- **Teal** - Cyan/teal color scheme
+
+### 📱 Responsive Design
+
+The application is fully responsive with mobile-first approach:
+
+- **Smartphones** (up to 480px): Optimized vertical layout
+- **Smartphones Landscape** (481px - 767px): Horizontal optimization
+- **Tablets** (768px - 1024px): Balanced layout
+- **Tablets Landscape** (1025px - 1279px): Enhanced spacing
+- **Desktop** (1280px+): Full-featured layout
+
+Features:
+
+- Touch-friendly targets (44x44px minimum)
+- Optimized typography scaling
+- Flexible grid layouts
+- Responsive modal dialogs
+- Smooth scrolling on mobile
 
 ## 🌐 Language Support
 
@@ -257,10 +318,12 @@ This project follows:
 - ✅ **SOLID Principles** - Single responsibility, modular design
 - ✅ **Accessibility First** - Tool itself is accessible
 - ✅ **Error Handling** - Robust error management
-- ✅ **Code Organization** - Scalable structure
+- ✅ **Code Organization** - Scalable structure with modular CSS
 - ✅ **Internationalization** - Multi-language ready
 - ✅ **Code Formatting** - Prettier for consistent style
 - ✅ **Pre-commit Hooks** - Automated quality checks with Husky
+- ✅ **Responsive Design** - Mobile-first approach
+- ✅ **Modular Architecture** - CSS and JS organized by functionality
 
 ## 📄 License
 

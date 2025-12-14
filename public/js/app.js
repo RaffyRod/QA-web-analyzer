@@ -1048,36 +1048,158 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // WCAG Info Modal - Discreet but notable
   const wcagInfoToggle = document.getElementById('wcagInfoToggle');
   const wcagInfoSection = document.getElementById('wcagInfoSection');
+  const wcagInfoClose = document.getElementById('wcagInfoClose');
+  const wcagModalOverlay = wcagInfoSection?.querySelector('.wcag-modal-overlay');
+
+  function closeWcagModal() {
+    if (wcagInfoSection) {
+      wcagInfoSection.classList.add('hidden');
+      if (wcagInfoToggle) {
+        wcagInfoToggle.setAttribute('aria-expanded', 'false');
+      }
+    }
+  }
+
+  function openWcagModal() {
+    if (wcagInfoSection) {
+      wcagInfoSection.classList.remove('hidden');
+      if (wcagInfoToggle) {
+        wcagInfoToggle.setAttribute('aria-expanded', 'true');
+      }
+    }
+  }
 
   if (wcagInfoToggle && wcagInfoSection) {
-    wcagInfoToggle.addEventListener('click', () => {
+    wcagInfoToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
       const isExpanded = wcagInfoToggle.getAttribute('aria-expanded') === 'true';
-      wcagInfoToggle.setAttribute('aria-expanded', !isExpanded);
-      wcagInfoSection.classList.toggle('hidden', isExpanded);
+      if (isExpanded) {
+        closeWcagModal();
+      } else {
+        openWcagModal();
+      }
     });
   }
 
-  // Select All / Deselect All functionality - Only for Attributes
-  const selectAllAttributes = document.getElementById('selectAllAttributes');
-  const deselectAllAttributes = document.getElementById('deselectAllAttributes');
-
-  if (selectAllAttributes) {
-    selectAllAttributes.addEventListener('click', () => {
-      const attributeCheckboxes = document.querySelectorAll(
-        '.attributes-group input[type="checkbox"]'
-      );
-      attributeCheckboxes.forEach((cb) => (cb.checked = true));
+  if (wcagInfoClose) {
+    wcagInfoClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeWcagModal();
     });
   }
 
-  if (deselectAllAttributes) {
-    deselectAllAttributes.addEventListener('click', () => {
-      const attributeCheckboxes = document.querySelectorAll(
-        '.attributes-group input[type="checkbox"]'
-      );
-      attributeCheckboxes.forEach((cb) => (cb.checked = false));
+  if (wcagModalOverlay) {
+    wcagModalOverlay.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeWcagModal();
     });
   }
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && wcagInfoSection && !wcagInfoSection.classList.contains('hidden')) {
+      closeWcagModal();
+    }
+  });
+
+  // Radio buttons for Attributes selection
+  const attributesAll = document.getElementById('attributesAll');
+  const attributesNone = document.getElementById('attributesNone');
+
+  if (attributesAll) {
+    attributesAll.addEventListener('change', () => {
+      if (attributesAll.checked) {
+        const attributeCheckboxes = document.querySelectorAll(
+          '.attributes-group input[type="checkbox"]'
+        );
+        attributeCheckboxes.forEach((cb) => (cb.checked = true));
+      }
+    });
+  }
+
+  if (attributesNone) {
+    attributesNone.addEventListener('change', () => {
+      if (attributesNone.checked) {
+        const attributeCheckboxes = document.querySelectorAll(
+          '.attributes-group input[type="checkbox"]'
+        );
+        attributeCheckboxes.forEach((cb) => (cb.checked = false));
+      }
+    });
+  }
+
+  // Radio buttons for Elements selection
+  const elementsAll = document.getElementById('elementsAll');
+  const elementsNone = document.getElementById('elementsNone');
+
+  if (elementsAll) {
+    elementsAll.addEventListener('change', () => {
+      if (elementsAll.checked) {
+        const elementCheckboxes = document.querySelectorAll(
+          '.option-group:not(.attributes-group) input[type="checkbox"]'
+        );
+        elementCheckboxes.forEach((cb) => (cb.checked = true));
+      }
+    });
+  }
+
+  if (elementsNone) {
+    elementsNone.addEventListener('change', () => {
+      if (elementsNone.checked) {
+        const elementCheckboxes = document.querySelectorAll(
+          '.option-group:not(.attributes-group) input[type="checkbox"]'
+        );
+        elementCheckboxes.forEach((cb) => (cb.checked = false));
+      }
+    });
+  }
+
+  // Update radio buttons when checkboxes change manually
+  function updateAttributesRadio() {
+    const attributeCheckboxes = document.querySelectorAll(
+      '.attributes-group input[type="checkbox"]'
+    );
+    const checkedCount = Array.from(attributeCheckboxes).filter((cb) => cb.checked).length;
+    if (checkedCount === attributeCheckboxes.length) {
+      if (attributesAll) attributesAll.checked = true;
+    } else if (checkedCount === 0) {
+      if (attributesNone) attributesNone.checked = true;
+    } else {
+      if (attributesAll) attributesAll.checked = false;
+      if (attributesNone) attributesNone.checked = false;
+    }
+  }
+
+  function updateElementsRadio() {
+    const elementCheckboxes = document.querySelectorAll(
+      '.option-group:not(.attributes-group) input[type="checkbox"]'
+    );
+    const checkedCount = Array.from(elementCheckboxes).filter((cb) => cb.checked).length;
+    if (checkedCount === elementCheckboxes.length) {
+      if (elementsAll) elementsAll.checked = true;
+    } else if (checkedCount === 0) {
+      if (elementsNone) elementsNone.checked = true;
+    } else {
+      if (elementsAll) elementsAll.checked = false;
+      if (elementsNone) elementsNone.checked = false;
+    }
+  }
+
+  // Listen to checkbox changes
+  document.querySelectorAll('.attributes-group input[type="checkbox"]').forEach((cb) => {
+    cb.addEventListener('change', updateAttributesRadio);
+  });
+
+  document
+    .querySelectorAll('.option-group:not(.attributes-group) input[type="checkbox"]')
+    .forEach((cb) => {
+      cb.addEventListener('change', updateElementsRadio);
+    });
+
+  // Initialize radio buttons state - set to "None" by default
+  if (attributesNone) attributesNone.checked = true;
+  if (elementsNone) elementsNone.checked = true;
 });

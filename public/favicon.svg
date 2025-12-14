@@ -10,3 +10,4 @@
   <path d="M 30 55 L 50 75 L 70 55" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
   <text x="50" y="90" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle" opacity="0.8">QA</text>
 </svg>
+
