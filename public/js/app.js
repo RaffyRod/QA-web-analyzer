@@ -1019,6 +1019,20 @@ document.addEventListener('DOMContentLoaded', () => {
         window.applyTheme(e.target.value);
       }
     });
+
+    // Update dropdown styles when it opens (for mobile wide dropdown)
+    themeSelect.addEventListener('focus', () => {
+      if (typeof updateThemeDropdownStyles === 'function') {
+        updateThemeDropdownStyles();
+      }
+    });
+
+    // Also update on mouseenter for desktop
+    themeSelect.addEventListener('mouseenter', () => {
+      if (typeof updateThemeDropdownStyles === 'function') {
+        updateThemeDropdownStyles();
+      }
+    });
   }
 
   if (exportPdfBtn) {
@@ -1202,4 +1216,46 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize radio buttons state - set to "None" by default
   if (attributesNone) attributesNone.checked = true;
   if (elementsNone) elementsNone.checked = true;
+
+  // Mobile Menu Toggle
+  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const languageToggleDesktop = document.getElementById('languageToggle');
+  const languageToggleMobile = document.getElementById('languageToggleMobile');
+  const themeButtonDesktop = document.getElementById('themeButton');
+  const themeButtonMobile = document.getElementById('themeButtonMobile');
+
+  // Language toggle synchronization is handled in i18n.js
+  // This code is kept for backward compatibility but initLanguage() handles everything
+
+  // Toggle mobile menu
+  if (mobileMenuToggle && mobileMenu) {
+    mobileMenuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
+      mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
+      if (isExpanded) {
+        mobileMenu.classList.add('hidden');
+      } else {
+        mobileMenu.classList.remove('hidden');
+      }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const target = e.target || e.srcElement;
+      if (target && !mobileMenuToggle.contains(target) && !mobileMenu.contains(target)) {
+        mobileMenu.classList.add('hidden');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Close mobile menu on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        mobileMenu.classList.add('hidden');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 });

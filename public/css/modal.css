@@ -65,19 +65,19 @@
   padding: 20px 24px;
   border-bottom: 2px solid var(--border-color, #e2e8f0);
   background: var(--primary-color, #2563eb);
-  color: white;
+  color: var(--modal-header-text-color, #ffffff);
 }
 
 .wcag-modal-header h4 {
   margin: 0;
-  color: white;
+  color: var(--modal-header-text-color, #ffffff);
   font-size: 1.2rem;
 }
 
 .wcag-modal-close {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--modal-close-bg, rgba(255, 255, 255, 0.2));
   border: none;
-  color: white;
+  color: var(--modal-header-text-color, #ffffff);
   font-size: 28px;
   width: 36px;
   height: 36px;
@@ -92,7 +92,7 @@
 }
 
 .wcag-modal-close:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--modal-close-bg-hover, rgba(255, 255, 255, 0.3));
   transform: rotate(90deg);
 }
 

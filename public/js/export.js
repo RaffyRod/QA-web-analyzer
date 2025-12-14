@@ -356,6 +356,8 @@ window.exportReportAsPDF = async function () {
   // Prepare items with detailed information
   const items = [];
   const sectionItems = { Images: [], Links: [], Buttons: [], Inputs: [], Roles: [] };
+  // Track processed items to avoid duplicates - use Map to store unique identifiers
+  const processedItems = new Map();
 
   if (showImages) {
     data.images.forEach((img) => {
@@ -380,20 +382,39 @@ window.exportReportAsPDF = async function () {
       }
 
       if (shouldInclude) {
-        const item = {
-          type: 'Image',
-          screenshot: img.screenshot || null,
-          missingAttributes: img.missingAttributes || [],
-          index: img.index,
-          hasAccessibility: img.hasAccessibility,
-          alt: img.alt,
-          src: img.src,
-          selector: img.selector,
-          outerHTML: img.outerHTML,
-          originalData: img, // Store full original data
-        };
-        items.push(item);
-        sectionItems.Images.push(item);
+        // Use src + alt as unique identifier to avoid duplicates (desktop/mobile variants)
+        const uniqueKey = `Image-${img.src || ''}-${img.alt || ''}`;
+        const existingItem = processedItems.get(uniqueKey);
+
+        if (!existingItem) {
+          // First occurrence - create new item
+          const item = {
+            type: 'Image',
+            screenshot: img.screenshot || null,
+            missingAttributes: img.missingAttributes || [],
+            index: img.index,
+            hasAccessibility: img.hasAccessibility,
+            alt: img.alt,
+            src: img.src,
+            selector: img.selector,
+            outerHTML: img.outerHTML,
+            originalData: img, // Store full original data
+          };
+          processedItems.set(uniqueKey, item);
+          items.push(item);
+          sectionItems.Images.push(item);
+        } else {
+          // Duplicate found - merge missing attributes if this one has more issues
+          if (
+            hasMissing &&
+            (!existingItem.missingAttributes ||
+              existingItem.missingAttributes.length < img.missingAttributes.length)
+          ) {
+            existingItem.missingAttributes = img.missingAttributes || [];
+            existingItem.hasAccessibility = img.hasAccessibility;
+            existingItem.originalData = img; // Update with latest data
+          }
+        }
       }
     });
   }
@@ -421,20 +442,39 @@ window.exportReportAsPDF = async function () {
       }
 
       if (shouldInclude) {
-        const item = {
-          type: 'Link',
-          screenshot: link.screenshot || null,
-          missingAttributes: link.missingAttributes || [],
-          index: link.index,
-          text: link.text,
-          href: link.href,
-          hasAccessibility: link.hasAccessibility,
-          selector: link.selector,
-          outerHTML: link.outerHTML,
-          originalData: link, // Store full original data
-        };
-        items.push(item);
-        sectionItems.Links.push(item);
+        // Use href + text as unique identifier to avoid duplicates
+        const uniqueKey = `Link-${link.href || ''}-${link.text || ''}`;
+        const existingItem = processedItems.get(uniqueKey);
+
+        if (!existingItem) {
+          // First occurrence - create new item
+          const item = {
+            type: 'Link',
+            screenshot: link.screenshot || null,
+            missingAttributes: link.missingAttributes || [],
+            index: link.index,
+            text: link.text,
+            href: link.href,
+            hasAccessibility: link.hasAccessibility,
+            selector: link.selector,
+            outerHTML: link.outerHTML,
+            originalData: link, // Store full original data
+          };
+          processedItems.set(uniqueKey, item);
+          items.push(item);
+          sectionItems.Links.push(item);
+        } else {
+          // Duplicate found - merge missing attributes if this one has more issues
+          if (
+            hasMissing &&
+            (!existingItem.missingAttributes ||
+              existingItem.missingAttributes.length < link.missingAttributes.length)
+          ) {
+            existingItem.missingAttributes = link.missingAttributes || [];
+            existingItem.hasAccessibility = link.hasAccessibility;
+            existingItem.originalData = link; // Update with latest data
+          }
+        }
       }
     });
   }
@@ -462,19 +502,38 @@ window.exportReportAsPDF = async function () {
       }
 
       if (shouldInclude) {
-        const item = {
-          type: 'Button',
-          screenshot: btn.screenshot || null,
-          missingAttributes: btn.missingAttributes || [],
-          index: btn.index,
-          text: btn.text,
-          hasAccessibility: btn.hasAccessibility,
-          selector: btn.selector,
-          outerHTML: btn.outerHTML,
-          originalData: btn, // Store full original data
-        };
-        items.push(item);
-        sectionItems.Buttons.push(item);
+        // Use text + aria-label as unique identifier to avoid duplicates
+        const uniqueKey = `Button-${btn.text || ''}-${btn.ariaLabel || ''}`;
+        const existingItem = processedItems.get(uniqueKey);
+
+        if (!existingItem) {
+          // First occurrence - create new item
+          const item = {
+            type: 'Button',
+            screenshot: btn.screenshot || null,
+            missingAttributes: btn.missingAttributes || [],
+            index: btn.index,
+            text: btn.text,
+            hasAccessibility: btn.hasAccessibility,
+            selector: btn.selector,
+            outerHTML: btn.outerHTML,
+            originalData: btn, // Store full original data
+          };
+          processedItems.set(uniqueKey, item);
+          items.push(item);
+          sectionItems.Buttons.push(item);
+        } else {
+          // Duplicate found - merge missing attributes if this one has more issues
+          if (
+            hasMissing &&
+            (!existingItem.missingAttributes ||
+              existingItem.missingAttributes.length < btn.missingAttributes.length)
+          ) {
+            existingItem.missingAttributes = btn.missingAttributes || [];
+            existingItem.hasAccessibility = btn.hasAccessibility;
+            existingItem.originalData = btn; // Update with latest data
+          }
+        }
       }
     });
   }
@@ -502,19 +561,38 @@ window.exportReportAsPDF = async function () {
       }
 
       if (shouldInclude) {
-        const item = {
-          type: 'Input',
-          screenshot: input.screenshot || null,
-          missingAttributes: input.missingAttributes || [],
-          index: input.index,
-          typeName: input.type,
-          hasAccessibility: input.hasAccessibility,
-          selector: input.selector,
-          outerHTML: input.outerHTML,
-          originalData: input, // Store full original data
-        };
-        items.push(item);
-        sectionItems.Inputs.push(item);
+        // Use type + name + label as unique identifier to avoid duplicates
+        const uniqueKey = `Input-${input.type || ''}-${input.name || ''}-${input.label || ''}`;
+        const existingItem = processedItems.get(uniqueKey);
+
+        if (!existingItem) {
+          // First occurrence - create new item
+          const item = {
+            type: 'Input',
+            screenshot: input.screenshot || null,
+            missingAttributes: input.missingAttributes || [],
+            index: input.index,
+            typeName: input.type,
+            hasAccessibility: input.hasAccessibility,
+            selector: input.selector,
+            outerHTML: input.outerHTML,
+            originalData: input, // Store full original data
+          };
+          processedItems.set(uniqueKey, item);
+          items.push(item);
+          sectionItems.Inputs.push(item);
+        } else {
+          // Duplicate found - merge missing attributes if this one has more issues
+          if (
+            hasMissing &&
+            (!existingItem.missingAttributes ||
+              existingItem.missingAttributes.length < input.missingAttributes.length)
+          ) {
+            existingItem.missingAttributes = input.missingAttributes || [];
+            existingItem.hasAccessibility = input.hasAccessibility;
+            existingItem.originalData = input; // Update with latest data
+          }
+        }
       }
     });
   }
@@ -542,19 +620,38 @@ window.exportReportAsPDF = async function () {
       }
 
       if (shouldInclude) {
-        const item = {
-          type: 'Role',
-          screenshot: role.screenshot || null,
-          missingAttributes: role.missingAttributes || [],
-          index: role.index,
-          role: role.role,
-          hasAccessibility: role.hasAccessibility,
-          selector: role.selector,
-          outerHTML: role.outerHTML,
-          originalData: role, // Store full original data
-        };
-        items.push(item);
-        sectionItems.Roles.push(item);
+        // Use role + tag as unique identifier to avoid duplicates
+        const uniqueKey = `Role-${role.role || ''}-${role.tag || ''}`;
+        const existingItem = processedItems.get(uniqueKey);
+
+        if (!existingItem) {
+          // First occurrence - create new item
+          const item = {
+            type: 'Role',
+            screenshot: role.screenshot || null,
+            missingAttributes: role.missingAttributes || [],
+            index: role.index,
+            role: role.role,
+            hasAccessibility: role.hasAccessibility,
+            selector: role.selector,
+            outerHTML: role.outerHTML,
+            originalData: role, // Store full original data
+          };
+          processedItems.set(uniqueKey, item);
+          items.push(item);
+          sectionItems.Roles.push(item);
+        } else {
+          // Duplicate found - merge missing attributes if this one has more issues
+          if (
+            hasMissing &&
+            (!existingItem.missingAttributes ||
+              existingItem.missingAttributes.length < role.missingAttributes.length)
+          ) {
+            existingItem.missingAttributes = role.missingAttributes || [];
+            existingItem.hasAccessibility = role.hasAccessibility;
+            existingItem.originalData = role; // Update with latest data
+          }
+        }
       }
     });
   }
@@ -625,13 +722,13 @@ window.exportReportAsPDF = async function () {
       // Only show section if it's enabled (checkbox checked) and has items
       if (section.enabled && section.items.length > 0) {
         // Group items by status (passed/failed)
-        const passedItems = section.items.filter(
-          (item) =>
-            item.hasAccessibility &&
-            (!item.missingAttributes || item.missingAttributes.length === 0)
-        );
+        // An item is "Failed" if it has any missing attributes according to WCAG
+        // An item is "Passed" only if it has NO missing attributes
         const failedItems = section.items.filter(
           (item) => item.missingAttributes && item.missingAttributes.length > 0
+        );
+        const passedItems = section.items.filter(
+          (item) => !item.missingAttributes || item.missingAttributes.length === 0
         );
 
         // Render Passed items first, then Failed items

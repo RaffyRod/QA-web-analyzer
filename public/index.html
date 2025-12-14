@@ -15,42 +15,154 @@
     <div class="container">
       <header>
         <div class="header-top">
-          <div class="header-controls">
+          <!-- Desktop controls (visible on desktop) -->
+          <div class="header-controls desktop-controls">
             <div class="language-toggle">
               <input type="checkbox" id="languageToggle" class="language-toggle-input" />
               <label for="languageToggle" class="language-toggle-label">
                 <span class="toggle-option" data-lang="en">US</span>
+                <span class="toggle-separator">/</span>
                 <span class="toggle-option" data-lang="es">ES</span>
               </label>
             </div>
             <div class="theme-selector">
-              <label for="themeSelect" class="theme-select-label-button">
-                <span class="theme-text-button" data-i18n="selectTheme">Theme</span>
-              </label>
-              <select id="themeSelect" class="theme-select">
-                <option value="light">Light Mode</option>
-                <option value="dark">Dark Mode</option>
-                <option value="flat">Flat Design</option>
-                <option value="material">Material Design</option>
-                <option value="glassmorphism">Glassmorphism</option>
-                <option value="cyberpunk">Cyberpunk</option>
-                <option value="minimal">Minimal</option>
-                <option value="ocean">Ocean</option>
-                <option value="sunset">Sunset</option>
-                <option value="forest">Forest</option>
-                <option value="monochrome">Monochrome</option>
-                <option value="highContrast">High Contrast</option>
-                <option value="blue">Blue Theme</option>
-                <option value="green">Green Theme</option>
-                <option value="purple">Purple Theme</option>
-                <option value="rose">Rose</option>
-                <option value="amber">Amber</option>
-                <option value="teal">Teal</option>
-              </select>
+              <button
+                id="themeButton"
+                class="theme-button"
+                aria-expanded="false"
+                aria-haspopup="true"
+                title="Theme"
+              >
+                <svg
+                  class="theme-button-icon"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                >
+                  <rect x="3" y="3" width="7" height="7" fill="#ef4444" />
+                  <rect x="14" y="3" width="7" height="7" fill="#3b82f6" />
+                  <rect x="3" y="14" width="7" height="7" fill="#10b981" />
+                  <rect x="14" y="14" width="7" height="7" fill="#f59e0b" />
+                </svg>
+              </button>
+              <div id="themeDropdown" class="theme-dropdown hidden">
+                <button class="theme-option" data-theme="light">Light Mode</button>
+                <button class="theme-option" data-theme="dark">Dark Mode</button>
+                <button class="theme-option" data-theme="flat">Flat Design</button>
+                <button class="theme-option" data-theme="material">Material Design</button>
+                <button class="theme-option" data-theme="glassmorphism">Glassmorphism</button>
+                <button class="theme-option" data-theme="cyberpunk">Cyberpunk</button>
+                <button class="theme-option" data-theme="minimal">Minimal</button>
+                <button class="theme-option" data-theme="ocean">Ocean</button>
+                <button class="theme-option" data-theme="sunset">Sunset</button>
+                <button class="theme-option" data-theme="forest">Forest</button>
+                <button class="theme-option" data-theme="monochrome">Monochrome</button>
+                <button class="theme-option" data-theme="highContrast">High Contrast</button>
+                <button class="theme-option" data-theme="blue">Blue Theme</button>
+                <button class="theme-option" data-theme="green">Green Theme</button>
+                <button class="theme-option" data-theme="purple">Purple Theme</button>
+                <button class="theme-option" data-theme="rose">Rose</button>
+                <button class="theme-option" data-theme="amber">Amber</button>
+                <button class="theme-option" data-theme="teal">Teal</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile hamburger menu button (visible on mobile) -->
+          <button
+            id="mobileMenuToggle"
+            class="mobile-menu-toggle"
+            aria-expanded="false"
+            aria-label="Menu"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="24"
+              height="24"
+            >
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+
+          <!-- Mobile menu (hidden by default) -->
+          <div id="mobileMenu" class="mobile-menu hidden">
+            <div class="mobile-menu-content">
+              <div class="language-toggle">
+                <input type="checkbox" id="languageToggleMobile" class="language-toggle-input" />
+                <label for="languageToggleMobile" class="language-toggle-label">
+                  <span class="toggle-option" data-lang="en">US</span>
+                  <span class="toggle-separator">/</span>
+                  <span class="toggle-option" data-lang="es">ES</span>
+                </label>
+              </div>
+              <div class="theme-selector">
+                <button
+                  id="themeButtonMobile"
+                  class="theme-button"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  title="Theme"
+                >
+                  <svg
+                    class="theme-button-icon"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                  >
+                    <rect x="3" y="3" width="7" height="7" fill="#ef4444" />
+                    <rect x="14" y="3" width="7" height="7" fill="#3b82f6" />
+                    <rect x="3" y="14" width="7" height="7" fill="#10b981" />
+                    <rect x="14" y="14" width="7" height="7" fill="#f59e0b" />
+                  </svg>
+                </button>
+                <div id="themeDropdownMobile" class="theme-dropdown hidden">
+                  <button class="theme-option" data-theme="light">Light Mode</button>
+                  <button class="theme-option" data-theme="dark">Dark Mode</button>
+                  <button class="theme-option" data-theme="flat">Flat Design</button>
+                  <button class="theme-option" data-theme="material">Material Design</button>
+                  <button class="theme-option" data-theme="glassmorphism">Glassmorphism</button>
+                  <button class="theme-option" data-theme="cyberpunk">Cyberpunk</button>
+                  <button class="theme-option" data-theme="minimal">Minimal</button>
+                  <button class="theme-option" data-theme="ocean">Ocean</button>
+                  <button class="theme-option" data-theme="sunset">Sunset</button>
+                  <button class="theme-option" data-theme="forest">Forest</button>
+                  <button class="theme-option" data-theme="monochrome">Monochrome</button>
+                  <button class="theme-option" data-theme="highContrast">High Contrast</button>
+                  <button class="theme-option" data-theme="blue">Blue Theme</button>
+                  <button class="theme-option" data-theme="green">Green Theme</button>
+                  <button class="theme-option" data-theme="purple">Purple Theme</button>
+                  <button class="theme-option" data-theme="rose">Rose</button>
+                  <button class="theme-option" data-theme="amber">Amber</button>
+                  <button class="theme-option" data-theme="teal">Teal</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <h1 data-i18n="title">🔍 QA Web Analyzer</h1>
+        <div class="header-title-group">
+          <svg
+            class="header-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          <h1 data-i18n="title">QA Web Analyzer</h1>
+        </div>
         <p class="subtitle" data-i18n="subtitle">Accessibility Analysis Tool</p>
       </header>
 
@@ -80,6 +192,8 @@
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                width="20"
+                height="20"
               >
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="16" x2="12" y2="12"></line>

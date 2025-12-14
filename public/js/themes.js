@@ -352,6 +352,50 @@ let currentTheme = localStorage.getItem('theme') || 'light';
 /**
  * Applies a theme to the document
  */
+/**
+ * Helper function to check if a color is light (needs dark text)
+ * Made global so it can be used throughout the application
+ */
+window.isLightColorValue = function (color) {
+  if (!color) return false;
+
+  // Check for white or very light colors
+  if (color === '#ffffff' || color === 'white' || color === 'rgb(255, 255, 255)') {
+    return true;
+  }
+
+  // Check for rgba with high alpha and white values
+  const rgbaMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (rgbaMatch) {
+    const r = parseInt(rgbaMatch[1]);
+    const g = parseInt(rgbaMatch[2]);
+    const b = parseInt(rgbaMatch[3]);
+    // If all RGB values are above 240, it's very light
+    if (r > 240 && g > 240 && b > 240) {
+      return true;
+    }
+  }
+
+  // Check hex colors
+  const hex = color.replace('#', '');
+  if (hex.length === 3) {
+    const r = parseInt(hex[0] + hex[0], 16);
+    const g = parseInt(hex[1] + hex[1], 16);
+    const b = parseInt(hex[2] + hex[2], 16);
+    // If average is above 240, it's light
+    return (r + g + b) / 3 > 240;
+  }
+  if (hex.length === 6) {
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    // If average is above 240, it's light
+    return (r + g + b) / 3 > 240;
+  }
+
+  return false;
+};
+
 window.applyTheme = function (themeName) {
   if (!themes[themeName]) {
     themeName = 'light';
@@ -371,18 +415,433 @@ window.applyTheme = function (themeName) {
 
   document.body.setAttribute('data-theme', themeName);
 
-  const themeSelect = document.getElementById('themeSelect');
-  if (themeSelect) {
-    themeSelect.value = themeName;
+  // Update theme button text if needed
+  updateThemeButton();
+
+  // Update dropdown styles to match new theme immediately
+  if (typeof updateThemeDropdownStyles === 'function') {
+    updateThemeDropdownStyles();
+    // Also update after a short delay to ensure CSS variables are applied
+    setTimeout(updateThemeDropdownStyles, 100);
   }
 };
+
+/**
+ * Updates theme button and dropdown styles to match current theme
+ */
+window.updateThemeDropdownStyles = function () {
+  const root = document.documentElement;
+  const computedStyle = getComputedStyle(root);
+  const headerText = computedStyle.getPropertyValue('--header-text').trim() || '#ffffff';
+  const borderColor =
+    computedStyle.getPropertyValue('--border-color').trim() || 'rgba(255, 255, 255, 0.25)';
+  const headerControlsBg =
+    computedStyle.getPropertyValue('--header-controls-bg').trim() || 'rgba(255, 255, 255, 0.15)';
+  const textColor = computedStyle.getPropertyValue('--text-primary').trim() || '#1e293b';
+  const bgColor = computedStyle.getPropertyValue('--card-bg').trim() || '#ffffff';
+  const borderColorDropdown = computedStyle.getPropertyValue('--border-color').trim() || '#cbd5e1';
+
+  // Update theme button styles
+  const themeButton = document.getElementById('themeButton');
+  if (themeButton) {
+    themeButton.style.color = headerText;
+    themeButton.style.borderColor = borderColor;
+    themeButton.style.backgroundColor = headerControlsBg;
+  }
+
+  // Helper function to check if a color is dark
+  function isDarkColor(color) {
+    if (!color) return false;
+    const hex = color.replace('#', '');
+    if (hex.length === 3) {
+      const r = parseInt(hex[0] + hex[0], 16);
+      const g = parseInt(hex[1] + hex[1], 16);
+      const b = parseInt(hex[2] + hex[2], 16);
+      return (r + g + b) / 3 < 128;
+    }
+    if (hex.length === 6) {
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return (r + g + b) / 3 < 128;
+    }
+    // Check for dark RGB values
+    if (color.includes('rgb')) {
+      const matches = color.match(/\d+/g);
+      if (matches && matches.length >= 3) {
+        const r = parseInt(matches[0]);
+        const g = parseInt(matches[1]);
+        const b = parseInt(matches[2]);
+        return (r + g + b) / 3 < 128;
+      }
+    }
+    // Fallback: check for common dark color patterns
+    return (
+      color.includes('#1') ||
+      color.includes('#2') ||
+      color.includes('#0') ||
+      color.includes('rgb(26') ||
+      color.includes('rgb(37') ||
+      color.includes('rgb(15')
+    );
+  }
+
+  // Update dropdown styles - always use light background for readability
+  const themeDropdown = document.getElementById('themeDropdown');
+  if (themeDropdown) {
+    // Always use white or very light background for dropdown
+    themeDropdown.style.backgroundColor = '#ffffff';
+    themeDropdown.style.borderColor = '#e2e8f0';
+  }
+
+  // Update dropdown option styles - ensure readable text colors (both desktop and mobile)
+  const themeOptions = document.querySelectorAll('.theme-option');
+  themeOptions.forEach((option) => {
+    // Reset all options first - always use dark text on white background
+    option.style.setProperty('background', 'transparent', 'important');
+    option.style.setProperty('color', '#1e293b', 'important');
+    option.removeAttribute('data-selected');
+
+    // Highlight current theme
+    if (option.dataset.theme === currentTheme) {
+      const primaryColor = computedStyle.getPropertyValue('--primary-color').trim() || '#3b82f6';
+      const isPrimaryLight = window.isLightColorValue(primaryColor);
+      const optionTextColor = isPrimaryLight ? '#1e293b' : '#ffffff';
+      option.style.setProperty('background', primaryColor, 'important');
+      option.style.setProperty('color', optionTextColor, 'important');
+      option.setAttribute('data-selected', 'true');
+    }
+  });
+
+  // Also update mobile dropdown background
+  const themeDropdownMobile = document.getElementById('themeDropdownMobile');
+  if (themeDropdownMobile) {
+    themeDropdownMobile.style.backgroundColor = '#ffffff';
+    themeDropdownMobile.style.borderColor = '#e2e8f0';
+  }
+
+  // Update language toggle styles
+  const languageToggleLabel = document.querySelector('.language-toggle-label');
+  if (languageToggleLabel) {
+    languageToggleLabel.style.color = headerText || '#ffffff';
+    languageToggleLabel.style.borderColor = borderColor;
+    if (!headerText || headerText === '') {
+      languageToggleLabel.style.color = '#ffffff';
+    }
+  }
+
+  // Ensure buttons text is always visible - detect if primary color is light or dark
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const infoBtn = document.getElementById('wcagInfoToggle');
+
+  // Get primary color and determine if it's light (needs dark text) or dark (needs light text)
+  const primaryColor = computedStyle.getPropertyValue('--primary-color').trim() || '#3b82f6';
+  const isLightColor = window.isLightColorValue(primaryColor);
+  const buttonTextColor = isLightColor ? '#1e293b' : '#ffffff';
+  const buttonBgColor = primaryColor;
+
+  // Set CSS variable for button text color so CSS can use it
+  root.style.setProperty('--button-text-color', buttonTextColor);
+
+  // Set CSS variables for modal header text color (same logic as buttons)
+  root.style.setProperty('--modal-header-text-color', buttonTextColor);
+  root.style.setProperty(
+    '--modal-close-bg',
+    isLightColor ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.2)'
+  );
+  root.style.setProperty(
+    '--modal-close-bg-hover',
+    isLightColor ? 'rgba(0, 0, 0, 0.15)' : 'rgba(255, 255, 255, 0.3)'
+  );
+
+  // Evaluate and set text colors for all color-based elements
+  const successColor = computedStyle.getPropertyValue('--success-color').trim() || '#10b981';
+  const dangerColor = computedStyle.getPropertyValue('--danger-color').trim() || '#ef4444';
+  const warningColor = computedStyle.getPropertyValue('--warning-color').trim() || '#f59e0b';
+
+  const isSuccessLight = window.isLightColorValue(successColor);
+  const isDangerLight = window.isLightColorValue(dangerColor);
+  const isWarningLight = window.isLightColorValue(warningColor);
+
+  root.style.setProperty('--success-text-color', isSuccessLight ? '#1e293b' : '#ffffff');
+  root.style.setProperty('--danger-text-color', isDangerLight ? '#1e293b' : '#ffffff');
+  root.style.setProperty('--warning-text-color', isWarningLight ? '#1e293b' : '#ffffff');
+
+  if (analyzeBtn) {
+    // Set appropriate text color based on background
+    analyzeBtn.style.setProperty('color', buttonTextColor, 'important');
+    analyzeBtn.style.color = buttonTextColor;
+    analyzeBtn.style.setProperty('background-color', buttonBgColor, 'important');
+    analyzeBtn.style.backgroundColor = buttonBgColor;
+
+    // Ensure all child elements have correct color
+    const analyzeBtnChildren = analyzeBtn.querySelectorAll('*');
+    analyzeBtnChildren.forEach((child) => {
+      child.style.setProperty('color', buttonTextColor, 'important');
+      child.style.color = buttonTextColor;
+    });
+  }
+
+  if (infoBtn) {
+    // Set appropriate text color based on background
+    infoBtn.style.setProperty('color', buttonTextColor, 'important');
+    infoBtn.style.color = buttonTextColor;
+    infoBtn.style.setProperty('background-color', buttonBgColor, 'important');
+    infoBtn.style.backgroundColor = buttonBgColor;
+
+    // Ensure SVG stroke has correct color
+    const svg = infoBtn.querySelector('svg');
+    if (svg) {
+      svg.style.setProperty('stroke', buttonTextColor, 'important');
+      svg.style.stroke = buttonTextColor;
+      svg.setAttribute('stroke', buttonTextColor);
+      svg.style.setProperty('fill', 'none', 'important');
+      svg.style.fill = 'none';
+    }
+
+    // Force all child elements to have correct color
+    const infoBtnChildren = infoBtn.querySelectorAll('*');
+    infoBtnChildren.forEach((child) => {
+      child.style.setProperty('color', buttonTextColor, 'important');
+      child.style.color = buttonTextColor;
+    });
+  }
+
+  // Update mobile menu elements - always use dark colors (menu has white background)
+  const mobileMenu = document.getElementById('mobileMenu');
+  if (mobileMenu) {
+    const mobileLanguageToggle = mobileMenu.querySelector('.language-toggle-label');
+    const mobileThemeButton = mobileMenu.querySelector('.theme-button');
+    const mobileThemeIcon = mobileMenu.querySelector('.theme-button-icon');
+
+    if (mobileLanguageToggle) {
+      mobileLanguageToggle.style.setProperty('background', '#f1f5f9', 'important');
+      mobileLanguageToggle.style.setProperty('border-color', '#cbd5e1', 'important');
+      mobileLanguageToggle.style.setProperty('color', '#1e293b', 'important');
+
+      // Update toggle options and separator
+      const toggleOptions = mobileLanguageToggle.querySelectorAll(
+        '.toggle-option, .toggle-separator'
+      );
+      toggleOptions.forEach((option) => {
+        option.style.setProperty('color', '#1e293b', 'important');
+      });
+    }
+
+    if (mobileThemeButton) {
+      mobileThemeButton.style.setProperty('background', '#f1f5f9', 'important');
+      mobileThemeButton.style.setProperty('border-color', '#cbd5e1', 'important');
+      mobileThemeButton.style.setProperty('color', '#1e293b', 'important');
+    }
+
+    if (mobileThemeIcon) {
+      mobileThemeIcon.style.setProperty('color', '#1e293b', 'important');
+      mobileThemeIcon.style.setProperty('stroke', '#1e293b', 'important');
+      mobileThemeIcon.setAttribute('stroke', '#1e293b');
+    }
+  }
+};
+
+/**
+ * Updates theme button appearance
+ */
+function updateThemeButton() {
+  const themeButton = document.getElementById('themeButton');
+  if (themeButton && themes[currentTheme]) {
+    // Button text remains as icon, but we could show theme name if needed
+  }
+}
 
 /**
  * Initializes theme on page load
  */
 window.initTheme = function () {
   window.applyTheme(currentTheme);
+  // Update dropdown styles after theme is applied
+  setTimeout(updateThemeDropdownStyles, 100);
+
+  // Initialize theme button and dropdown
+  initThemeDropdown();
 };
+
+/**
+ * Initializes theme dropdown functionality
+ */
+function initThemeDropdown() {
+  const themeButton = document.getElementById('themeButton');
+  const themeDropdown = document.getElementById('themeDropdown');
+  const themeOptions = document.querySelectorAll('.theme-option');
+
+  if (!themeButton || !themeDropdown) return;
+
+  // Toggle dropdown on button click
+  themeButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isExpanded = themeButton.getAttribute('aria-expanded') === 'true';
+    themeButton.setAttribute('aria-expanded', !isExpanded);
+    if (isExpanded) {
+      themeDropdown.classList.add('hidden');
+    } else {
+      themeDropdown.classList.remove('hidden');
+    }
+  });
+
+  // Handle theme selection
+  themeOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      const themeName = option.dataset.theme;
+      if (themeName) {
+        window.applyTheme(themeName);
+        // Update dropdown styles after theme change with delay to ensure CSS variables are applied
+        setTimeout(() => {
+          updateThemeDropdownStyles();
+        }, 150);
+        themeDropdown.classList.add('hidden');
+        themeButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  // Close dropdown when clicking outside (cross-platform compatible)
+  document.addEventListener('click', (e) => {
+    const target = e.target || e.srcElement; // Fallback for older browsers
+    if (target && !themeButton.contains(target) && !themeDropdown.contains(target)) {
+      themeDropdown.classList.add('hidden');
+      themeButton.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Close dropdown on Escape key (accessibility)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+      themeDropdown.classList.add('hidden');
+      themeButton.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Mark current theme in dropdown
+  updateThemeDropdownStyles();
+
+  // Initialize mobile theme dropdown if it exists
+  const themeButtonMobile = document.getElementById('themeButtonMobile');
+  const themeDropdownMobile = document.getElementById('themeDropdownMobile');
+  const themeOptionsMobile = themeDropdownMobile?.querySelectorAll('.theme-option');
+
+  if (themeButtonMobile && themeDropdownMobile) {
+    // Helper function to toggle button visibility
+    const toggleMobileButton = (show) => {
+      if (show) {
+        themeButtonMobile.style.opacity = '1';
+        themeButtonMobile.style.visibility = 'visible';
+        themeButtonMobile.style.height = 'auto';
+        themeButtonMobile.style.minHeight = '28px';
+        themeButtonMobile.style.padding = '4px 8px';
+        themeButtonMobile.style.margin = '0';
+        themeButtonMobile.style.border = '';
+        themeButtonMobile.style.overflow = '';
+      } else {
+        themeButtonMobile.style.opacity = '0';
+        themeButtonMobile.style.visibility = 'hidden';
+        themeButtonMobile.style.height = '0';
+        themeButtonMobile.style.minHeight = '0';
+        themeButtonMobile.style.padding = '0';
+        themeButtonMobile.style.margin = '0';
+        themeButtonMobile.style.border = 'none';
+        themeButtonMobile.style.overflow = 'hidden';
+      }
+    };
+
+    // Initialize button visibility (should be visible by default)
+    toggleMobileButton(true);
+
+    // Toggle dropdown on button click
+    themeButtonMobile.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isExpanded = themeButtonMobile.getAttribute('aria-expanded') === 'true';
+      themeButtonMobile.setAttribute('aria-expanded', !isExpanded);
+      if (isExpanded) {
+        themeDropdownMobile.classList.add('hidden');
+        toggleMobileButton(true); // Show button when closing
+      } else {
+        themeDropdownMobile.classList.remove('hidden');
+        toggleMobileButton(false); // Hide button when opening
+      }
+    });
+
+    // Handle theme selection
+    if (themeOptionsMobile) {
+      themeOptionsMobile.forEach((option) => {
+        option.addEventListener('click', () => {
+          const themeName = option.dataset.theme;
+          if (themeName) {
+            window.applyTheme(themeName);
+            // Update dropdown styles after theme change
+            setTimeout(() => {
+              updateThemeDropdownStyles();
+            }, 150);
+            themeDropdownMobile.classList.add('hidden');
+            themeButtonMobile.setAttribute('aria-expanded', 'false');
+            // Show button again when closing dropdown
+            themeButtonMobile.style.opacity = '1';
+            themeButtonMobile.style.visibility = 'visible';
+            themeButtonMobile.style.height = 'auto';
+            themeButtonMobile.style.minHeight = '28px';
+            themeButtonMobile.style.padding = '4px 8px';
+            themeButtonMobile.style.margin = '0';
+            themeButtonMobile.style.border = '';
+            themeButtonMobile.style.overflow = '';
+            // Close mobile menu after theme selection
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            if (mobileMenu) {
+              mobileMenu.classList.add('hidden');
+              if (mobileMenuToggle) {
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+              }
+            }
+          }
+        });
+      });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const target = e.target || e.srcElement;
+      if (target && !themeButtonMobile.contains(target) && !themeDropdownMobile.contains(target)) {
+        themeDropdownMobile.classList.add('hidden');
+        themeButtonMobile.setAttribute('aria-expanded', 'false');
+        // Show button again when closing dropdown
+        themeButtonMobile.style.opacity = '1';
+        themeButtonMobile.style.visibility = 'visible';
+        themeButtonMobile.style.height = 'auto';
+        themeButtonMobile.style.minHeight = '28px';
+        themeButtonMobile.style.padding = '4px 8px';
+        themeButtonMobile.style.margin = '0';
+        themeButtonMobile.style.border = '';
+        themeButtonMobile.style.overflow = '';
+      }
+    });
+
+    // Close dropdown on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        if (!themeDropdownMobile.classList.contains('hidden')) {
+          themeDropdownMobile.classList.add('hidden');
+          themeButtonMobile.setAttribute('aria-expanded', 'false');
+          // Show button again when closing dropdown
+          themeButtonMobile.style.opacity = '1';
+          themeButtonMobile.style.visibility = 'visible';
+          themeButtonMobile.style.height = 'auto';
+          themeButtonMobile.style.minHeight = '28px';
+          themeButtonMobile.style.padding = '4px 8px';
+          themeButtonMobile.style.margin = '0';
+          themeButtonMobile.style.border = '';
+          themeButtonMobile.style.overflow = '';
+        }
+      }
+    });
+  }
+}
 
 /**
  * Gets available themes for dropdown

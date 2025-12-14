@@ -17,8 +17,7 @@ header {
   position: relative;
   transition: all 0.3s ease;
   background: var(--header-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
-  padding: 20px;
-  padding-top: 70px;
+  padding: 40px 20px 25px;
   border-radius: 20px;
   box-shadow: var(
     --shadow-lg,
@@ -27,21 +26,45 @@ header {
   );
   overflow: visible;
   min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-title-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.header-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: var(--header-text, white);
+  stroke: currentColor;
 }
 
 header h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
+  font-size: 2.2rem;
+  margin: 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   color: var(--header-text, white);
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .subtitle {
-  font-size: 1.2rem;
+  font-size: 1rem;
   opacity: 0.95;
   color: var(--header-text, white);
   font-weight: 500;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .header-top {
@@ -49,12 +72,29 @@ header h1 {
   top: 10px;
   right: 10px;
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
+  align-items: flex-end;
   z-index: 10;
-  flex-wrap: wrap;
   max-width: calc(100% - 20px);
   justify-content: flex-end;
+}
+
+.header-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+/* Desktop controls - visible by default */
+.desktop-controls {
+  display: flex;
+}
+
+/* Mobile menu toggle - hidden by default */
+.mobile-menu-toggle {
+  display: none;
 }
 
 .input-section {

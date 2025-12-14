@@ -24,11 +24,11 @@
 
 .option-group-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 12px;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .option-group-header h4 {
@@ -76,7 +76,7 @@
 /* Radio Buttons */
 .radio-group {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -121,12 +121,20 @@
     font-size: 0.85rem;
   }
 
+  .option-group-header {
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+
   .radio-group {
-    width: 100%;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
   }
 
   .radio-label {
-    flex: 1;
-    justify-content: center;
+    flex: 0 0 auto;
+    justify-content: flex-start;
   }
 }

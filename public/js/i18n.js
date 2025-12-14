@@ -276,4 +276,42 @@ function updateUI() {
 function initLanguage() {
   const savedLanguage = localStorage.getItem('language') || 'en';
   setLanguage(savedLanguage);
+
+  // Setup language toggle (desktop)
+  const languageToggle = document.getElementById('languageToggle');
+  if (languageToggle) {
+    // Set initial state based on saved language
+    languageToggle.checked = savedLanguage === 'es';
+
+    // Handle toggle change
+    languageToggle.addEventListener('change', (e) => {
+      const newLang = e.target.checked ? 'es' : 'en';
+      setLanguage(newLang);
+      // Sync with mobile toggle
+      const languageToggleMobile = document.getElementById('languageToggleMobile');
+      if (languageToggleMobile) {
+        languageToggleMobile.checked = e.target.checked;
+      }
+    });
+  }
+
+  // Setup language toggle (mobile)
+  const languageToggleMobile = document.getElementById('languageToggleMobile');
+  if (languageToggleMobile) {
+    // Set initial state based on saved language
+    languageToggleMobile.checked = savedLanguage === 'es';
+
+    // Handle toggle change
+    languageToggleMobile.addEventListener('change', (e) => {
+      const newLang = e.target.checked ? 'es' : 'en';
+      setLanguage(newLang);
+      // Sync with desktop toggle
+      if (languageToggle) {
+        languageToggle.checked = e.target.checked;
+      }
+    });
+  }
 }
+
+// Make setLanguage available globally
+window.setLanguage = setLanguage;

@@ -223,7 +223,7 @@
 .result-section h2 .count {
   margin-left: auto;
   background: var(--primary-color);
-  color: white;
+  color: var(--button-text-color, #ffffff);
   padding: 5px 15px;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -431,7 +431,7 @@
   margin-top: 8px;
   padding: 6px 12px;
   background: var(--primary-color);
-  color: white;
+  color: var(--button-text-color, #ffffff);
   border: none;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -441,6 +441,7 @@
 
 .code-toggle:hover {
   background: var(--primary-hover);
+  color: var(--button-text-color, #ffffff);
 }
 
 .url-text {
@@ -457,7 +458,7 @@
   display: inline-block;
   padding: 4px 10px;
   background: var(--danger-color);
-  color: white;
+  color: var(--danger-text-color, #ffffff);
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
