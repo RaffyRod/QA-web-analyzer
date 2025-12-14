@@ -343,6 +343,26 @@ ISC
 
 Para problemas o preguntas, por favor abre un issue en GitHub.
 
+## 📜 Créditos y Atribución
+
+Este proyecto fue desarrollado y mantenido por **Raffy Rodriguez** (2025).
+
+### Agradecimientos
+
+Este proyecto utiliza las siguientes bibliotecas y herramientas de código abierto:
+
+- **Playwright** - Automatización y pruebas de navegador
+- **Express** - Framework web para Node.js
+- **TypeScript** - JavaScript con tipos
+- **jsPDF** - Biblioteca de generación de PDF
+- **Prettier** - Formateador de código
+- **Husky** - Git hooks
+- **lint-staged** - Ejecutar linters en archivos staged
+
+Para una lista completa de dependencias, ver `package.json`.
+
+Construido con tecnologías web modernas y mejores prácticas, siguiendo los estándares de accesibilidad WCAG 2.2 AA.
+
 ---
 
 **Hecho con ❤️ para mejor accesibilidad web**

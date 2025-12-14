@@ -343,6 +343,26 @@ Contributions are welcome! Please:
 
 For issues or questions, please open an issue on GitHub.
 
+## 📜 Credits & Attribution
+
+This project was developed and maintained by **Raffy Rodriguez** (2025).
+
+### Acknowledgments
+
+This project uses the following open-source libraries and tools:
+
+- **Playwright** - Browser automation and testing
+- **Express** - Web framework for Node.js
+- **TypeScript** - Type-safe JavaScript
+- **jsPDF** - PDF generation library
+- **Prettier** - Code formatter
+- **Husky** - Git hooks
+- **lint-staged** - Run linters on staged files
+
+For a complete list of dependencies, see `package.json`.
+
+Built with modern web technologies and best practices, following WCAG 2.2 AA accessibility standards.
+
 ---
 
 **Made with ❤️ for better web accessibility**
