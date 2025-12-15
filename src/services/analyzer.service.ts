@@ -190,28 +190,82 @@ export class AnalyzerService {
         if (opts.checkImages) {
           document.querySelectorAll('img').forEach((img: HTMLImageElement, i: number) => {
             const altAttribute = img.getAttribute('alt');
-            const hasAlt = altAttribute !== null && altAttribute.trim() !== '';
+            const ariaLabel = img.getAttribute('aria-label');
+            const ariaLabelledby = img.getAttribute('aria-labelledby');
             const hasFocusState = opts.checkFocusStates ? checkFocusState(img) : true;
             const outerHTML = img.outerHTML;
             const selector = generateSelector(img);
 
+            // According to WCAG 2.2 AA, images can have alternative text via:
+            // 1. alt attribute (preferred)
+            // 2. aria-label
+            // 3. aria-labelledby
+            const hasAlt = altAttribute !== null && altAttribute.trim() !== '';
+            const hasAriaLabel = ariaLabel !== null && ariaLabel.trim() !== '';
+            const hasAriaLabelledby = ariaLabelledby !== null && ariaLabelledby.trim() !== '';
+            const hasAlternativeText = hasAlt || hasAriaLabel || hasAriaLabelledby;
+
             const missingAttributes: string[] = [];
+
+            // Check alt text (if option is enabled)
             if (opts.checkAltText) {
-              if (altAttribute === null) {
-                missingAttributes.push('alt (attribute missing)');
-              } else if (altAttribute.trim() === '') {
+              if (!hasAlternativeText) {
+                // No alternative text at all
+                missingAttributes.push('alt (missing - use alt, aria-label, or aria-labelledby)');
+              } else if (!hasAlt && (hasAriaLabel || hasAriaLabelledby)) {
+                // Has aria-label or aria-labelledby but no alt (warning, not error)
+                // This is valid per WCAG but alt is preferred
+                if (hasAriaLabel) {
+                  missingAttributes.push(
+                    'alt (missing - aria-label present, but alt is preferred)'
+                  );
+                } else if (hasAriaLabelledby) {
+                  missingAttributes.push(
+                    'alt (missing - aria-labelledby present, but alt is preferred)'
+                  );
+                }
+              } else if (altAttribute !== null && altAttribute.trim() === '') {
                 missingAttributes.push('alt (empty - consider if image is decorative)');
               }
             }
+
+            // Check aria-label (if option is enabled)
+            // According to WCAG: if image has alt, aria-label is not required
+            // aria-label is only required if alt is missing
+            if (opts.checkAriaLabel) {
+              if (!hasAlt && !hasAriaLabel && !hasAriaLabelledby) {
+                // No alternative text at all - aria-label would be one valid option
+                missingAttributes.push(
+                  'aria-label (missing - no alternative text found, use alt or aria-label)'
+                );
+              } else if (!hasAlt && !hasAriaLabel && hasAriaLabelledby) {
+                // Has aria-labelledby but no alt or aria-label - alt is preferred but aria-label would also work
+                // This is valid per WCAG, but we note that alt is preferred
+              }
+            }
+
+            // Check aria-labelledby (if option is enabled)
+            // According to WCAG: if image has alt, aria-labelledby is not required
+            if (opts.checkAriaLabelledby) {
+              if (!hasAlt && !hasAriaLabelledby && !hasAriaLabel) {
+                // No alternative text at all - aria-labelledby would be one valid option
+                missingAttributes.push(
+                  'aria-labelledby (missing - no alternative text found, use alt or aria-labelledby)'
+                );
+              }
+            }
+
             if (!hasFocusState && opts.checkFocusStates) missingAttributes.push('focus-state');
 
-            const hasAccessibility = missingAttributes.length === 0 && hasAlt;
+            const hasAccessibility = missingAttributes.length === 0 && hasAlternativeText;
 
             analysis.images.push({
               index: i + 1,
               src: img.src,
               alt: img.alt || null,
-              hasAlt,
+              ariaLabel: ariaLabel || null,
+              ariaLabelledby: ariaLabelledby || null,
+              hasAlt: hasAlternativeText, // Updated to reflect any alternative text method
               hasFocusState,
               hasAccessibility,
               outerHTML,
@@ -220,7 +274,10 @@ export class AnalyzerService {
             });
 
             analysis.summary.totalImages++;
-            if (!hasAlt && opts.checkAltText) {
+            if (
+              !hasAlternativeText &&
+              (opts.checkAltText || opts.checkAriaLabel || opts.checkAriaLabelledby)
+            ) {
               analysis.summary.imagesWithoutAlt++;
             }
             if (!hasFocusState && opts.checkFocusStates) {
@@ -244,9 +301,9 @@ export class AnalyzerService {
 
             const missingAttributes: string[] = [];
 
-            // Validate href attribute - links must have href
+            // Validate href attribute - only if checkHref is enabled
             const href = link.getAttribute('href');
-            if (!href || href.trim() === '' || href === '#') {
+            if (opts.checkHref && (!href || href.trim() === '' || href === '#')) {
               missingAttributes.push('href (missing or empty)');
             }
 

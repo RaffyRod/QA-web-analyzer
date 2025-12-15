@@ -22,14 +22,17 @@
           <div class="wcag-item">
             <strong>Alt Text</strong>
             <p>All images must have descriptive <strong>alt</strong> attributes. Decorative images should use <strong>alt=""</strong>.</p>
+            <p class="wcag-note"><strong>For Images:</strong> According to WCAG 2.2 AA, images must have alternative text via <strong>alt</strong> (preferred), <strong>aria-label</strong>, or <strong>aria-labelledby</strong>. If an image has <strong>alt</strong>, <strong>aria-label</strong> is not required. If no <strong>alt</strong> is present, the image must have either <strong>aria-label</strong> or <strong>aria-labelledby</strong>.</p>
           </div>
           <div class="wcag-item">
             <strong>aria-label</strong>
             <p>Provides an accessible name for elements that don't have visible text labels.</p>
+            <p class="wcag-note"><strong>For Images:</strong> <strong>aria-label</strong> can be used as alternative text for images, but <strong>alt</strong> is the preferred method. If an image has <strong>alt</strong>, <strong>aria-label</strong> is not required. Only mark as missing if the image has no <strong>alt</strong> and no <strong>aria-label</strong>.</p>
           </div>
           <div class="wcag-item">
             <strong>aria-labelledby</strong>
             <p>References another element that provides the accessible name.</p>
+            <p class="wcag-note"><strong>For Images:</strong> <strong>aria-labelledby</strong> can be used as alternative text for images, but <strong>alt</strong> is the preferred method. If an image has <strong>alt</strong>, <strong>aria-labelledby</strong> is not required.</p>
           </div>
           <div class="wcag-item">
             <strong>aria-describedby</strong>

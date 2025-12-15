@@ -3,7 +3,7 @@ import cors from 'cors';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { AnalyzerService } from './services/analyzer.service.js';
-import { findAvailablePort } from './utils/port-finder.util.js';
+import { findAvailablePort, isPortAvailable } from './utils/port-finder.util.js';
 import type { AnalyzeRequest, AnalysisOptions } from './types/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -47,7 +47,9 @@ app.post('/api/analyze', async (req: Request<{}, {}, AnalyzeRequest>, res: Respo
   }
 
   if (typeof url !== 'string' || (!url.startsWith('http://') && !url.startsWith('https://'))) {
-    return res.status(400).json({ error: 'Invalid URL format. Must start with http:// or https://' });
+    return res
+      .status(400)
+      .json({ error: 'Invalid URL format. Must start with http:// or https://' });
   }
 
   const analysisOptions: AnalysisOptions = {
@@ -68,8 +70,40 @@ app.post('/api/analyze', async (req: Request<{}, {}, AnalyzeRequest>, res: Respo
   }
 });
 
+/**
+ * Finds an available port with priority strategy:
+ * 1. Try ports 3002-3005 first (avoiding 3000 and 3001)
+ * 2. If those 4 ports are occupied, fall back to 3000 or 3001 if available
+ * 3. If all are occupied, find any available port starting from 3000
+ * @returns Promise resolving to an available port number
+ */
+const findPortWithPriority = async (): Promise<number> => {
+  // First, try alternative ports (3002-3005) to avoid 3000 and 3001
+  const alternativePorts = [3002, 3003, 3004, 3005];
+
+  for (const port of alternativePorts) {
+    const isAvailable = await isPortAvailable(port);
+    if (isAvailable) {
+      return port;
+    }
+  }
+
+  // If all 4 alternative ports are occupied, try 3000 and 3001 as fallback
+  const fallbackPorts = [3000, 3001];
+
+  for (const port of fallbackPorts) {
+    const isAvailable = await isPortAvailable(port);
+    if (isAvailable) {
+      return port;
+    }
+  }
+
+  // If all preferred ports are occupied, find any available port starting from 3000
+  return await findAvailablePort(3000);
+};
+
 const startServer = async (): Promise<void> => {
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : await findAvailablePort(3000);
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : await findPortWithPriority();
 
   app.listen(PORT, () => {
     console.log(`QA Web Analyzer server running on http://localhost:${PORT}`);
@@ -80,4 +114,3 @@ startServer().catch((error) => {
   console.error('Failed to start server:', error);
   process.exit(1);
 });
-

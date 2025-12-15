@@ -2,30 +2,19 @@
   <div class="container">
     <Header />
     <AnalysisForm />
-    <Suspense v-if="hasResults">
-      <template #default>
-        <Results :data="resultsData" />
-      </template>
-      <template #fallback>
-        <div class="loading">Loading results...</div>
-      </template>
-    </Suspense>
+    <Results v-if="hasResults" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Suspense, defineAsyncComponent } from 'vue'
 import Header from './components/Header/Header.vue'
 import AnalysisForm from './components/AnalysisForm/AnalysisForm.vue'
+import Results from './components/Results/Results.vue'
 import { useAnalysisStore } from './stores/analysis'
-
-// Lazy load Results component
-const Results = defineAsyncComponent(() => import('./components/Results/Results.vue'))
 
 const analysisStore = useAnalysisStore()
 const hasResults = computed(() => !!analysisStore.results)
-const resultsData = computed(() => analysisStore.results)
 </script>
 
 <style scoped>

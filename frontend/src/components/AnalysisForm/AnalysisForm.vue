@@ -10,11 +10,20 @@
       />
       <div class="button-group">
         <button
+          v-if="!isLoading"
           class="btn-primary"
-          :disabled="isLoading || !url.trim()"
+          :disabled="!url.trim()"
           @click="handleAnalyze"
         >
-          {{ isLoading ? t('analyzing') : t('analyzeBtn') }}
+          {{ t('analyzeBtn') }}
+        </button>
+        <button
+          v-else
+          id="stopBtn"
+          class="btn-stop"
+          @click="handleStop"
+        >
+          {{ t('stop') }}
         </button>
         <button
           id="wcagInfoToggle"
@@ -30,6 +39,13 @@
           </svg>
         </button>
       </div>
+    </div>
+    <div v-if="error" class="error">
+      {{ error }}
+    </div>
+    <div v-if="isLoading" class="loading">
+      <div class="spinner"></div>
+      <span>{{ t('analyzing') }}</span>
     </div>
     <OptionsPanel />
     <WcagInfoModal />
@@ -48,6 +64,7 @@ const languageStore = useLanguageStore()
 const { t } = languageStore
 const url = ref('')
 const isLoading = computed(() => analysisStore.isLoading)
+const error = computed(() => analysisStore.error)
 const wcagModalOpen = ref(false)
 
 function toggleWcagModal() {
@@ -68,6 +85,10 @@ async function handleAnalyze() {
   }
 
   await analysisStore.analyze(url.value)
+}
+
+function handleStop() {
+  analysisStore.stop()
 }
 </script>
 

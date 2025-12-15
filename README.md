@@ -2,9 +2,29 @@
 
 > **Professional accessibility analysis tool** for web pages. Built with TypeScript following best practices.
 
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)
-![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat&logo=playwright&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat-square&logo=playwright&logoColor=white)
+
+---
+
+## ⚡ Quick Run (TL;DR)
+
+**Want to run it now?** Use a single command to start both servers:
+
+```bash
+# Install dependencies and build (first time only)
+pnpm install && pnpm build && cd frontend && npm install && cd ..
+
+# Start both backend and frontend in one terminal
+pnpm start:all
+```
+
+Then open **http://localhost:5173** in your browser! 🚀
+
+> 📖 For detailed setup instructions, see [Quick Start section](#-quick-start---run-locally) below.
+
+---
 
 ## 🎯 What is this?
 
@@ -16,52 +36,139 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - 🎛️ **Configurable Options**: Select exactly what you want to analyze
 - 📊 **Detailed Reports**: See HTML code, screenshots, and missing attributes
 - 🎨 **15+ Visual Themes**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk, and more
-- 📄 **Professional PDF Export**: Generate elegant PDF reports with neomorphism design
+- 📄 **Professional PDF Export**: Generate elegant PDF reports with customizable options (Design 12: Highlight Rows + Design 13: Icon Badges)
+- 🎛️ **Export Modal**: Select which elements and statuses to include in PDF reports
 - 🌍 **Multi-language**: English and Spanish support
 - 🎯 **Smart Filtering**: Filter by missing or present attributes
 - 📸 **Visual Feedback**: Screenshots of problematic elements
 - 📱 **Fully Responsive**: Optimized for smartphones, tablets, and desktop
-- 🎭 **WCAG Information Modal**: Quick reference guide for accessibility standards
+- 🎭 **WCAG Information Modal**: Quick reference guide for accessibility standards with detailed rules for images and `aria-label` according to WCAG 2.2 AA
 
-## 🚀 Quick Start
+## 🚀 Quick Start - Run Locally
+
+### ⚡ Fast Setup (Recommended)
+
+**Option 1: Start Both Servers with One Command (Easiest)**
 
 ```bash
-# 1. Install backend dependencies
-pnpm install
+# First time: Install dependencies and build
+pnpm install && pnpm build && cd frontend && npm install && cd ..
 
-# 2. Install frontend dependencies
-cd frontend
-npm install
-cd ..
+# Then start both servers in one terminal
+pnpm start:all
+```
 
-# 3. Build backend TypeScript
-pnpm build
+This will start:
 
-# 4. Start development (backend + frontend)
-# Terminal 1: Backend server
-pnpm start
+- ✅ Backend server (Express API)
+- ✅ Frontend dev server (Vite)
 
-# Terminal 2: Frontend dev server
+Both servers run in the same terminal with colored output! 🎨
+
+---
+
+**Option 2: Using the startup script (backend only)**
+
+```bash
+# Windows
+node start.js
+
+# Or use the batch file
+start.bat
+
+# Unix/Linux/Mac
+./start.sh
+```
+
+This script will:
+
+- ✅ Automatically install dependencies if needed
+- ✅ Build the TypeScript backend
+- ✅ Start the backend server
+
+Then in a **separate terminal**, start the frontend:
+
+```bash
 cd frontend
 npm run dev
 ```
 
-### 📍 Access the Application
+---
 
-- **Frontend (Vue)**: http://localhost:5173 (Vite dev server)
-- **Backend API**: http://localhost:3000 (Express server)
+### 📋 Manual Setup (Step by Step)
 
-The frontend automatically proxies API requests to the backend.
+**Step 1: Install Backend Dependencies**
 
-### 📍 Access the Application
-
-After starting, you'll see:
-
-```
-QA Web Analyzer server running on http://localhost:3000
+```bash
+pnpm install
 ```
 
-Open that URL in your browser! 🌐
+**Step 2: Install Frontend Dependencies**
+
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+**Step 3: Build Backend TypeScript**
+
+```bash
+pnpm build
+```
+
+**Step 4: Start the Application**
+
+You need **two terminals** running simultaneously:
+
+**Terminal 1 - Backend Server:**
+
+```bash
+pnpm start
+```
+
+**Terminal 2 - Frontend Dev Server:**
+
+```bash
+cd frontend
+npm run dev
+```
+
+---
+
+### 🌐 Access the Application
+
+Once both servers are running:
+
+| Service                | URL                   | Description                |
+| ---------------------- | --------------------- | -------------------------- |
+| **Frontend (Vue App)** | http://localhost:5173 | Main application interface |
+| **Backend API**        | http://localhost:3000 | Express API server         |
+
+> 💡 **Note**: The frontend automatically proxies API requests to the backend, so you only need to open http://localhost:5173 in your browser.
+
+---
+
+### ✅ Verify Installation
+
+After starting, you should see:
+
+**Backend Terminal:**
+
+```
+✅ QA Web Analyzer server running on http://localhost:3000
+```
+
+**Frontend Terminal:**
+
+```
+  VITE v5.x.x  ready in xxx ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+```
+
+Open **http://localhost:5173** in your browser! 🎉
 
 ## 📖 How to Use
 
@@ -75,6 +182,7 @@ Open that URL in your browser! 🌐
 | 4. Analyze           | Click the "Analyze" button to start the analysis                                         |
 | 5. Review Report     | Examine the results: • Summary cards • Detailed element analysis • Screenshots of issues |
 | 6. Filter & Export   | Use filters to show missing/present attributes and export as PDF                         |
+| 7. Export PDF        | Click "Export PDF" → Select elements/statuses to include → Generate report               |
 
 ### 🎛️ Configuration Options
 
@@ -88,9 +196,9 @@ Open that URL in your browser! 🌐
 
 #### Attributes to Check
 
-- **Alt Text**: For images
-- **aria-label**: Accessible name
-- **aria-labelledby**: Reference to label
+- **Alt Text**: For images (WCAG 2.2 AA requirement)
+- **aria-label**: Accessible name (for images: only required if no `alt` is present)
+- **aria-labelledby**: Reference to label (for images: only required if no `alt` is present)
 - **aria-describedby**: Additional description
 - **aria-hidden**: Misuse detection
 - **aria-expanded**: For expandable elements
@@ -103,6 +211,7 @@ Open that URL in your browser! 🌐
 - **Labels**: `<label>` elements for inputs
 - **Title**: Title attribute
 - **Focus States**: WCAG 2.2 AA compliance
+- **href**: Link destination validation (only validates if selected)
 
 #### Selection Controls
 
@@ -143,32 +252,66 @@ qa-web-analyzer/
 │   │   ├── 📁 components/    # Vue components
 │   │   │   ├── Header/       # Header with language & theme
 │   │   │   ├── AnalysisForm/ # Analysis form & options
-│   │   │   └── Results/      # Results display (lazy loaded)
-│   │   ├── 📁 stores/        # Pinia stores
+│   │   │   ├── Results/      # Results display (lazy loaded)
+│   │   │   ├── ExportModal.vue # PDF export modal
+│   │   │   └── WcagInfoModal.vue # WCAG information modal
+│   │   ├── 📁 stores/        # Pinia stores (state management)
 │   │   │   ├── analysis.ts  # Analysis state management
 │   │   │   ├── theme.ts      # Theme management
 │   │   │   └── language.ts   # i18n management
-│   │   ├── 📁 assets/        # Static assets
+│   │   ├── 📁 utils/         # Utility functions
+│   │   │   ├── export.ts    # PDF export logic
+│   │   │   ├── html.ts      # HTML utilities
+│   │   │   └── themes.ts    # Theme utilities
+│   │   ├── 📁 assets/        # Static assets (CSS imports)
+│   │   │   └── main.css     # Main CSS entry point
 │   │   ├── App.vue           # Root component
 │   │   └── main.ts           # Application entry point
-│   ├── 📁 public/            # Public assets
-│   │   └── 📁 css/           # CSS files (shared with legacy)
+│   ├── 📁 public/            # Public assets (Vite static files)
+│   │   └── favicon.svg       # Application favicon
+│   ├── 📁 tests/             # Frontend unit tests
+│   │   ├── stores/          # Store tests
+│   │   └── utils/           # Utility tests
 │   ├── vite.config.ts        # Vite configuration
+│   ├── vitest.config.ts      # Vitest test configuration
 │   ├── tsconfig.json         # TypeScript config
 │   └── package.json          # Frontend dependencies
 │
-├── 📁 public/                 # Legacy frontend (being migrated)
-│   ├── index.html            # Legacy HTML
-│   ├── 📁 css/               # Modular CSS architecture
-│   └── 📁 js/                # Legacy JavaScript modules
+├── 📁 public/                 # Shared public directory (served by Express)
+│   ├── index.html            # Legacy HTML (fallback)
+│   ├── 📁 css/               # Modular CSS architecture (shared)
+│   │   ├── variables.css    # CSS variables and theme colors
+│   │   ├── base.css         # Base styles and reset
+│   │   ├── layout.css       # Layout components
+│   │   ├── components.css   # UI components (buttons, inputs)
+│   │   ├── options.css      # Analysis options styles
+│   │   ├── modal.css        # Modal styles
+│   │   ├── results.css      # Results display styles
+│   │   └── responsive.css   # Responsive design rules
+│   ├── 📁 js/                # Legacy JavaScript modules
+│   │   ├── app.js           # Main application logic
+│   │   ├── export.js        # PDF export functionality
+│   │   ├── themes.js        # Theme management
+│   │   └── i18n.js          # Internationalization
+│   ├── 📁 assets/            # Vite build output (auto-generated)
+│   └── favicon.svg           # Application favicon
 │
-├── 📁 dist/                  # Compiled JavaScript (auto-generated)
+├── 📁 dist/                  # Backend compiled JavaScript (auto-generated)
 │
-├── 📄 package.json           # Backend dependencies
-├── 📄 tsconfig.json          # TypeScript config
+├── 📁 tests/                  # Backend unit tests
+│   ├── services/            # Service tests
+│   └── utils/               # Utility tests
+│
+├── 📄 package.json           # Backend dependencies and scripts
+├── 📄 tsconfig.json          # Backend TypeScript config
+├── 📄 vitest.config.ts       # Backend test configuration
 ├── 📄 .gitignore            # Git ignore rules
 ├── 📄 .prettierrc.json      # Prettier configuration
 ├── 📄 .lintstagedrc.json     # lint-staged configuration
+├── 📄 .env.example          # Environment variables template
+├── 📄 start.js              # Startup script (auto-install & build)
+├── 📄 start.bat              # Windows startup script
+├── 📄 start.sh               # Unix startup script
 ├── 📄 README.md             # This file
 └── 📄 README.es.md          # Spanish README
 ```
@@ -192,8 +335,34 @@ qa-web-analyzer/
 - **CSS3** - Modular styling with CSS variables, neomorphism, and responsive design
 - **Lazy Loading** - Code splitting and async component loading
 - **jsPDF** - PDF generation with custom table rendering (lazy loaded)
+- **Export Modal** - Vue component with theme adaptation (Design 10: Dark Mode Style)
 
 ## 📝 Available Scripts
+
+### 🚀 Quick Commands to Run Locally
+
+**⭐ Start Both Servers in One Terminal (Recommended):**
+
+```bash
+pnpm start:all
+```
+
+**Or start them separately:**
+
+**Backend Server:**
+
+```bash
+pnpm start
+```
+
+**Frontend Dev Server (in a separate terminal):**
+
+```bash
+cd frontend
+npm run dev
+```
+
+---
 
 ### Backend Scripts
 
@@ -202,7 +371,9 @@ qa-web-analyzer/
 | `pnpm install`      | 📦 Install backend dependencies     |
 | `pnpm build`        | 🔨 Compile TypeScript to JavaScript |
 | `pnpm start`        | ▶️ Start production server          |
+| `pnpm start:all`    | 🚀 **Start backend + frontend** ⭐  |
 | `pnpm dev`          | 🔄 Start with auto-reload           |
+| `pnpm dev:all`      | 🔄 Start backend + frontend (watch) |
 | `pnpm type-check`   | ✅ Check types without compiling    |
 | `pnpm format`       | 🎨 Format all files with Prettier   |
 | `pnpm format:check` | 🔍 Check code formatting            |
@@ -210,12 +381,25 @@ qa-web-analyzer/
 
 ### Frontend Scripts
 
-| Command                          | Description                            |
-| -------------------------------- | -------------------------------------- |
-| `cd frontend && npm install`     | 📦 Install frontend dependencies       |
-| `cd frontend && npm run dev`     | 🚀 Start Vite dev server (HMR enabled) |
-| `cd frontend && npm run build`   | 🔨 Build for production                |
-| `cd frontend && npm run preview` | 👀 Preview production build            |
+| Command                          | Description                      |
+| -------------------------------- | -------------------------------- |
+| `cd frontend && npm install`     | 📦 Install frontend dependencies |
+| `cd frontend && npm run dev`     | 🚀 **Start Vite dev server** ⭐  |
+| `cd frontend && npm run build`   | 🔨 Build for production          |
+| `cd frontend && npm run preview` | 👀 Preview production build      |
+
+### Testing Scripts
+
+| Command                                | Description                              |
+| -------------------------------------- | ---------------------------------------- |
+| `npm test`                             | 🧪 Run all backend tests                 |
+| `npm run test:watch`                   | 👀 Run backend tests in watch mode       |
+| `npm run test:ui`                      | 🎨 Run backend tests with UI             |
+| `npm run test:coverage`                | 📊 Generate backend test coverage report |
+| `cd frontend && npm test`              | 🧪 Run all frontend tests                |
+| `cd frontend && npm run test:watch`    | 👀 Run frontend tests in watch mode      |
+| `cd frontend && npm run test:ui`       | 🎨 Run frontend tests with UI            |
+| `cd frontend && npm run test:coverage` | 📊 Generate frontend test coverage       |
 
 ## 🎨 Features in Detail
 
@@ -223,14 +407,14 @@ qa-web-analyzer/
 
 The tool verifies compliance with **WCAG 2.2 AA standards**:
 
-| Element        | Checks                                                                    |
-| -------------- | ------------------------------------------------------------------------- |
-| 🖼️ **Images**  | `alt` attribute (missing/empty detection)                                 |
-| 🔗 **Links**   | `aria-label`, `aria-labelledby`, `title`, text content, `href` validation |
-| 🔘 **Buttons** | `aria-label`, `aria-labelledby`, `aria-describedby`, text                 |
-| 📝 **Inputs**  | `aria-label`, `aria-labelledby`, `<label>`, `aria-required`               |
-| 🎭 **Roles**   | `aria-label`, `aria-labelledby` for custom roles                          |
-| 🎯 **All**     | Focus states, `tabindex` anti-patterns, `lang` attribute                  |
+| Element        | Checks                                                                                                                            |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 🖼️ **Images**  | `alt` attribute (preferred), `aria-label`, or `aria-labelledby` (WCAG 2.2 AA). If `alt` is present, `aria-label` is not required. |
+| 🔗 **Links**   | `aria-label`, `aria-labelledby`, `title`, text content, `href` validation (only if `href` checkbox is selected)                   |
+| 🔘 **Buttons** | `aria-label`, `aria-labelledby`, `aria-describedby`, text                                                                         |
+| 📝 **Inputs**  | `aria-label`, `aria-labelledby`, `<label>`, `aria-required`                                                                       |
+| 🎭 **Roles**   | `aria-label`, `aria-labelledby` for custom roles                                                                                  |
+| 🎯 **All**     | Focus states, `tabindex` anti-patterns, `lang` attribute                                                                          |
 
 ### 📊 Report Features
 
@@ -238,7 +422,13 @@ The tool verifies compliance with **WCAG 2.2 AA standards**:
 - 📸 **Screenshots**: Visual highlighting of problematic elements
 - 💻 **HTML Code**: Expandable code snippets for each element
 - 🔍 **Smart Filters**: Show only missing or present attributes
-- 📄 **PDF Export**: Professional reports with neomorphism design, tables, and images
+- 📄 **PDF Export**: Professional reports with customizable selection modal
+  - Select which elements to include (Images, Links, Buttons, Inputs, Roles)
+  - Choose status types (Passed, Failed)
+  - Additional options (Summary, Screenshots, HTML code)
+  - Pre-selected based on your analysis options
+  - Table design: Highlight Rows with Icon Badges (Design 12 + Design 13)
+  - **Smart Ordering**: Passed elements shown first, then Failed elements
 - 🎨 **15+ Themes**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk, Minimal, Ocean, Sunset, Forest, Monochrome, High Contrast, Rose, Amber, Teal
 - 🌍 **i18n**: English and Spanish support
 - 📱 **Responsive**: Fully optimized for mobile, tablet, and desktop
@@ -288,16 +478,94 @@ Switch languages using the language selector in the UI:
 - 🇺🇸 **English** (default)
 - 🇪🇸 **Español** - [Ver README en Español](./README.es.md)
 
+## 🧪 Testing
+
+The project includes comprehensive unit tests for both backend and frontend code.
+
+### Test Structure
+
+- **Backend Tests** (`tests/`): Unit tests for services and utilities
+  - `services/analyzer.service.test.ts` - Analyzer service tests
+  - `utils/port-finder.test.ts` - Port finder utility tests
+- **Frontend Tests** (`frontend/tests/`): Unit tests for Vue components and stores
+  - `stores/analysis.test.ts` - Analysis store tests
+  - `stores/language.test.ts` - Language/i18n store tests
+  - `stores/theme.test.ts` - Theme store tests
+  - `utils/html.test.ts` - HTML utility tests
+  - `utils/export.test.ts` - PDF export utility tests
+
+### Running Tests
+
+**Backend:**
+
+```bash
+npm test              # Run all tests
+npm run test:watch    # Watch mode
+npm run test:ui       # UI mode
+npm run test:coverage # Coverage report
+```
+
+**Frontend:**
+
+```bash
+cd frontend
+npm test              # Run all tests
+npm run test:watch    # Watch mode
+npm run test:ui       # UI mode
+npm run test:coverage # Coverage report
+```
+
+### Test Coverage
+
+Tests cover:
+
+- ✅ Utility functions (port-finder, html)
+- ✅ Service methods (analyzer.service)
+- ✅ Pinia stores (analysis, language, theme)
+- ✅ Export utilities
+
+See [tests/README.md](./tests/README.md) and [frontend/tests/README.md](./frontend/tests/README.md) for more details.
+
+### WCAG 2.2 AA Compliance Features
+
+The analyzer follows WCAG 2.2 AA standards strictly:
+
+- **Images**: Must have alternative text via `alt` (preferred), `aria-label`, or `aria-labelledby`. If `alt` is present, `aria-label` is not required.
+- **Links**: `href` validation is optional and only performed if the `href` checkbox is selected in "Attributes to Check".
+- **Smart Validation**: Attributes are only validated if explicitly selected, preventing false negatives.
+- **PDF Reports**: Elements are ordered with "Passed" items first, followed by "Failed" items for better readability.
+
 ## 📋 Prerequisites
 
 - **Node.js** v18 or higher
-- **pnpm** package manager
+- **pnpm** package manager (or npm)
+- **npm** (for frontend dependencies)
 
 Install pnpm:
 
 ```bash
 npm install -g pnpm
 ```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and configure as needed:
+
+```bash
+cp .env.example .env
+```
+
+Available environment variables:
+
+- `PORT` - Backend server port (default: 3000)
+- `NODE_ENV` - Environment mode (development/production)
+- `VITE_PORT` - Frontend dev server port (default: 5173)
+- `API_BASE_URL` - API base URL (default: http://localhost:3000)
+- `PLAYWRIGHT_BROWSER` - Browser for Playwright (chromium/firefox/webkit)
+- `PLAYWRIGHT_HEADLESS` - Run browser in headless mode (true/false)
+- `ANALYSIS_TIMEOUT` - Analysis timeout in milliseconds (default: 30000)
 
 ## 🔧 Development
 
@@ -344,9 +612,11 @@ Before each commit, the following checks run automatically:
 
 This ensures code quality and consistency. If checks fail, the commit is blocked.
 
-## 🎯 Best Practices
+## 🎯 Best Practices & Project Structure
 
-This project follows:
+This project follows industry best practices:
+
+### Code Organization
 
 - ✅ **TypeScript Strict Mode** - Fully typed codebase (backend + frontend)
 - ✅ **Component-Based Architecture** - Vue 3 components with Composition API
@@ -356,11 +626,37 @@ This project follows:
 - ✅ **SOLID Principles** - Single responsibility, modular design
 - ✅ **Accessibility First** - Tool itself is accessible
 - ✅ **Error Handling** - Robust error management
-- ✅ **Code Organization** - Scalable structure with modular CSS
+- ✅ **Modular CSS** - Organized by functionality (variables, base, components, layout, etc.)
+- ✅ **Separation of Concerns** - Backend (TypeScript/Express) and Frontend (Vue 3/Vite) clearly separated
+
+### Directory Structure Best Practices
+
+- **`src/`** - Backend source code (TypeScript)
+- **`frontend/src/`** - Frontend source code (Vue 3 + TypeScript)
+- **`public/`** - Shared static assets (CSS, legacy JS, build output)
+- **`dist/`** - Backend compiled output (auto-generated)
+- **`tests/`** - Backend unit tests
+- **`frontend/tests/`** - Frontend unit tests
+- **`frontend/public/`** - Vite static assets (favicon only, CSS removed to avoid duplication)
+
+### File Naming Conventions
+
+- **Components**: PascalCase (e.g., `Header.vue`, `AnalysisForm.vue`)
+- **Stores**: camelCase (e.g., `analysis.ts`, `theme.ts`)
+- **Utilities**: camelCase (e.g., `export.ts`, `html.ts`)
+- **Tests**: `*.test.ts` suffix
+- **Config files**: kebab-case (e.g., `vite.config.ts`, `tsconfig.json`)
+
+### Build & Deployment
+
+- **Backend**: TypeScript compiled to `dist/` directory
+- **Frontend**: Vite builds to `public/` directory (shared with legacy files)
+- **Assets**: Vite generates optimized chunks in `public/assets/` (gitignored)
+- **CSS**: Shared between legacy and Vue app from `public/css/`
 
 ## 🆕 Vue 3 Migration
 
-The frontend has been migrated to **Vue 3 + Vite + TypeScript** for:
+The frontend has been fully migrated to **Vue 3 + Vite + TypeScript** for:
 
 - ⚡ **Better Performance** - Smaller bundle size (~23% reduction)
 - 🔄 **Lazy Loading** - Components loaded on demand
@@ -368,22 +664,27 @@ The frontend has been migrated to **Vue 3 + Vite + TypeScript** for:
 - 🛠️ **Developer Experience** - Hot Module Replacement (HMR)
 - 📦 **Code Splitting** - Automatic chunk optimization
 - 🎨 **Modern Architecture** - Component-based with Pinia stores
+- 🎛️ **Export Modal** - Theme-adaptive modal with pre-selected options
+- 📄 **PDF Export** - Professional reports with customizable table design
 
 ### Migration Status
 
-- ✅ Project structure created
-- ✅ Core components migrated (Header, LanguageToggle, ThemeSelector)
-- ✅ Analysis form and options panel
-- ✅ Results component with lazy loading
-- ✅ State management (Pinia stores)
-- ✅ TypeScript configuration
-- ✅ Build system (Vite)
-- ⏳ Full feature migration (in progress)
-- ✅ **Internationalization** - Multi-language ready
+- ✅ **Project structure created** - Vue 3 + Vite + TypeScript setup
+- ✅ **Core components migrated** - Header, LanguageToggle, ThemeSelector
+- ✅ **Analysis form and options panel** - Full functionality with Vue components
+- ✅ **Results component** - Complete results display with lazy loading
+- ✅ **State management** - Pinia stores for analysis, theme, and language
+- ✅ **TypeScript configuration** - Full type safety across frontend
+- ✅ **Build system** - Vite with HMR and code splitting
+- ✅ **PDF Export** - Complete export functionality with modal selection
+- ✅ **Export Modal** - Design 10: Dark Mode Style, adapts to current theme
+- ✅ **PDF Table Design** - Design 12: Highlight Rows + Design 13: Icon Badges
+- ✅ **Internationalization** - Multi-language ready (English/Spanish)
 - ✅ **Code Formatting** - Prettier for consistent style
 - ✅ **Pre-commit Hooks** - Automated quality checks with Husky
 - ✅ **Responsive Design** - Mobile-first approach
 - ✅ **Modular Architecture** - CSS and JS organized by functionality
+- ✅ **Feature Complete** - All functionality migrated and working
 
 ## 📄 License
 

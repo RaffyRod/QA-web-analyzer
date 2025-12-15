@@ -237,6 +237,15 @@
           />
           <span>{{ t('focusStates') }}</span>
         </label>
+        <label>
+          <input
+            id="checkHref"
+            v-model="options.checkHref"
+            type="checkbox"
+            @change="updateOptions"
+          />
+          <span>{{ t('href') }}</span>
+        </label>
       </div>
     </div>
     </div>
@@ -277,7 +286,8 @@ const attributeCheckboxes = computed(() => [
   'checkLang',
   'checkLabels',
   'checkTitle',
-  'checkFocusStates'
+  'checkFocusStates',
+  'checkHref'
 ])
 
 const elementsAllSelected = computed(() => {

@@ -1,15 +1,49 @@
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Environment variables
 .env
-*.log
-.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
 dist/
 build/
 *.tsbuildinfo
-.cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testing
 coverage/
 .nyc_output/
+.vitest/
+
+# Cache
+.cache/
+.parcel-cache/
+.vite/
+
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite build artifacts (in public/assets)
+public/assets/
+!public/assets/.gitkeep

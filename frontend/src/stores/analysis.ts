@@ -38,6 +38,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
   const isLoading = ref(false);
   const results = ref<AnalysisResults | null>(null);
   const error = ref<string | null>(null);
+  let abortController: AbortController | null = null;
   const options = ref<AnalysisOptions>({
     checkImages: false,
     checkLinks: false,
@@ -63,6 +64,12 @@ export const useAnalysisStore = defineStore('analysis', () => {
   });
 
   async function analyze(url: string) {
+    // Cancel any ongoing analysis
+    if (abortController) {
+      abortController.abort();
+    }
+
+    abortController = new AbortController();
     isLoading.value = true;
     error.value = null;
 
@@ -73,6 +80,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ url, options: options.value }),
+        signal: abortController.signal,
       });
 
       if (!response.ok) {
@@ -81,12 +89,27 @@ export const useAnalysisStore = defineStore('analysis', () => {
       }
 
       const data = await response.json();
-      results.value = data;
+      results.value = {
+        ...data,
+        url: url,
+        analyzedAt: new Date().toISOString(),
+      };
     } catch (err: any) {
-      error.value = err.message || 'Failed to analyze page';
+      if (err.name === 'AbortError') {
+        error.value = 'Analysis cancelled';
+      } else {
+        error.value = err.message || 'Failed to analyze page';
+      }
       results.value = null;
     } finally {
       isLoading.value = false;
+      abortController = null;
+    }
+  }
+
+  function stop() {
+    if (abortController) {
+      abortController.abort();
     }
   }
 
@@ -105,6 +128,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
     error,
     options,
     analyze,
+    stop,
     updateOptions,
     reset,
   };

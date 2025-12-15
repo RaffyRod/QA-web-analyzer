@@ -1,9 +1,0 @@
-/* Main CSS - Imports all modules */
-@import url('./variables.css');
-@import url('./base.css');
-@import url('./layout.css');
-@import url('./components.css');
-@import url('./options.css');
-@import url('./modal.css');
-@import url('./results.css');
-@import url('./responsive.css');

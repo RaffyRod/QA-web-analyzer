@@ -19,12 +19,15 @@ export interface AnalysisOptions {
   checkLabels: boolean;
   checkTitle: boolean;
   checkFocusStates: boolean;
+  checkHref?: boolean;
 }
 
 export interface ImageElement {
   index: number;
   src: string;
   alt: string | null;
+  ariaLabel?: string | null;
+  ariaLabelledby?: string | null;
   hasAlt: boolean;
   hasFocusState: boolean;
   hasAccessibility: boolean;
@@ -151,4 +154,3 @@ export interface AnalyzeRequest {
   url: string;
   options: AnalysisOptions;
 }
-
