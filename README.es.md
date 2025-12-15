@@ -2,6 +2,8 @@
 
 > **Herramienta profesional de análisis de accesibilidad** para páginas web. Construida con TypeScript siguiendo las mejores prácticas.
 
+**Autor**: [RaffyRod](https://github.com/RaffyRod)
+
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat-square&logo=playwright&logoColor=white)
@@ -23,6 +25,28 @@ pnpm start:all
 **✨ Los servidores buscarán puertos libres automáticamente y mostrarán en consola las URLs exactas donde se desplegaron.**
 
 > 💡 **Nota**: El frontend automáticamente hace proxy de las peticiones API al backend. Solo necesitas abrir la URL del frontend que aparecerá en consola.
+
+### 🔄 **Detección Automática de Puertos**
+
+La aplicación utiliza **gestión inteligente de puertos**:
+
+- **Backend**: Busca automáticamente puertos disponibles en orden de prioridad (3002 → 3003 → 3004 → 3005 → 3000 → 3001 → cualquier disponible)
+- **Frontend**: Detecta automáticamente en qué puerto está corriendo el backend
+- **Proxy**: Se conecta dinámicamente al puerto correcto del backend
+- **Soporte Multi-Servidor**: Funciona perfectamente incluso si tienes otros servidores corriendo en esos puertos
+
+**Cómo funciona:**
+
+1. El backend verifica puertos en orden de prioridad y usa el primero disponible
+2. El frontend detecta automáticamente el puerto del backend probando puertos comunes
+3. Si el backend está en un puerto diferente, el frontend lo encontrará automáticamente
+4. ¡No se necesita configuración manual - simplemente funciona! 🎉
+
+**Si tienes otros servidores corriendo:**
+
+- El backend saltará los puertos ocupados y usará el siguiente disponible
+- El frontend encontrará automáticamente el backend correcto, incluso si está en un puerto diferente
+- Sin conflictos - cada servidor usa su propio puerto independientemente
 
 ---
 
@@ -240,27 +264,31 @@ npm run dev
 
 ### Scripts del Backend
 
-| Comando             | Descripción                                  |
-| ------------------- | -------------------------------------------- |
-| `pnpm install`      | 📦 Instalar dependencias                     |
-| `pnpm build`        | 🔨 Compilar TypeScript a JavaScript          |
-| `pnpm start`        | ▶️ Iniciar servidor de producción            |
-| `pnpm start:all`    | 🚀 **Iniciar backend + frontend** ⭐         |
-| `pnpm dev`          | 🔄 Iniciar con auto-recarga                  |
-| `pnpm dev:all`      | 🔄 Iniciar backend + frontend (watch)        |
-| `pnpm type-check`   | ✅ Verificar tipos sin compilar              |
-| `pnpm format`       | 🎨 Formatear todos los archivos con Prettier |
-| `pnpm format:check` | 🔍 Verificar formato del código              |
-| `pnpm lint`         | ✅ Verificar formato y tipos                 |
+| Comando             | Descripción                                       |
+| ------------------- | ------------------------------------------------- |
+| `pnpm install`      | 📦 Instalar dependencias                          |
+| `pnpm _build`       | 🔨 Compilar TypeScript a JavaScript (desactivado) |
+| `pnpm start`        | ▶️ Iniciar servidor de producción                 |
+| `pnpm start:all`    | 🚀 **Iniciar backend + frontend** ⭐              |
+| `pnpm dev`          | 🔄 Iniciar con auto-recarga                       |
+| `pnpm dev:all`      | 🔄 Iniciar backend + frontend (watch)             |
+| `pnpm type-check`   | ✅ Verificar tipos sin compilar                   |
+| `pnpm format`       | 🎨 Formatear todos los archivos con Prettier      |
+| `pnpm format:check` | 🔍 Verificar formato del código                   |
+| `pnpm lint`         | ✅ Verificar formato y tipos                      |
+
+> 💡 **Nota**: Los scripts de build de producción están desactivados (`_build`, `_build:backend`, `_build:frontend`) para desarrollo local. Pueden reactivarse eliminando el prefijo `_` cuando se necesiten.
 
 ### Scripts del Frontend
 
-| Comando                          | Descripción                           |
-| -------------------------------- | ------------------------------------- |
-| `cd frontend && npm install`     | 📦 Instalar dependencias del frontend |
-| `cd frontend && npm run dev`     | 🚀 **Iniciar servidor Vite dev** ⭐   |
-| `cd frontend && npm run build`   | 🔨 Compilar para producción           |
-| `cd frontend && npm run preview` | 👀 Vista previa de la compilación     |
+| Comando                           | Descripción                                     |
+| --------------------------------- | ----------------------------------------------- |
+| `cd frontend && npm install`      | 📦 Instalar dependencias del frontend           |
+| `cd frontend && npm run dev`      | 🚀 **Iniciar servidor Vite dev** ⭐             |
+| `cd frontend && npm run _build`   | 🔨 Compilar para producción (desactivado)       |
+| `cd frontend && npm run _preview` | 👀 Vista previa de la compilación (desactivado) |
+
+> 💡 **Nota**: Los scripts de build de producción están desactivados (`_build`, `_preview`) para desarrollo local. Pueden reactivarse eliminando el prefijo `_` cuando se necesiten.
 
 ## 🎨 Características en Detalle
 
@@ -397,12 +425,60 @@ El analizador sigue estrictamente los estándares WCAG 2.2 AA:
 ## 📋 Requisitos Previos
 
 - **Node.js** v18 o superior
-- **pnpm** gestor de paquetes
+- **pnpm** gestor de paquetes (o npm)
+- **npm** (para dependencias del frontend)
 
 Instalar pnpm:
 
 ```bash
 npm install -g pnpm
+```
+
+## ⚙️ Configuración
+
+### Variables de Entorno
+
+Copia `.env.example` a `.env` y configura según sea necesario:
+
+```bash
+cp .env.example .env
+```
+
+Variables de entorno disponibles:
+
+- `PORT` - Puerto del servidor backend (opcional, se detecta automáticamente si no se establece)
+- `NODE_ENV` - Modo de entorno (development/production)
+- `VITE_PORT` - Puerto del servidor dev frontend (por defecto: 5173, busca alternativa si está ocupado)
+- `VITE_API_URL` - URL de la API del backend (opcional, se detecta automáticamente si no se establece)
+- `PLAYWRIGHT_BROWSER` - Navegador para Playwright (chromium/firefox/webkit)
+- `PLAYWRIGHT_HEADLESS` - Ejecutar navegador en modo headless (true/false)
+- `ANALYSIS_TIMEOUT` - Timeout de análisis en milisegundos (por defecto: 30000)
+
+### 🔄 Sistema de Gestión de Puertos
+
+**Detección de Puerto del Backend:**
+
+- Busca automáticamente puertos disponibles en orden de prioridad: **3002 → 3003 → 3004 → 3005 → 3000 → 3001 → cualquier disponible**
+- Salta puertos ocupados y usa el siguiente disponible
+- Funciona perfectamente incluso si tienes otros servidores corriendo en esos puertos
+
+**Detección de Puerto del Frontend:**
+
+- Detecta automáticamente en qué puerto está corriendo el backend
+- Prueba puertos comunes y verifica que sea el backend correcto (no otro servidor)
+- Hace fallback al proxy si la auto-detección falla
+
+**Soporte Multi-Servidor:**
+
+- ✅ Funciona con otros servidores en puertos comunes (Next.js, React, etc.)
+- ✅ Sin conflictos - cada servidor usa su propio puerto independientemente
+- ✅ La detección automática asegura la conexión correcta
+
+**Configuración Manual:**
+Si necesitas especificar un puerto personalizado, establece:
+
+```bash
+VITE_API_URL=http://localhost:PUERTO
 ```
 
 ## 🔧 Desarrollo
@@ -486,7 +562,15 @@ Para problemas o preguntas, por favor abre un issue en GitHub.
 
 ## 📜 Créditos y Atribución
 
+**Autor**: [RaffyRod](https://github.com/RaffyRod)
+
 Este proyecto fue desarrollado y mantenido por **Raffy Rodriguez** (2025).
+
+**Atribución de Código:**
+
+- Todos los archivos fuente incluyen comentarios de atribución de autor (`@author RaffyRod`)
+- La atribución está presente en archivos TypeScript, JavaScript, Vue y CSS
+- Solo los archivos propios del proyecto incluyen atribución (no bibliotecas de terceros)
 
 ### Agradecimientos
 

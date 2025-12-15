@@ -24,6 +24,28 @@ pnpm start:all
 
 > 💡 **Note**: The frontend automatically proxies API requests to the backend. You only need to open the frontend URL that will appear in the console.
 
+### 🔄 **Automatic Port Detection**
+
+The application uses **intelligent port management**:
+
+- **Backend**: Automatically finds available ports in priority order (3002 → 3003 → 3004 → 3005 → 3000 → 3001 → any available)
+- **Frontend**: Automatically detects which port the backend is using
+- **Proxy**: Dynamically connects to the correct backend port
+- **Multi-Server Support**: Works seamlessly even if you have other servers running on those ports
+
+**How it works:**
+
+1. Backend checks ports in priority order and uses the first available one
+2. Frontend automatically detects the backend port by testing common ports
+3. If the backend is on a different port, the frontend will find it automatically
+4. No manual configuration needed - it just works! 🎉
+
+**If you have other servers running:**
+
+- The backend will skip occupied ports and use the next available one
+- The frontend will automatically find the correct backend, even if it's on a different port
+- No conflicts - each server uses its own port independently
+
 ---
 
 ## 🎯 What is this?
@@ -211,22 +233,42 @@ qa-web-analyzer/
 - **jsPDF** - PDF generation with custom table rendering (lazy loaded)
 - **Export Modal** - Vue component with theme adaptation (Design 10: Dark Mode Style)
 
+## 🎯 Recent Improvements
+
+### ✨ Enhanced Features
+
+- **🔄 Automatic Port Detection**: Backend and frontend automatically find and connect to available ports
+- **🔍 Smart Backend Detection**: Frontend automatically detects the correct backend port, even with multiple servers running
+- **🛡️ Robust Error Handling**: Improved error messages with detailed debugging information
+- **🎨 UI Improvements**: Removed redundant spinner (emoji animation is sufficient)
+- **📝 Code Attribution**: All source files include author attribution comments
+- **🚀 Production Builds**: Disabled for local development (can be re-enabled when needed)
+
+### 🔧 Technical Enhancements
+
+- **Proxy Intelligence**: Vite proxy automatically detects backend port
+- **Multi-Server Support**: Works seamlessly with other servers on common ports
+- **Error Recovery**: Better error messages help identify and fix issues quickly
+- **Development Focus**: Optimized for local development workflow
+
 ## 📝 Available Scripts
 
 ### Backend Scripts
 
-| Command             | Description                         |
-| ------------------- | ----------------------------------- |
-| `pnpm install`      | 📦 Install backend dependencies     |
-| `pnpm build`        | 🔨 Compile TypeScript to JavaScript |
-| `pnpm start`        | ▶️ Start production server          |
-| `pnpm start:all`    | 🚀 **Start backend + frontend** ⭐  |
-| `pnpm dev`          | 🔄 Start with auto-reload           |
-| `pnpm dev:all`      | 🔄 Start backend + frontend (watch) |
-| `pnpm type-check`   | ✅ Check types without compiling    |
-| `pnpm format`       | 🎨 Format all files with Prettier   |
-| `pnpm format:check` | 🔍 Check code formatting            |
-| `pnpm lint`         | ✅ Check formatting and types       |
+| Command             | Description                                    |
+| ------------------- | ---------------------------------------------- |
+| `pnpm install`      | 📦 Install backend dependencies                |
+| `pnpm _build`       | 🔨 Compile TypeScript to JavaScript (disabled) |
+| `pnpm start`        | ▶️ Start production server                     |
+| `pnpm start:all`    | 🚀 **Start backend + frontend** ⭐             |
+| `pnpm dev`          | 🔄 Start with auto-reload                      |
+| `pnpm dev:all`      | 🔄 Start backend + frontend (watch)            |
+| `pnpm type-check`   | ✅ Check types without compiling               |
+| `pnpm format`       | 🎨 Format all files with Prettier              |
+| `pnpm format:check` | 🔍 Check code formatting                       |
+| `pnpm lint`         | ✅ Check formatting and types                  |
+
+> 💡 **Note**: Production build scripts are disabled (`_build`, `_build:backend`, `_build:frontend`) for local development. They can be re-enabled by removing the `_` prefix when needed.
 
 ### Frontend Scripts
 
@@ -408,13 +450,40 @@ cp .env.example .env
 
 Available environment variables:
 
-- `PORT` - Backend server port (default: 3000)
+- `PORT` - Backend server port (optional, auto-detects if not set)
 - `NODE_ENV` - Environment mode (development/production)
-- `VITE_PORT` - Frontend dev server port (default: 5173)
-- `API_BASE_URL` - API base URL (default: http://localhost:3000)
+- `VITE_PORT` - Frontend dev server port (default: 5173, auto-finds alternative if occupied)
+- `VITE_API_URL` - Backend API URL (optional, auto-detects if not set)
 - `PLAYWRIGHT_BROWSER` - Browser for Playwright (chromium/firefox/webkit)
 - `PLAYWRIGHT_HEADLESS` - Run browser in headless mode (true/false)
 - `ANALYSIS_TIMEOUT` - Analysis timeout in milliseconds (default: 30000)
+
+### 🔄 Port Management System
+
+**Backend Port Detection:**
+
+- Automatically finds available ports in priority order: **3002 → 3003 → 3004 → 3005 → 3000 → 3001 → any available**
+- Skips occupied ports and uses the next available one
+- Works seamlessly even if you have other servers running on those ports
+
+**Frontend Port Detection:**
+
+- Automatically detects which port the backend is using
+- Tests common ports and verifies it's the correct backend (not another server)
+- Falls back to proxy if auto-detection fails
+
+**Multi-Server Support:**
+
+- ✅ Works with other servers on common ports (Next.js, React, etc.)
+- ✅ No conflicts - each server uses its own port independently
+- ✅ Automatic detection ensures correct connection
+
+**Manual Configuration:**
+If you need to specify a custom port, set:
+
+```bash
+VITE_API_URL=http://localhost:PORT
+```
 
 ## 🔧 Development
 
@@ -555,7 +624,15 @@ For issues or questions, please open an issue on GitHub.
 
 ## 📜 Credits & Attribution
 
+**Author**: [RaffyRod](https://github.com/RaffyRod)
+
 This project was developed and maintained by **Raffy Rodriguez** (2025).
+
+**Code Attribution:**
+
+- All source files include author attribution comments (`@author RaffyRod`)
+- Attribution is present in TypeScript, JavaScript, Vue, and CSS files
+- Only project-owned files include attribution (not third-party libraries)
 
 ### Acknowledgments
 
