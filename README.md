@@ -5,22 +5,36 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat-square&logo=playwright&logoColor=white)
+![Cross-Platform](https://img.shields.io/badge/Cross--Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=flat-square)
+
+> ✅ **Fully Portable**: Works on any PC regardless of installation path or operating system. No hardcoded paths or system-specific configurations.
 
 ---
 
 ## 🚀 HOW TO RUN - QUICK START
 
-### ⚡ **Recommended Method: Single Command**
+### ⚡ **One Command - Fully Automatic**
+
+After cloning the repository, simply run:
 
 ```bash
-# First time: Install dependencies and build
-pnpm install && pnpm build && cd frontend && npm install && cd ..
-
-# Start both servers (Backend + Frontend) in one terminal
-pnpm start:all
+npm run setup
 ```
 
+**✨ That's it! The script automatically:**
+
+- ✅ Installs backend dependencies (if needed)
+- ✅ Installs frontend dependencies (if needed)
+- ✅ Builds the TypeScript backend (if needed)
+- ✅ Starts both servers (Backend + Frontend)
+- ✅ Finds available ports automatically
+
 **✨ Servers will automatically find available ports and display the exact URLs in the console where they were deployed.**
+
+> 💡 **Alternative commands:**
+>
+> - `node setup-and-run.js` - Direct execution
+> - `start.bat` (Windows) or `./start.sh` (macOS/Linux) - Platform-specific scripts
 
 > 💡 **Note**: The frontend automatically proxies API requests to the backend. You only need to open the frontend URL that will appear in the console.
 
@@ -455,21 +469,62 @@ The analyzer follows WCAG 2.2 AA standards strictly:
 
 ## 📋 Prerequisites
 
-- **Node.js** v18 or higher
-- **pnpm** package manager (or npm)
-- **npm** (for frontend dependencies)
+### System Requirements
 
-Install pnpm:
+- **Node.js** v18 or higher ([Download](https://nodejs.org/))
+  - Includes **npm** automatically (no need to install separately)
+  - **pnpm** is optional (the script will use npm if pnpm is not available)
 
-```bash
-npm install -g pnpm
-```
+### Supported Operating Systems
+
+✅ **Windows** (10/11)  
+✅ **macOS** (10.15+)  
+✅ **Linux** (Ubuntu 18.04+, Debian 10+, Fedora 30+, etc.)
+
+### Quick Installation
+
+1. **Install Node.js** (if not already installed):
+   - Download from [nodejs.org](https://nodejs.org/)
+   - Verify: `node --version` (should be v18+)
+
+2. **Clone and run**:
+
+   ```bash
+   git clone https://github.com/RaffyRod/QA-web-analyzer.git
+   cd QA-web-analyzer/qa-web-analyzer
+   npm run setup
+   ```
+
+   That's it! The script will automatically:
+   - Install all dependencies (backend + frontend)
+   - Build the project
+   - Start both servers
+
+> 💡 **Note**: The project is fully portable and automatic. No manual configuration needed - just clone and run!
 
 ## ⚙️ Configuration
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and configure as needed:
+The `.env` file is **optional**. The application works without it using default settings and automatic port detection.
+
+**Location**: `qa-web-analyzer/.env` (same level as `package.json`)
+
+Copy `.env.example` to `.env` if you want to customize settings:
+
+**Windows (cmd)**:
+
+```bash
+copy .env.example .env
+```
+
+**PowerShell**:
+
+```bash
+Copy-Item .env.example .env
+```
+
+**macOS/Linux**:
 
 ```bash
 cp .env.example .env

@@ -11,10 +11,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import Header from './components/Header/Header.vue'
-import AnalysisForm from './components/AnalysisForm/AnalysisForm.vue'
-import Results from './components/Results/Results.vue'
-import { useAnalysisStore } from './stores/analysis'
+import Header from '@/components/Header/Header.vue'
+import AnalysisForm from '@/components/AnalysisForm/AnalysisForm.vue'
+import Results from '@/components/Results/Results.vue'
+import { useAnalysisStore } from '@/stores/analysis'
 
 const analysisStore = useAnalysisStore()
 const hasResults = computed(() => !!analysisStore.results)

@@ -4,9 +4,9 @@
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import App from './App.vue';
-import './assets/main.css';
-import { useLanguageStore } from './stores/language';
+import App from '@/App.vue';
+import '@/assets/main.css';
+import { useLanguageStore } from '@/stores/language';
 
 // Clear cache on app initialization (development only)
 if (import.meta.env.DEV) {

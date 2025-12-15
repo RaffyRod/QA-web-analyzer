@@ -6,6 +6,10 @@
     "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -22,4 +26,3 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
-

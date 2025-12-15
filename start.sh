@@ -1,39 +1,15 @@
 #!/bin/bash
 
-echo "🚀 Starting QA Web Analyzer..."
+echo "🚀 QA Web Analyzer - Automatic Setup & Run"
+echo ""
+echo "This script will automatically:"
+echo "  - Install dependencies (if needed)"
+echo "  - Build the project (if needed)"
+echo "  - Start both servers"
+echo ""
 echo ""
 
-if [ ! -d "node_modules" ]; then
-    echo "📦 Installing dependencies (first time setup)..."
-    pnpm install
-    if [ $? -ne 0 ]; then
-        echo "❌ Error installing dependencies"
-        exit 1
-    fi
-    echo "✅ Dependencies installed successfully!"
-    echo ""
-else
-    echo "✅ Dependencies already installed, skipping install step."
-    echo ""
-fi
-
-echo "🔨 Building TypeScript project..."
-pnpm build
-if [ $? -ne 0 ]; then
-    echo "❌ Error building project"
-    exit 1
-fi
-echo "✅ Build completed successfully!"
-echo ""
-
-if [ ! -d "dist" ]; then
-    echo "❌ Build directory not found. Build may have failed."
-    exit 1
-fi
-
-echo "🎯 Starting server..."
-echo ""
-pnpm start
+node setup-and-run.js
 
 
 

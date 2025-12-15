@@ -7,22 +7,36 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat-square&logo=typescript&logoColor=white)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-45ba4b?style=flat-square&logo=playwright&logoColor=white)
+![Cross-Platform](https://img.shields.io/badge/Cross--Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=flat-square)
+
+> ✅ **Completamente Portable**: Funciona en cualquier PC independientemente de la ruta de instalación o sistema operativo. Sin rutas hardcodeadas ni configuraciones específicas del sistema.
 
 ---
 
 ## 🚀 CÓMO EJECUTAR - INICIO RÁPIDO
 
-### ⚡ **Método Recomendado: Un Solo Comando**
+### ⚡ **Un Solo Comando - Completamente Automático**
+
+Después de clonar el repositorio, simplemente ejecuta:
 
 ```bash
-# Primera vez: Instalar dependencias y compilar
-pnpm install && pnpm build && cd frontend && npm install && cd ..
-
-# Iniciar ambos servidores (Backend + Frontend) en una sola terminal
-pnpm start:all
+npm run setup
 ```
 
+**✨ ¡Eso es todo! El script automáticamente:**
+
+- ✅ Instala dependencias del backend (si es necesario)
+- ✅ Instala dependencias del frontend (si es necesario)
+- ✅ Compila el backend TypeScript (si es necesario)
+- ✅ Inicia ambos servidores (Backend + Frontend)
+- ✅ Busca puertos disponibles automáticamente
+
 **✨ Los servidores buscarán puertos libres automáticamente y mostrarán en consola las URLs exactas donde se desplegaron.**
+
+> 💡 **Comandos alternativos:**
+>
+> - `node setup-and-run.js` - Ejecución directa
+> - `start.bat` (Windows) o `./start.sh` (macOS/Linux) - Scripts específicos de plataforma
 
 > 💡 **Nota**: El frontend automáticamente hace proxy de las peticiones API al backend. Solo necesitas abrir la URL del frontend que aparecerá en consola.
 
@@ -451,21 +465,62 @@ El analizador sigue estrictamente los estándares WCAG 2.2 AA:
 
 ## 📋 Requisitos Previos
 
-- **Node.js** v18 o superior
-- **pnpm** gestor de paquetes (o npm)
-- **npm** (para dependencias del frontend)
+### Requisitos del Sistema
 
-Instalar pnpm:
+- **Node.js** v18 o superior ([Descargar](https://nodejs.org/))
+  - Incluye **npm** automáticamente (no necesitas instalarlo por separado)
+  - **pnpm** es opcional (el script usará npm si pnpm no está disponible)
 
-```bash
-npm install -g pnpm
-```
+### Sistemas Operativos Soportados
+
+✅ **Windows** (10/11)  
+✅ **macOS** (10.15+)  
+✅ **Linux** (Ubuntu 18.04+, Debian 10+, Fedora 30+, etc.)
+
+### Instalación Rápida
+
+1. **Instalar Node.js** (si no está instalado):
+   - Descargar desde [nodejs.org](https://nodejs.org/)
+   - Verificar: `node --version` (debe ser v18+)
+
+2. **Clonar y ejecutar**:
+
+   ```bash
+   git clone https://github.com/RaffyRod/QA-web-analyzer.git
+   cd QA-web-analyzer/qa-web-analyzer
+   npm run setup
+   ```
+
+   ¡Eso es todo! El script automáticamente:
+   - Instala todas las dependencias (backend + frontend)
+   - Compila el proyecto
+   - Inicia ambos servidores
+
+> 💡 **Nota**: El proyecto es completamente portable y automático. ¡No se necesita configuración manual - solo clonar y ejecutar!
 
 ## ⚙️ Configuración
 
 ### Variables de Entorno
 
-Copia `.env.example` a `.env` y configura según sea necesario:
+El archivo `.env` es **opcional**. La aplicación funciona sin él usando configuraciones por defecto y detección automática de puertos.
+
+**Ubicación**: `qa-web-analyzer/.env` (mismo nivel que `package.json`)
+
+Copia `.env.example` a `.env` si quieres personalizar la configuración:
+
+**Windows (cmd)**:
+
+```bash
+copy .env.example .env
+```
+
+**PowerShell**:
+
+```bash
+Copy-Item .env.example .env
+```
+
+**macOS/Linux**:
 
 ```bash
 cp .env.example .env

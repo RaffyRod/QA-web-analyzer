@@ -1,38 +1,14 @@
 @echo off
-echo 🚀 Starting QA Web Analyzer...
+echo 🚀 QA Web Analyzer - Automatic Setup & Run
+echo.
+echo This script will automatically:
+echo   - Install dependencies (if needed)
+echo   - Build the project (if needed)
+echo   - Start both servers
+echo.
 echo.
 
-if not exist "node_modules" (
-    echo 📦 Installing dependencies (first time setup)...
-    call pnpm install
-    if errorlevel 1 (
-        echo ❌ Error installing dependencies
-        exit /b 1
-    )
-    echo ✅ Dependencies installed successfully!
-    echo.
-) else (
-    echo ✅ Dependencies already installed, skipping install step.
-    echo.
-)
-
-echo 🔨 Building TypeScript project...
-call pnpm build
-if errorlevel 1 (
-    echo ❌ Error building project
-    exit /b 1
-)
-echo ✅ Build completed successfully!
-echo.
-
-if not exist "dist" (
-    echo ❌ Build directory not found. Build may have failed.
-    exit /b 1
-)
-
-echo 🎯 Starting server...
-echo.
-call pnpm start
+node setup-and-run.js
 
 
 
