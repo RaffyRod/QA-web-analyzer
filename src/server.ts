@@ -106,7 +106,13 @@ const startServer = async (): Promise<void> => {
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : await findPortWithPriority();
 
   app.listen(PORT, () => {
-    console.log(`QA Web Analyzer server running on http://localhost:${PORT}`);
+    console.log('\n' + '='.repeat(70));
+    console.log('🚀  QA WEB ANALYZER - BACKEND SERVER');
+    console.log('='.repeat(70));
+    console.log(`✅  Server deployed on: http://localhost:${PORT}`);
+    console.log(`📡  API endpoint:      http://localhost:${PORT}/api/analyze`);
+    console.log('='.repeat(70));
+    console.log(`\n💡  Open this URL in your browser: http://localhost:${PORT}\n`);
   });
 };
 

@@ -8,21 +8,21 @@
 
 ---
 
-## ⚡ Quick Run (TL;DR)
+## 🚀 HOW TO RUN - QUICK START
 
-**Want to run it now?** Use a single command to start both servers:
+### ⚡ **Recommended Method: Single Command**
 
 ```bash
-# Install dependencies and build (first time only)
+# First time: Install dependencies and build
 pnpm install && pnpm build && cd frontend && npm install && cd ..
 
-# Start both backend and frontend in one terminal
+# Start both servers (Backend + Frontend) in one terminal
 pnpm start:all
 ```
 
-Then open **http://localhost:5173** in your browser! 🚀
+**✨ Servers will automatically find available ports and display the exact URLs in the console where they were deployed.**
 
-> 📖 For detailed setup instructions, see [Quick Start section](#-quick-start---run-locally) below.
+> 💡 **Note**: The frontend automatically proxies API requests to the backend. You only need to open the frontend URL that will appear in the console.
 
 ---
 
@@ -43,132 +43,6 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - 📸 **Visual Feedback**: Screenshots of problematic elements
 - 📱 **Fully Responsive**: Optimized for smartphones, tablets, and desktop
 - 🎭 **WCAG Information Modal**: Quick reference guide for accessibility standards with detailed rules for images and `aria-label` according to WCAG 2.2 AA
-
-## 🚀 Quick Start - Run Locally
-
-### ⚡ Fast Setup (Recommended)
-
-**Option 1: Start Both Servers with One Command (Easiest)**
-
-```bash
-# First time: Install dependencies and build
-pnpm install && pnpm build && cd frontend && npm install && cd ..
-
-# Then start both servers in one terminal
-pnpm start:all
-```
-
-This will start:
-
-- ✅ Backend server (Express API)
-- ✅ Frontend dev server (Vite)
-
-Both servers run in the same terminal with colored output! 🎨
-
----
-
-**Option 2: Using the startup script (backend only)**
-
-```bash
-# Windows
-node start.js
-
-# Or use the batch file
-start.bat
-
-# Unix/Linux/Mac
-./start.sh
-```
-
-This script will:
-
-- ✅ Automatically install dependencies if needed
-- ✅ Build the TypeScript backend
-- ✅ Start the backend server
-
-Then in a **separate terminal**, start the frontend:
-
-```bash
-cd frontend
-npm run dev
-```
-
----
-
-### 📋 Manual Setup (Step by Step)
-
-**Step 1: Install Backend Dependencies**
-
-```bash
-pnpm install
-```
-
-**Step 2: Install Frontend Dependencies**
-
-```bash
-cd frontend
-npm install
-cd ..
-```
-
-**Step 3: Build Backend TypeScript**
-
-```bash
-pnpm build
-```
-
-**Step 4: Start the Application**
-
-You need **two terminals** running simultaneously:
-
-**Terminal 1 - Backend Server:**
-
-```bash
-pnpm start
-```
-
-**Terminal 2 - Frontend Dev Server:**
-
-```bash
-cd frontend
-npm run dev
-```
-
----
-
-### 🌐 Access the Application
-
-Once both servers are running:
-
-| Service                | URL                   | Description                |
-| ---------------------- | --------------------- | -------------------------- |
-| **Frontend (Vue App)** | http://localhost:5173 | Main application interface |
-| **Backend API**        | http://localhost:3000 | Express API server         |
-
-> 💡 **Note**: The frontend automatically proxies API requests to the backend, so you only need to open http://localhost:5173 in your browser.
-
----
-
-### ✅ Verify Installation
-
-After starting, you should see:
-
-**Backend Terminal:**
-
-```
-✅ QA Web Analyzer server running on http://localhost:3000
-```
-
-**Frontend Terminal:**
-
-```
-  VITE v5.x.x  ready in xxx ms
-
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: use --host to expose
-```
-
-Open **http://localhost:5173** in your browser! 🎉
 
 ## 📖 How to Use
 
@@ -338,31 +212,6 @@ qa-web-analyzer/
 - **Export Modal** - Vue component with theme adaptation (Design 10: Dark Mode Style)
 
 ## 📝 Available Scripts
-
-### 🚀 Quick Commands to Run Locally
-
-**⭐ Start Both Servers in One Terminal (Recommended):**
-
-```bash
-pnpm start:all
-```
-
-**Or start them separately:**
-
-**Backend Server:**
-
-```bash
-pnpm start
-```
-
-**Frontend Dev Server (in a separate terminal):**
-
-```bash
-cd frontend
-npm run dev
-```
-
----
 
 ### Backend Scripts
 

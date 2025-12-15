@@ -8,21 +8,21 @@
 
 ---
 
-## ⚡ Ejecución Rápida (TL;DR)
+## 🚀 CÓMO EJECUTAR - INICIO RÁPIDO
 
-**¿Quieres ejecutarlo ahora?** Usa un solo comando para iniciar ambos servidores:
+### ⚡ **Método Recomendado: Un Solo Comando**
 
 ```bash
-# Instalar dependencias y compilar (solo la primera vez)
+# Primera vez: Instalar dependencias y compilar
 pnpm install && pnpm build && cd frontend && npm install && cd ..
 
-# Iniciar backend y frontend en una sola terminal
+# Iniciar ambos servidores (Backend + Frontend) en una sola terminal
 pnpm start:all
 ```
 
-¡Luego abre **http://localhost:5173** en tu navegador! 🚀
+**✨ Los servidores buscarán puertos libres automáticamente y mostrarán en consola las URLs exactas donde se desplegaron.**
 
-> 📖 Para instrucciones detalladas, consulta la sección [Inicio Rápido](#-inicio-rápido---ejecutar-localmente) a continuación.
+> 💡 **Nota**: El frontend automáticamente hace proxy de las peticiones API al backend. Solo necesitas abrir la URL del frontend que aparecerá en consola.
 
 ---
 
@@ -43,132 +43,6 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - 📸 **Retroalimentación Visual**: Capturas de pantalla de elementos problemáticos
 - 📱 **Totalmente Responsive**: Optimizado para smartphones, tablets y desktop
 - 🎭 **Modal de Información WCAG**: Guía de referencia rápida para estándares de accesibilidad con reglas detalladas para imágenes y `aria-label` según WCAG 2.2 AA
-
-## 🚀 Inicio Rápido - Ejecutar Localmente
-
-### ⚡ Configuración Rápida (Recomendado)
-
-**Opción 1: Iniciar Ambos Servidores con Un Solo Comando (Más Fácil)**
-
-```bash
-# Primera vez: Instalar dependencias y compilar
-pnpm install && pnpm build && cd frontend && npm install && cd ..
-
-# Luego iniciar ambos servidores en una terminal
-pnpm start:all
-```
-
-Esto iniciará:
-
-- ✅ Servidor backend (API Express)
-- ✅ Servidor frontend dev (Vite)
-
-¡Ambos servidores se ejecutan en la misma terminal con salida coloreada! 🎨
-
----
-
-**Opción 2: Usando el script de inicio (solo backend)**
-
-```bash
-# Windows
-node start.js
-
-# O usar el archivo batch
-start.bat
-
-# Unix/Linux/Mac
-./start.sh
-```
-
-Este script hará:
-
-- ✅ Instalar dependencias automáticamente si es necesario
-- ✅ Compilar el backend TypeScript
-- ✅ Iniciar el servidor backend
-
-Luego en una **terminal separada**, inicia el frontend:
-
-```bash
-cd frontend
-npm run dev
-```
-
----
-
-### 📋 Configuración Manual (Paso a Paso)
-
-**Paso 1: Instalar Dependencias del Backend**
-
-```bash
-pnpm install
-```
-
-**Paso 2: Instalar Dependencias del Frontend**
-
-```bash
-cd frontend
-npm install
-cd ..
-```
-
-**Paso 3: Compilar TypeScript del Backend**
-
-```bash
-pnpm build
-```
-
-**Paso 4: Iniciar la Aplicación**
-
-Necesitas **dos terminales** ejecutándose simultáneamente:
-
-**Terminal 1 - Servidor Backend:**
-
-```bash
-pnpm start
-```
-
-**Terminal 2 - Servidor Frontend Dev:**
-
-```bash
-cd frontend
-npm run dev
-```
-
----
-
-### 🌐 Acceder a la Aplicación
-
-Una vez que ambos servidores estén ejecutándose:
-
-| Servicio               | URL                   | Descripción                         |
-| ---------------------- | --------------------- | ----------------------------------- |
-| **Frontend (App Vue)** | http://localhost:5173 | Interfaz principal de la aplicación |
-| **Backend API**        | http://localhost:3000 | Servidor API Express                |
-
-> 💡 **Nota**: El frontend automáticamente hace proxy de las peticiones API al backend, así que solo necesitas abrir http://localhost:5173 en tu navegador.
-
----
-
-### ✅ Verificar Instalación
-
-Después de iniciar, deberías ver:
-
-**Terminal Backend:**
-
-```
-✅ QA Web Analyzer server running on http://localhost:3000
-```
-
-**Terminal Frontend:**
-
-```
-  VITE v5.x.x  ready in xxx ms
-
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: use --host to expose
-```
-
-¡Abre **http://localhost:5173** en tu navegador! 🎉
 
 ## 📖 Cómo Usar
 
