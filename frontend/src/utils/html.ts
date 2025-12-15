@@ -1,4 +1,8 @@
 /**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
+/**
  * Escapes HTML special characters
  */
 export function escapeHtml(text: string | null | undefined): string {

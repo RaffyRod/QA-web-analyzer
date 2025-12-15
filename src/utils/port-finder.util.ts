@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 import { createServer, Server } from 'http';
 
 /**

@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 let urlInput, analyzeBtn, stopBtn, loading, error, results;
 let filterMissing, filterHasAttributes;
 let optionCheckboxes = {};

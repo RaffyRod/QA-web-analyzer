@@ -1,3 +1,6 @@
+<!--
+  @author RaffyRod (https://github.com/RaffyRod)
+-->
 <template>
   <div class="options-section">
     <h2>{{ t('analysisOptions') }}</h2>

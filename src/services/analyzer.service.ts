@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 import { chromium } from 'playwright';
 import type {
   AnalysisOptions,
@@ -15,7 +19,18 @@ export class AnalyzerService {
    * Analyzes a web page for accessibility issues based on provided options
    */
   async analyzePage(url: string, options: AnalysisOptions): Promise<AnalysisResult> {
-    const browser = await chromium.launch();
+    let browser;
+    try {
+      browser = await chromium.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      });
+    } catch (error) {
+      throw new Error(
+        `Failed to launch browser: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+
     const page = await browser.newPage();
 
     try {
@@ -753,8 +768,17 @@ export class AnalyzerService {
         analyzedAt: new Date().toISOString(),
       };
     } catch (error) {
-      await browser.close();
-      throw error;
+      if (browser) {
+        await browser.close().catch((closeError) => {
+          console.error('Error closing browser:', closeError);
+        });
+      }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const enhancedError = new Error(`Analysis failed: ${errorMessage}`);
+      if (error instanceof Error && error.stack) {
+        enhancedError.stack = error.stack;
+      }
+      throw enhancedError;
     }
   }
 }

@@ -1,3 +1,6 @@
+<!--
+  @author RaffyRod (https://github.com/RaffyRod)
+-->
 <template>
   <div v-if="isOpen" class="modal-overlay" @click.self="close">
     <div class="modal-content">

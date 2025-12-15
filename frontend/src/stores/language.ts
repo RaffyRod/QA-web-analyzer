@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -12,7 +16,7 @@ export const useLanguageStore = defineStore('language', () => {
       subtitle: 'Accessibility Analysis Tool',
       urlPlaceholder: 'Enter URL (e.g., http://localhost:3000 or https://example.com)',
       analyzeBtn: 'Analyze',
-      analyzing: 'Analyzing page...',
+      analyzing: '🔍 Analyzing page...',
       analysisOptions: 'Analysis Options',
       elementsToCheck: 'Elements to Check',
       attributesToCheck: 'Attributes to Check',
@@ -78,6 +82,8 @@ export const useLanguageStore = defineStore('language', () => {
       errorExportFailed: 'Export failed',
       stop: 'Stop',
       analysisCancelled: 'Analysis cancelled',
+      analysisCompleted: 'Analysis completed',
+      analysisCompletedMessage: 'The page analysis has been completed successfully.',
       exportPDF: 'Export PDF',
       elementsToInclude: 'Elements to Include',
       resultsStatus: 'Results Status',
@@ -96,7 +102,7 @@ export const useLanguageStore = defineStore('language', () => {
       subtitle: 'Herramienta de Análisis de Accesibilidad',
       urlPlaceholder: 'Ingresa URL (ej: http://localhost:3000 o https://example.com)',
       analyzeBtn: 'Analizar',
-      analyzing: 'Analizando página...',
+      analyzing: '🔍 Analizando página...',
       analysisOptions: 'Opciones de Análisis',
       elementsToCheck: 'Elementos a Verificar',
       attributesToCheck: 'Atributos a Verificar',
@@ -162,6 +168,8 @@ export const useLanguageStore = defineStore('language', () => {
       errorExportFailed: 'Error al exportar',
       stop: 'Detener',
       analysisCancelled: 'Análisis cancelado',
+      analysisCompleted: 'Análisis completado',
+      analysisCompletedMessage: 'El análisis de la página se ha completado exitosamente.',
       exportPDF: 'Exportar PDF',
       elementsToInclude: 'Elementos a Incluir',
       resultsStatus: 'Estado de Resultados',

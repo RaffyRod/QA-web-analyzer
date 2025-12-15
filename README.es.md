@@ -367,6 +367,33 @@ Cambia de idioma usando el selector en la interfaz:
 - 🇺🇸 **English** - [View English README](./README.md)
 - 🇪🇸 **Español** (predeterminado)
 
+## ⚙️ Configuración
+
+### Variables de Entorno
+
+- Ubicación (raíz): `qa-web-analyzer/.env` (mismo nivel que `package.json`, `src/`, `frontend/`, `.env.example`)
+- Overrides opcionales de frontend: `qa-web-analyzer/frontend/.env` (solo si necesitas valores específicos para el frontend)
+
+Crea tu `.env` desde la plantilla:
+
+- Windows (cmd):
+
+  ```bash
+  copy .env.example .env
+  ```
+
+- PowerShell:
+
+  ```bash
+  Copy-Item .env.example .env
+  ```
+
+- macOS/Linux:
+
+  ```bash
+  cp .env.example .env
+  ```
+
 ## 🧪 Testing
 
 El proyecto incluye tests unitarios completos para el código del backend y frontend.

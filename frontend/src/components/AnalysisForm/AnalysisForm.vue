@@ -1,3 +1,6 @@
+<!--
+  @author RaffyRod (https://github.com/RaffyRod)
+-->
 <template>
   <div class="input-section">
     <div class="input-group">
@@ -41,23 +44,40 @@
       </div>
     </div>
     <div v-if="error" class="error">
-      {{ error }}
+      <strong>Error:</strong> {{ error }}
+      <details v-if="error.includes('Details:')" style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+        <summary style="cursor: pointer; margin-top: 5px;">Ver detalles técnicos</summary>
+        <pre style="margin-top: 5px; white-space: pre-wrap; word-break: break-word;">{{ error }}</pre>
+      </details>
     </div>
     <div v-if="isLoading" class="loading">
-      <div class="spinner"></div>
-      <span>{{ t('analyzing') }}</span>
+      <span class="analyzing-text">
+        <span class="analyzing-emoji">🔍</span>
+        {{ t('analyzing').replace('🔍 ', '') }}
+      </span>
     </div>
     <OptionsPanel />
     <WcagInfoModal />
+    <NotificationAlert
+      v-if="showNotification"
+      :key="notificationKey"
+      type="info"
+      :title="t('analysisCompleted')"
+      :message="t('analysisCompletedMessage')"
+      :duration="5000"
+      :auto-close="true"
+      @close="closeNotification"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAnalysisStore } from '@/stores/analysis'
 import { useLanguageStore } from '@/stores/language'
 import OptionsPanel from './OptionsPanel.vue'
 import WcagInfoModal from '../WcagInfoModal.vue'
+import NotificationAlert from '../NotificationAlert.vue'
 
 const analysisStore = useAnalysisStore()
 const languageStore = useLanguageStore()
@@ -66,6 +86,50 @@ const url = ref('')
 const isLoading = computed(() => analysisStore.isLoading)
 const error = computed(() => analysisStore.error)
 const wcagModalOpen = ref(false)
+const showNotification = ref(false)
+const notificationKey = ref(0)
+
+// Request notification permission on mount
+onMounted(() => {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission()
+  }
+  
+  // Listen for analysis completion
+  window.addEventListener('analysis-completed', handleAnalysisCompleted)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('analysis-completed', handleAnalysisCompleted)
+})
+
+function handleAnalysisCompleted(event: Event) {
+  const customEvent = event as CustomEvent
+  if (customEvent.detail?.success) {
+    showSystemNotification()
+    showPageNotification()
+  }
+}
+
+function showSystemNotification() {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(t('analysisCompleted'), {
+      body: t('analysisCompletedMessage'),
+      icon: '/favicon.svg',
+      tag: 'analysis-completed',
+      requireInteraction: false,
+    })
+  }
+}
+
+function showPageNotification() {
+  notificationKey.value++
+  showNotification.value = true
+}
+
+function closeNotification() {
+  showNotification.value = false
+}
 
 function toggleWcagModal() {
   wcagModalOpen.value = !wcagModalOpen.value

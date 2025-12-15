@@ -1,8 +1,33 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 import './assets/main.css';
 import { useLanguageStore } from './stores/language';
+
+// Clear cache on app initialization (development only)
+if (import.meta.env.DEV) {
+  // Clear service worker cache
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => {
+        registration.unregister();
+      });
+    });
+  }
+
+  // Clear browser cache
+  if ('caches' in window) {
+    caches.keys().then((names) => {
+      names.forEach((name) => {
+        caches.delete(name);
+      });
+    });
+  }
+}
 
 const app = createApp(App);
 const pinia = createPinia();

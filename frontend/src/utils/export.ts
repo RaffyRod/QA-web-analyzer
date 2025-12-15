@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 import jsPDF from 'jspdf';
 import type { AnalysisResults, AnalysisOptions } from '@/stores/analysis';
 import { useLanguageStore } from '@/stores/language';

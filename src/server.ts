@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
@@ -14,6 +18,19 @@ const analyzerService = new AnalyzerService();
 
 app.use(cors());
 app.use(express.json());
+
+// Disable caching in development
+const isDevelopment = process.env.NODE_ENV !== 'production';
+if (isDevelopment) {
+  app.use((_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
+  });
+}
+
 app.use(express.static(join(__dirname, '../public')));
 
 const DEFAULT_OPTIONS: AnalysisOptions = {
@@ -59,13 +76,24 @@ app.post('/api/analyze', async (req: Request<{}, {}, AnalyzeRequest>, res: Respo
 
   try {
     const results = await analyzerService.analyzePage(url, analysisOptions);
-    return res.json(results);
+    return res.status(200).json(results);
   } catch (error) {
-    console.error('Analysis error:', error);
+    console.error('❌ Analysis error:', error);
+    console.error('Error type:', error instanceof Error ? error.constructor.name : typeof error);
+    console.error('Error message:', error instanceof Error ? error.message : String(error));
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+
     const errorMessage = error instanceof Error ? error.message : 'Failed to analyze page';
+    const errorDetails =
+      error instanceof Error && error.stack
+        ? error.stack.split('\n').slice(0, 5).join('\n')
+        : String(error);
+
     return res.status(500).json({
       error: 'Failed to analyze page',
       message: errorMessage,
+      details: process.env.NODE_ENV !== 'production' ? errorDetails : undefined,
+      timestamp: new Date().toISOString(),
     });
   }
 });

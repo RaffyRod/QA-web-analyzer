@@ -1,4 +1,5 @@
 /**
+ * @author RaffyRod (https://github.com/RaffyRod)
  * Theme management module
  */
 

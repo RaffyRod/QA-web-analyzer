@@ -1,10 +1,14 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 const translations = {
   en: {
     title: 'QA Web Analyzer',
     subtitle: 'Accessibility Analysis Tool',
     urlPlaceholder: 'Enter URL (e.g., http://localhost:3000 or https://example.com)',
     analyzeBtn: 'Analyze',
-    analyzing: 'Analyzing page...',
+    analyzing: '🔍 Analyzing page...',
     analysisOptions: 'Analysis Options',
     elementsToCheck: 'Elements to Check',
     attributesToCheck: 'Attributes to Check',
@@ -115,7 +119,7 @@ const translations = {
     subtitle: 'Herramienta de Análisis de Accesibilidad',
     urlPlaceholder: 'Ingresa URL (ej: http://localhost:3000 o https://example.com)',
     analyzeBtn: 'Analizar',
-    analyzing: 'Analizando página...',
+    analyzing: '🔍 Analizando página...',
     analysisOptions: 'Opciones de Análisis',
     elementsToCheck: 'Elementos a Verificar',
     attributesToCheck: 'Atributos a Verificar',

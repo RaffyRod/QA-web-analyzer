@@ -1,3 +1,6 @@
+<!--
+  @author RaffyRod (https://github.com/RaffyRod)
+-->
 <template>
   <div v-if="results && results.summary" id="results" class="results-section">
     <!-- Summary Section -->

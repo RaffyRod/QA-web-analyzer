@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 export interface AnalysisOptions {
   checkImages: boolean;
   checkLinks: boolean;

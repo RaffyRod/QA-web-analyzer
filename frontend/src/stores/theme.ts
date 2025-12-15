@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 import { defineStore } from 'pinia';
 import { ref, watch } from 'vue';
 import { themes, isLightColorValue } from '@/utils/themes';

@@ -1,3 +1,7 @@
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
+
 export interface Theme {
   name: string;
   [key: string]: string;

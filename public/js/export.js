@@ -1,4 +1,5 @@
 /**
+ * @author RaffyRod (https://github.com/RaffyRod)
  * Export module for generating PDF reports
  */
 
