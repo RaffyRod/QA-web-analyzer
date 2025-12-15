@@ -5,7 +5,9 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cd frontend && npm install && npm run build",
+    "build:backend": "tsc",
+    "build:frontend": "cd frontend && npm install && npm run build",
     "start": "node dist/server.js",
     "dev": "tsc --watch & node --watch dist/server.js",
     "type-check": "tsc --noEmit",

@@ -1,5 +1,9 @@
 {
-  "*.ts": ["prettier --write", "tsc --noEmit --pretty"],
+  "*.ts": [
+    "prettier --write",
+    "bash -c 'if [[ ! \"$1\" =~ frontend ]]; then tsc --noEmit --pretty; fi' --"
+  ],
+  "frontend/**/*.ts": ["prettier --write"],
   "*.js": ["prettier --write"],
   "*.{json,html,css,md}": ["prettier --write"]
 }
