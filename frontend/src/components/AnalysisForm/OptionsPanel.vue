@@ -594,6 +594,16 @@ function deselectAllAttributes() {
   margin-top: 12px;
 }
 
+.checkbox-group label {
+  color: var(--text-primary, #1e293b);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-group label span {
+  color: var(--text-primary, #1e293b);
+}
+
 .checkbox-group label:has(input[type="checkbox"]:checked) {
   color: var(--primary-color, #2563eb);
   font-weight: 600;
@@ -632,7 +642,7 @@ function deselectAllAttributes() {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: var(--bg-color, #f8fafc);
+  background: var(--card-bg, #ffffff);
   border: none;
   cursor: pointer;
   text-align: left;
@@ -640,6 +650,8 @@ function deselectAllAttributes() {
   -webkit-transition: all 0.2s ease;
   -moz-transition: all 0.2s ease;
   -o-transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .category-header:hover {
@@ -658,10 +670,12 @@ function deselectAllAttributes() {
 .category-title {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-secondary, #64748b);
+  color: var(--text-primary, #1e293b);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   flex: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .category-toggle {
@@ -687,6 +701,27 @@ function deselectAllAttributes() {
 .category-content {
   padding: 12px 16px;
   overflow: hidden;
+  background: var(--card-bg, #ffffff);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.category-content .checkbox-group label {
+  color: var(--text-primary, #1e293b) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.category-content .checkbox-group label span {
+  color: var(--text-primary, #1e293b) !important;
+}
+
+.category-content .checkbox-group label:has(input[type="checkbox"]:checked) {
+  color: var(--primary-color, #2563eb) !important;
+}
+
+.category-content .checkbox-group label:has(input[type="checkbox"]:checked) span {
+  color: var(--primary-color, #2563eb) !important;
 }
 
 /* Smooth slide-fade transition */
