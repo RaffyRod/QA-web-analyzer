@@ -136,6 +136,15 @@
       :auto-close="true"
       @close="closeUrlNotification"
     />
+    <NotificationAlert
+      v-if="showCancelledNotification"
+      :key="cancelledNotificationKey"
+      type="success"
+      :title="t('analysisCancelled')"
+      :duration="3000"
+      :auto-close="true"
+      @close="closeCancelledNotification"
+    />
     
           <!-- Cancel Confirmation Modal -->
           <div v-if="showCancelModal" class="modal-overlay" @click.self="closeCancelModal">
@@ -218,6 +227,8 @@ const validationErrorMessage = ref('')
 const showUrlNotification = ref(false)
 const urlNotificationKey = ref(0)
 const urlNotificationMessage = ref('')
+const showCancelledNotification = ref(false)
+const cancelledNotificationKey = ref(0)
 const showCancelModal = ref(false)
 const showSavedUrlsDropdown = ref(false)
 const showMaxUrlsModal = ref(false)

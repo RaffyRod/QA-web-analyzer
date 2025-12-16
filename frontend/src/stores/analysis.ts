@@ -285,7 +285,8 @@ export const useAnalysisStore = defineStore('analysis', () => {
     } catch (err: any) {
       console.error('Analysis error in store:', err);
       if (err.name === 'AbortError') {
-        error.value = 'Analysis cancelled';
+        // Don't set error for cancellation - it's a user action, not an error
+        error.value = null;
       } else {
         const errorMsg = err.message || 'Failed to analyze page';
         error.value = errorMsg;
