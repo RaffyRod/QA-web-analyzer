@@ -3,27 +3,50 @@
  */
 
 export interface AnalysisOptions {
+  // Elements to Check
   checkImages: boolean;
   checkLinks: boolean;
   checkButtons: boolean;
   checkInputs: boolean;
   checkRoles: boolean;
+  checkHeadings: boolean;
+  checkTables: boolean;
+  checkFormElements: boolean;
+
+  // ARIA Attributes - Labels & Names
   checkAltText: boolean;
   checkAriaLabel: boolean;
   checkAriaLabelledby: boolean;
   checkAriaDescribedby: boolean;
-  checkAriaHidden: boolean;
+
+  // ARIA Attributes - States
+  checkAriaChecked: boolean;
+  checkAriaDisabled: boolean;
   checkAriaExpanded: boolean;
+  checkAriaHidden: boolean;
+  checkAriaInvalid: boolean;
+  checkAriaPressed: boolean;
+  checkAriaRequired: boolean;
+
+  // ARIA Attributes - Relationships
   checkAriaControls: boolean;
   checkAriaCurrent: boolean;
-  checkAriaRequired: boolean;
-  checkAriaInvalid: boolean;
-  checkTabIndex: boolean;
-  checkLang: boolean;
+
+  // ARIA Attributes - Live Regions
+  checkAriaBusy: boolean;
+  checkAriaLive: boolean;
+
+  // Form Attributes
+  checkAutocomplete: boolean;
   checkLabels: boolean;
-  checkTitle: boolean;
+  checkRequired: boolean;
+
+  // Other Attributes
   checkFocusStates: boolean;
   checkHref?: boolean;
+  checkLang: boolean;
+  checkTabIndex: boolean;
+  checkTitle: boolean;
 }
 
 export interface ImageElement {

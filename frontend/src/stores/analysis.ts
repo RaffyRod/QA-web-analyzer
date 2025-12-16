@@ -5,29 +5,9 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export interface AnalysisOptions {
-  checkImages: boolean;
-  checkLinks: boolean;
-  checkButtons: boolean;
-  checkInputs: boolean;
-  checkRoles: boolean;
-  checkAltText: boolean;
-  checkAriaLabel: boolean;
-  checkAriaLabelledby: boolean;
-  checkAriaDescribedby: boolean;
-  checkAriaHidden: boolean;
-  checkAriaExpanded: boolean;
-  checkAriaControls: boolean;
-  checkAriaCurrent: boolean;
-  checkAriaRequired: boolean;
-  checkAriaInvalid: boolean;
-  checkTabIndex: boolean;
-  checkLang: boolean;
-  checkLabels: boolean;
-  checkTitle: boolean;
-  checkFocusStates: boolean;
-  checkHref?: boolean;
-}
+import type { AnalysisOptions as AnalysisOptionsType } from '../../../../src/types/index';
+
+export type AnalysisOptions = AnalysisOptionsType;
 
 export interface AnalysisResults {
   images?: any[];
@@ -44,27 +24,44 @@ export const useAnalysisStore = defineStore('analysis', () => {
   const error = ref<string | null>(null);
   let abortController: AbortController | null = null;
   const options = ref<AnalysisOptions>({
+    // Elements
     checkImages: false,
     checkLinks: false,
     checkButtons: false,
     checkInputs: false,
     checkRoles: false,
+    checkHeadings: false,
+    checkTables: false,
+    checkFormElements: false,
+    // ARIA Labels & Names
     checkAltText: false,
     checkAriaLabel: false,
     checkAriaLabelledby: false,
     checkAriaDescribedby: false,
-    checkAriaHidden: false,
+    // ARIA States
+    checkAriaChecked: false,
+    checkAriaDisabled: false,
     checkAriaExpanded: false,
+    checkAriaHidden: false,
+    checkAriaInvalid: false,
+    checkAriaPressed: false,
+    checkAriaRequired: false,
+    // ARIA Relationships
     checkAriaControls: false,
     checkAriaCurrent: false,
-    checkAriaRequired: false,
-    checkAriaInvalid: false,
-    checkTabIndex: false,
-    checkLang: false,
+    // ARIA Live Regions
+    checkAriaBusy: false,
+    checkAriaLive: false,
+    // Form Attributes
+    checkAutocomplete: false,
     checkLabels: false,
-    checkTitle: false,
+    checkRequired: false,
+    // Other Attributes
     checkFocusStates: false,
     checkHref: false,
+    checkLang: false,
+    checkTabIndex: false,
+    checkTitle: false,
   });
 
   /**

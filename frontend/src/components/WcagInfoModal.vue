@@ -85,6 +85,51 @@
             <strong>Focus States</strong>
             <p>All interactive elements must have visible focus indicators that meet WCAG 2.2 AA contrast requirements.</p>
           </div>
+          <div class="wcag-item">
+            <strong>aria-checked</strong>
+            <p>Indicates the checked state of checkboxes, radio buttons, and other toggleable elements. Required for custom controls.</p>
+          </div>
+          <div class="wcag-item">
+            <strong>aria-disabled</strong>
+            <p>Indicates that an element is disabled but still visible. Use with interactive elements that cannot be activated.</p>
+          </div>
+          <div class="wcag-item">
+            <strong>aria-pressed</strong>
+            <p>Indicates the pressed state of toggle buttons. Use for buttons that can be toggled on/off.</p>
+          </div>
+          <div class="wcag-item">
+            <strong>aria-busy</strong>
+            <p>Indicates that an element is being modified and assistive technologies may need to wait before presenting updates.</p>
+          </div>
+          <div class="wcag-item">
+            <strong>aria-live</strong>
+            <p>Indicates that an element will be updated and describes the types of updates. Use for dynamic content regions.</p>
+            <p class="wcag-note"><strong>Values:</strong> <strong>off</strong> (default), <strong>polite</strong> (announce when idle), <strong>assertive</strong> (announce immediately).</p>
+          </div>
+          <div class="wcag-item">
+            <strong>autocomplete</strong>
+            <p>Helps users fill out forms faster and more accurately. Required for certain input types per WCAG 2.2 AA.</p>
+            <p class="wcag-note"><strong>Common values:</strong> name, email, tel, url, address-line1, country, etc.</p>
+          </div>
+          <div class="wcag-item">
+            <strong>required</strong>
+            <p>Indicates that a form field must be filled out before submission. Provides visual and programmatic indication.</p>
+          </div>
+          <div class="wcag-item">
+            <strong>Headings (h1-h6)</strong>
+            <p>Provide semantic structure to content. Must have proper hierarchy (one h1 per page, no skipped levels).</p>
+            <p class="wcag-note"><strong>Best Practice:</strong> Use headings to organize content logically. Screen readers use them for navigation.</p>
+          </div>
+          <div class="wcag-item">
+            <strong>Tables</strong>
+            <p>Data tables must have proper headers (th elements) with scope attributes, and optionally caption or summary.</p>
+            <p class="wcag-note"><strong>Requirements:</strong> Use <strong>scope</strong> on th elements (col, row, colgroup, rowgroup). Complex tables may need <strong>headers</strong> attribute on td.</p>
+          </div>
+          <div class="wcag-item">
+            <strong>Form Elements (select, textarea)</strong>
+            <p>Form controls must have associated labels and proper accessibility attributes. Select elements need accessible options.</p>
+            <p class="wcag-note"><strong>Requirements:</strong> All form elements should have <strong>label</strong> elements or <strong>aria-label</strong>/<strong>aria-labelledby</strong>.</p>
+          </div>
         </div>
       </div>
     </div>
