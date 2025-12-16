@@ -127,6 +127,7 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - ✅ **Notificación al Eliminar URL**: Agregada notificación de confirmación al eliminar URLs de la lista guardada
 - ✅ **Mensaje de Cancelación de Análisis**: Cambiado el mensaje de cancelación de error a notificación de éxito en ambos idiomas
 - ✅ **Corrección de Notificación de Cancelación**: Corregida la visualización de la notificación al cancelar el análisis - ahora muestra el mensaje de éxito correctamente
+- ✅ **Espaciado de Secciones de Resultados**: Mejorado el espaciado entre las secciones de resultados (Imágenes, Enlaces, Botones, etc.) y entre los filtros y la primera sección para mejor legibilidad
 
 ## 🎯 Mejoras Recientes
 

@@ -125,6 +125,7 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - ✅ **URL Removal Notification**: Added confirmation notification when removing URLs from saved list
 - ✅ **Analysis Cancellation Message**: Changed cancellation message from error to success notification in both languages
 - ✅ **Cancellation Notification Fix**: Fixed notification display when analysis is cancelled - now shows success message correctly
+- ✅ **Result Sections Spacing**: Improved spacing between result sections (Images, Links, Buttons, etc.) and between filters and first section for better readability
 
 ## 📖 How to Use
 
