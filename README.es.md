@@ -45,12 +45,30 @@ npm run setup
 
 > 💡 **Nota**: El frontend automáticamente hace proxy de las peticiones API al backend. Solo necesitas abrir la URL del frontend que aparecerá en consola.
 
-> 💡 **Comandos alternativos:**
->
-> - `node setup-and-run.js` - Ejecución directa
-> - `start.bat` (Windows) o `./start.sh` (macOS/Linux) - Scripts específicos de plataforma
+---
 
-> 💡 **Nota**: El frontend automáticamente hace proxy de las peticiones API al backend. Solo necesitas abrir la URL del frontend que aparecerá en consola.
+## 🏃 EJECUTAR - INICIAR SERVIDORES (Ya Configurado)
+
+<div align="center">
+
+### ⚡ **SOLO EJECUTAR - NO SE NECESITA CONFIGURACIÓN**
+
+```bash
+npm run start:all
+```
+
+**✨ Si ya ejecutaste `npm run setup` antes, usa este comando para iniciar los servidores rápidamente.**
+
+</div>
+
+### 📋 Lo que `npm run start:all` hace:
+
+- ✅ Inicia el servidor backend (si está compilado)
+- ✅ Inicia el servidor de desarrollo del frontend
+- ✅ Busca puertos disponibles automáticamente
+- ✅ Te muestra las URLs exactas en la consola
+
+> ⚠️ **Importante**: Asegúrate de haber ejecutado `npm run setup` al menos una vez antes de usar este comando. Este comando asume que las dependencias están instaladas y el backend está compilado.
 
 ### 🔄 **Detección Automática de Puertos**
 

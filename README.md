@@ -43,22 +43,30 @@ npm run setup
 
 > 💡 **Note**: The frontend automatically proxies API requests to the backend. You only need to open the frontend URL that will appear in the console.
 
-**✨ That's it! No configuration needed. The script automatically:**
+---
 
-- ✅ Installs backend dependencies (if needed)
-- ✅ Installs frontend dependencies (if needed)
-- ✅ Builds the TypeScript backend (if needed)
-- ✅ Starts both servers (Backend + Frontend)
-- ✅ Finds available ports automatically
+## 🏃 RUN - START SERVERS (Already Set Up)
 
-**✨ Servers will automatically find available ports and display the exact URLs in the console where they were deployed.**
+<div align="center">
 
-> 💡 **Alternative commands:**
->
-> - `node setup-and-run.js` - Direct execution
-> - `start.bat` (Windows) or `./start.sh` (macOS/Linux) - Platform-specific scripts
+### ⚡ **JUST RUN - NO SETUP NEEDED**
 
-> 💡 **Note**: The frontend automatically proxies API requests to the backend. You only need to open the frontend URL that will appear in the console.
+```bash
+npm run start:all
+```
+
+**✨ If you've already run `npm run setup` before, use this command to start the servers quickly.**
+
+</div>
+
+### 📋 What `npm run start:all` does:
+
+- ✅ Starts the backend server (if compiled)
+- ✅ Starts the frontend development server
+- ✅ Automatically finds available ports
+- ✅ Shows you the exact URLs in the console
+
+> ⚠️ **Important**: Make sure you've run `npm run setup` at least once before using this command. This command assumes dependencies are installed and the backend is compiled.
 
 ### 🔄 **Automatic Port Detection**
 
