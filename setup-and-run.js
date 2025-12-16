@@ -51,18 +51,34 @@ if (!existsSync(backendNodeModules)) {
   console.log('✅ Backend dependencies already installed\n');
 }
 
-// Step 1.5: Install Playwright browsers (required for Playwright to work)
+// Step 2: Install Playwright browsers (required for Playwright to work)
+// Check if Playwright package is installed first
+const playwrightPath = join(backendNodeModules, 'playwright');
+if (!existsSync(playwrightPath)) {
+  console.log('⚠️  Playwright package not found. Installing backend dependencies first...');
+  // If Playwright package is missing, reinstall backend dependencies
+  try {
+    execSync(`${pkgManager} install`, { stdio: 'inherit', cwd: __dirname });
+    console.log('✅ Backend dependencies (including Playwright) installed!\n');
+  } catch (error) {
+    console.error('❌ Error installing Playwright package');
+    process.exit(1);
+  }
+}
+
 console.log('🌐 Step 2/5: Installing Playwright browsers...');
+console.log('💡 This may take a few minutes on first run (downloads Chromium browser)...\n');
 try {
   if (pkgManager === 'pnpm') {
-    execSync('pnpm exec playwright install', { stdio: 'inherit', cwd: __dirname });
+    execSync('pnpm exec playwright install chromium', { stdio: 'inherit', cwd: __dirname });
   } else {
-    execSync('npx playwright install', { stdio: 'inherit', cwd: __dirname });
+    execSync('npx playwright install chromium', { stdio: 'inherit', cwd: __dirname });
   }
   console.log('✅ Playwright browsers installed!\n');
 } catch (error) {
   console.error('❌ Error installing Playwright browsers');
-  console.error('💡 This is required for Playwright to work. Trying to continue...\n');
+  console.error('💡 This is required for Playwright to work.');
+  console.error('💡 Trying to continue, but analysis may fail if browsers are not installed.\n');
   // Don't exit - Playwright might already be installed or might work without it
 }
 
