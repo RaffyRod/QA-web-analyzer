@@ -113,6 +113,92 @@ export const useLanguageStore = defineStore('language', () => {
       includeScreenshots: 'Include Screenshots',
       includeHTML: 'Include HTML Code',
       cancel: 'Cancel',
+      wcagGuidelines: 'WCAG 2.2 AA Accessibility Guidelines',
+      close: 'Close',
+      wcagAltText: 'Alt Text',
+      wcagAltTextDesc:
+        'All images must have descriptive <strong>alt</strong> attributes. Decorative images should use <strong>alt=""</strong>.',
+      wcagAltTextNote:
+        '<strong>For Images:</strong> According to WCAG 2.2 AA, images must have alternative text via <strong>alt</strong> (preferred), <strong>aria-label</strong>, or <strong>aria-labelledby</strong>. If an image has <strong>alt</strong>, <strong>aria-label</strong> is not required. If no <strong>alt</strong> is present, the image must have either <strong>aria-label</strong> or <strong>aria-labelledby</strong>.',
+      wcagAriaLabel: 'aria-label',
+      wcagAriaLabelDesc:
+        "Provides an accessible name for elements that don't have visible text labels.",
+      wcagAriaLabelNote:
+        '<strong>For Images:</strong> <strong>aria-label</strong> can be used as alternative text for images, but <strong>alt</strong> is the preferred method. If an image has <strong>alt</strong>, <strong>aria-label</strong> is not required. Only mark as missing if the image has no <strong>alt</strong> and no <strong>aria-label</strong>.',
+      wcagAriaLabelledby: 'aria-labelledby',
+      wcagAriaLabelledbyDesc: 'References another element that provides the accessible name.',
+      wcagAriaLabelledbyNote:
+        '<strong>For Images:</strong> <strong>aria-labelledby</strong> can be used as alternative text for images, but <strong>alt</strong> is the preferred method. If an image has <strong>alt</strong>, <strong>aria-labelledby</strong> is not required.',
+      wcagAriaDescribedby: 'aria-describedby',
+      wcagAriaDescribedbyDesc:
+        'References elements that provide additional descriptive information.',
+      wcagAriaHidden: 'aria-hidden',
+      wcagAriaHiddenDesc:
+        'Should be used carefully. Hides decorative elements from screen readers.',
+      wcagAriaExpanded: 'aria-expanded',
+      wcagAriaExpandedDesc: 'Indicates whether collapsible elements are expanded or collapsed.',
+      wcagAriaControls: 'aria-controls',
+      wcagAriaControlsDesc: 'Identifies elements controlled by the current element.',
+      wcagAriaCurrent: 'aria-current',
+      wcagAriaCurrentDesc: 'Indicates the current item in a set of related elements.',
+      wcagAriaRequired: 'aria-required',
+      wcagAriaRequiredDesc: 'Indicates that user input is required for form controls.',
+      wcagAriaInvalid: 'aria-invalid',
+      wcagAriaInvalidDesc: 'Indicates that the value entered is invalid.',
+      wcagTabIndex: 'tabindex',
+      wcagTabIndexDesc:
+        'Controls keyboard navigation. Use <strong>tabindex="0"</strong> for focusable elements, avoid positive values.',
+      wcagLang: 'lang',
+      wcagLangDesc: "Specifies the language of the element's content for screen readers.",
+      wcagLabelElements: '<label> elements',
+      wcagLabelElementsDesc:
+        'All form inputs should have associated <strong>&lt;label&gt;</strong> elements.',
+      wcagTitleAttribute: 'title attribute',
+      wcagTitleAttributeDesc:
+        'Provides additional tooltip information, but should not be the only way to convey important information.',
+      wcagFocusStates: 'Focus States',
+      wcagFocusStatesDesc:
+        'All interactive elements must have visible focus indicators that meet WCAG 2.2 AA contrast requirements.',
+      wcagAriaChecked: 'aria-checked',
+      wcagAriaCheckedDesc:
+        'Indicates the checked state of checkboxes, radio buttons, and other toggleable elements. Required for custom controls.',
+      wcagAriaDisabled: 'aria-disabled',
+      wcagAriaDisabledDesc:
+        'Indicates that an element is disabled but still visible. Use with interactive elements that cannot be activated.',
+      wcagAriaPressed: 'aria-pressed',
+      wcagAriaPressedDesc:
+        'Indicates the pressed state of toggle buttons. Use for buttons that can be toggled on/off.',
+      wcagAriaBusy: 'aria-busy',
+      wcagAriaBusyDesc:
+        'Indicates that an element is being modified and assistive technologies may need to wait before presenting updates.',
+      wcagAriaLive: 'aria-live',
+      wcagAriaLiveDesc:
+        'Indicates that an element will be updated and describes the types of updates. Use for dynamic content regions.',
+      wcagAriaLiveNote:
+        '<strong>Values:</strong> <strong>off</strong> (default), <strong>polite</strong> (announce when idle), <strong>assertive</strong> (announce immediately).',
+      wcagAutocomplete: 'autocomplete',
+      wcagAutocompleteDesc:
+        'Helps users fill out forms faster and more accurately. Required for certain input types per WCAG 2.2 AA.',
+      wcagAutocompleteNote:
+        '<strong>Common values:</strong> name, email, tel, url, address-line1, country, etc.',
+      wcagRequired: 'required',
+      wcagRequiredDesc:
+        'Indicates that a form field must be filled out before submission. Provides visual and programmatic indication.',
+      wcagHeadings: 'Headings (h1-h6)',
+      wcagHeadingsDesc:
+        'Provide semantic structure to content. Must have proper hierarchy (one h1 per page, no skipped levels).',
+      wcagHeadingsNote:
+        '<strong>Best Practice:</strong> Use headings to organize content logically. Screen readers use them for navigation.',
+      wcagTables: 'Tables',
+      wcagTablesDesc:
+        'Data tables must have proper headers (th elements) with scope attributes, and optionally caption or summary.',
+      wcagTablesNote:
+        '<strong>Requirements:</strong> Use <strong>scope</strong> on th elements (col, row, colgroup, rowgroup). Complex tables may need <strong>headers</strong> attribute on td.',
+      wcagFormElements: 'Form Elements (select, textarea)',
+      wcagFormElementsDesc:
+        'Form controls must have associated labels and proper accessibility attributes. Select elements need accessible options.',
+      wcagFormElementsNote:
+        '<strong>Requirements:</strong> All form elements should have <strong>label</strong> elements or <strong>aria-label</strong>/<strong>aria-labelledby</strong>.',
     },
     es: {
       title: 'QA Web Analyzer',
@@ -216,6 +302,94 @@ export const useLanguageStore = defineStore('language', () => {
       includeScreenshots: 'Incluir Capturas',
       includeHTML: 'Incluir Código HTML',
       cancel: 'Cancelar',
+      wcagGuidelines: 'Guías de Accesibilidad WCAG 2.2 AA',
+      close: 'Cerrar',
+      wcagAltText: 'Texto Alt',
+      wcagAltTextDesc:
+        'Todas las imágenes deben tener atributos <strong>alt</strong> descriptivos. Las imágenes decorativas deben usar <strong>alt=""</strong>.',
+      wcagAltTextNote:
+        '<strong>Para Imágenes:</strong> Según WCAG 2.2 AA, las imágenes deben tener texto alternativo mediante <strong>alt</strong> (preferido), <strong>aria-label</strong>, o <strong>aria-labelledby</strong>. Si una imagen tiene <strong>alt</strong>, <strong>aria-label</strong> no es requerido. Si no hay <strong>alt</strong>, la imagen debe tener <strong>aria-label</strong> o <strong>aria-labelledby</strong>.',
+      wcagAriaLabel: 'aria-label',
+      wcagAriaLabelDesc:
+        'Proporciona un nombre accesible para elementos que no tienen etiquetas de texto visibles.',
+      wcagAriaLabelNote:
+        '<strong>Para Imágenes:</strong> <strong>aria-label</strong> puede usarse como texto alternativo para imágenes, pero <strong>alt</strong> es el método preferido. Si una imagen tiene <strong>alt</strong>, <strong>aria-label</strong> no es requerido. Solo marcar como faltante si la imagen no tiene <strong>alt</strong> ni <strong>aria-label</strong>.',
+      wcagAriaLabelledby: 'aria-labelledby',
+      wcagAriaLabelledbyDesc:
+        'Hace referencia a otro elemento que proporciona el nombre accesible.',
+      wcagAriaLabelledbyNote:
+        '<strong>Para Imágenes:</strong> <strong>aria-labelledby</strong> puede usarse como texto alternativo para imágenes, pero <strong>alt</strong> es el método preferido. Si una imagen tiene <strong>alt</strong>, <strong>aria-labelledby</strong> no es requerido.',
+      wcagAriaDescribedby: 'aria-describedby',
+      wcagAriaDescribedbyDesc:
+        'Hace referencia a elementos que proporcionan información descriptiva adicional.',
+      wcagAriaHidden: 'aria-hidden',
+      wcagAriaHiddenDesc:
+        'Debe usarse con cuidado. Oculta elementos decorativos de los lectores de pantalla.',
+      wcagAriaExpanded: 'aria-expanded',
+      wcagAriaExpandedDesc: 'Indica si los elementos colapsables están expandidos o contraídos.',
+      wcagAriaControls: 'aria-controls',
+      wcagAriaControlsDesc: 'Identifica elementos controlados por el elemento actual.',
+      wcagAriaCurrent: 'aria-current',
+      wcagAriaCurrentDesc: 'Indica el elemento actual en un conjunto de elementos relacionados.',
+      wcagAriaRequired: 'aria-required',
+      wcagAriaRequiredDesc:
+        'Indica que se requiere entrada del usuario para los controles de formulario.',
+      wcagAriaInvalid: 'aria-invalid',
+      wcagAriaInvalidDesc: 'Indica que el valor ingresado es inválido.',
+      wcagTabIndex: 'tabindex',
+      wcagTabIndexDesc:
+        'Controla la navegación por teclado. Usa <strong>tabindex="0"</strong> para elementos enfocables, evita valores positivos.',
+      wcagLang: 'lang',
+      wcagLangDesc: 'Especifica el idioma del contenido del elemento para lectores de pantalla.',
+      wcagLabelElements: 'elementos <label>',
+      wcagLabelElementsDesc:
+        'Todos los inputs de formulario deben tener elementos <strong>&lt;label&gt;</strong> asociados.',
+      wcagTitleAttribute: 'atributo title',
+      wcagTitleAttributeDesc:
+        'Proporciona información adicional de tooltip, pero no debe ser la única forma de transmitir información importante.',
+      wcagFocusStates: 'Estados de Foco',
+      wcagFocusStatesDesc:
+        'Todos los elementos interactivos deben tener indicadores de foco visibles que cumplan con los requisitos de contraste WCAG 2.2 AA.',
+      wcagAriaChecked: 'aria-checked',
+      wcagAriaCheckedDesc:
+        'Indica el estado marcado de casillas, botones de radio y otros elementos alternables. Requerido para controles personalizados.',
+      wcagAriaDisabled: 'aria-disabled',
+      wcagAriaDisabledDesc:
+        'Indica que un elemento está deshabilitado pero aún visible. Usar con elementos interactivos que no pueden activarse.',
+      wcagAriaPressed: 'aria-pressed',
+      wcagAriaPressedDesc:
+        'Indica el estado presionado de botones alternables. Usar para botones que pueden activarse/desactivarse.',
+      wcagAriaBusy: 'aria-busy',
+      wcagAriaBusyDesc:
+        'Indica que un elemento está siendo modificado y las tecnologías asistivas pueden necesitar esperar antes de presentar actualizaciones.',
+      wcagAriaLive: 'aria-live',
+      wcagAriaLiveDesc:
+        'Indica que un elemento será actualizado y describe los tipos de actualizaciones. Usar para regiones de contenido dinámico.',
+      wcagAriaLiveNote:
+        '<strong>Valores:</strong> <strong>off</strong> (por defecto), <strong>polite</strong> (anunciar cuando esté inactivo), <strong>assertive</strong> (anunciar inmediatamente).',
+      wcagAutocomplete: 'autocomplete',
+      wcagAutocompleteDesc:
+        'Ayuda a los usuarios a completar formularios más rápido y con mayor precisión. Requerido para ciertos tipos de input según WCAG 2.2 AA.',
+      wcagAutocompleteNote:
+        '<strong>Valores comunes:</strong> name, email, tel, url, address-line1, country, etc.',
+      wcagRequired: 'required',
+      wcagRequiredDesc:
+        'Indica que un campo de formulario debe completarse antes del envío. Proporciona indicación visual y programática.',
+      wcagHeadings: 'Encabezados (h1-h6)',
+      wcagHeadingsDesc:
+        'Proporcionan estructura semántica al contenido. Deben tener jerarquía adecuada (un h1 por página, sin niveles saltados).',
+      wcagHeadingsNote:
+        '<strong>Mejor Práctica:</strong> Usa encabezados para organizar el contenido lógicamente. Los lectores de pantalla los usan para navegación.',
+      wcagTables: 'Tablas',
+      wcagTablesDesc:
+        'Las tablas de datos deben tener encabezados apropiados (elementos th) con atributos scope, y opcionalmente caption o summary.',
+      wcagTablesNote:
+        '<strong>Requisitos:</strong> Usa <strong>scope</strong> en elementos th (col, row, colgroup, rowgroup). Las tablas complejas pueden necesitar el atributo <strong>headers</strong> en td.',
+      wcagFormElements: 'Elementos de Formulario (select, textarea)',
+      wcagFormElementsDesc:
+        'Los controles de formulario deben tener etiquetas asociadas y atributos de accesibilidad apropiados. Los elementos select necesitan opciones accesibles.',
+      wcagFormElementsNote:
+        '<strong>Requisitos:</strong> Todos los elementos de formulario deben tener elementos <strong>label</strong> o <strong>aria-label</strong>/<strong>aria-labelledby</strong>.',
     },
   };
 

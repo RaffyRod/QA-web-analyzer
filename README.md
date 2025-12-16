@@ -109,7 +109,7 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - 🎯 **Smart Filtering**: Filter by missing or present attributes
 - 📸 **Visual Feedback**: Screenshots of problematic elements
 - 📱 **Fully Responsive**: Optimized for smartphones, tablets, and desktop
-- 🎭 **WCAG Information Modal**: Quick reference guide for accessibility standards with detailed rules for images and `aria-label` according to WCAG 2.2 AA
+- 🎭 **WCAG Information Modal**: Quick reference guide for accessibility standards with detailed rules for images and `aria-label` according to WCAG 2.2 AA. Fully translated to English and Spanish.
 
 ## 📖 How to Use
 
