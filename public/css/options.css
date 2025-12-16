@@ -54,12 +54,16 @@
 
 .option-group label {
   display: flex;
+  -webkit-display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
   color: var(--text-primary);
   font-size: 0.9rem;
   font-weight: 500;
+  -webkit-transition: color 0.3s ease;
+  -moz-transition: color 0.3s ease;
+  -o-transition: color 0.3s ease;
   transition: color 0.3s ease;
   position: relative;
 }
@@ -83,12 +87,16 @@
 
 .radio-label {
   display: flex;
+  -webkit-display: flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
   font-size: 0.8rem;
   color: var(--text-secondary);
   font-weight: 500;
+  -webkit-transition: color 0.2s ease;
+  -moz-transition: color 0.2s ease;
+  -o-transition: color 0.2s ease;
   transition: color 0.2s ease;
 }
 

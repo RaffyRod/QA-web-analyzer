@@ -256,6 +256,7 @@ watch(
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
+  -webkit-display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
@@ -266,12 +267,17 @@ watch(
   background: var(--card-bg, #1e293b);
   color: var(--text-primary, #f1f5f9);
   border-radius: 16px;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
   padding: 30px;
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   border: 1px solid var(--border-color, #334155);
 }
 

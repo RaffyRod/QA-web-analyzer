@@ -5,8 +5,15 @@
   margin: 0 auto;
   background: var(--card-bg, #f5f7fa);
   border-radius: 24px;
+  -webkit-border-radius: 24px;
+  -moz-border-radius: 24px;
   padding: 30px;
   box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
+  -webkit-box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
+  -moz-box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -16,11 +23,26 @@ header {
   margin-bottom: 40px;
   color: var(--header-text, white);
   position: relative;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   background: var(--header-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
   padding: 40px 20px 25px;
   border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
   box-shadow: var(
+    --shadow-lg,
+    12px 12px 24px rgba(0, 0, 0, 0.2),
+    -12px -12px 24px rgba(255, 255, 255, 0.1)
+  );
+  -webkit-box-shadow: var(
+    --shadow-lg,
+    12px 12px 24px rgba(0, 0, 0, 0.2),
+    -12px -12px 24px rgba(255, 255, 255, 0.1)
+  );
+  -moz-box-shadow: var(
     --shadow-lg,
     12px 12px 24px rgba(0, 0, 0, 0.2),
     -12px -12px 24px rgba(255, 255, 255, 0.1)
@@ -28,6 +50,7 @@ header {
   overflow: visible;
   min-height: 120px;
   display: flex;
+  -webkit-display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -102,9 +125,16 @@ header h1 {
   background: var(--card-bg, #f5f7fa);
   padding: 30px;
   border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
   box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
+  -webkit-box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
+  -moz-box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
   margin-bottom: 30px;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 
@@ -124,7 +154,14 @@ header h1 {
   background: var(--card-bg, #f5f7fa);
   padding: 30px;
   border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
   box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
+  -webkit-box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
+  -moz-box-shadow: var(--shadow-lg, 12px 12px 24px #b8bec4, -12px -12px 24px #ffffff);
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
 

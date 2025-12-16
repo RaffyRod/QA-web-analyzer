@@ -188,12 +188,21 @@
 /* Language Selector (legacy) */
 .language-selector {
   display: flex;
+  -webkit-display: flex;
   gap: 4px;
   background: var(--header-controls-bg, rgba(255, 255, 255, 0.15));
   padding: 4px;
   border-radius: 12px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
@@ -231,8 +240,13 @@
 .lang-btn:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.4);
+  -webkit-transform: translateY(-1px);
+  -moz-transform: translateY(-1px);
+  -ms-transform: translateY(-1px);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .lang-btn.active {
@@ -408,16 +422,25 @@
   font-size: 0.9rem;
   border: 2px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
   background: var(--card-bg, #ffffff);
   color: var(--text-primary);
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -webkit-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -moz-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
 }
 
 .url-input-compact:focus {
   outline: none;
   border-color: var(--primary-color, #2563eb);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  -webkit-box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  -moz-box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .button-group {
@@ -434,16 +457,24 @@
   color: var(--button-text-color, #ffffff) !important;
   border: none !important;
   border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -webkit-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -moz-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
   position: relative;
   overflow: hidden;
   min-width: 100px;
   height: 44px;
   display: flex;
+  -webkit-display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -461,8 +492,13 @@
 .btn-primary:hover:not(:disabled) {
   background: var(--primary-hover) !important;
   color: var(--button-text-color, #ffffff) !important;
+  -webkit-transform: translateY(-1px);
+  -moz-transform: translateY(-1px);
+  -ms-transform: translateY(-1px);
   transform: translateY(-1px);
   box-shadow: var(--shadow-lg, 0 4px 6px rgba(0, 0, 0, 0.1));
+  -webkit-box-shadow: var(--shadow-lg, 0 4px 6px rgba(0, 0, 0, 0.1));
+  -moz-box-shadow: var(--shadow-lg, 0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .btn-primary:hover:not(:disabled) * {
@@ -470,8 +506,13 @@
 }
 
 .btn-primary:active:not(:disabled) {
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
   transform: translateY(0);
   box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -webkit-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -moz-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
 }
 
 .btn-primary:disabled {
@@ -486,11 +527,19 @@
   color: var(--button-text-color, #ffffff) !important;
   border: none !important;
   border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -webkit-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -moz-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
   display: flex;
+  -webkit-display: flex;
   align-items: center;
   justify-content: center;
   min-width: 44px;
@@ -499,6 +548,8 @@
   flex-shrink: 0;
   overflow: hidden;
   box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 
 .btn-info * {
@@ -522,8 +573,13 @@
 .btn-info:hover {
   background: var(--primary-hover, #1d4ed8) !important;
   color: var(--button-text-color, #ffffff) !important;
+  -webkit-transform: translateY(-1px);
+  -moz-transform: translateY(-1px);
+  -ms-transform: translateY(-1px);
   transform: translateY(-1px);
   box-shadow: var(--shadow-lg, 0 4px 6px rgba(0, 0, 0, 0.1));
+  -webkit-box-shadow: var(--shadow-lg, 0 4px 6px rgba(0, 0, 0, 0.1));
+  -moz-box-shadow: var(--shadow-lg, 0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .btn-info:hover * {
@@ -531,6 +587,9 @@
 }
 
 .btn-info:active {
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
   transform: translateY(0);
 }
 
@@ -540,11 +599,22 @@
   color: var(--danger-text-color, #ffffff);
   border: none;
   border-radius: 16px;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   box-shadow:
+    6px 6px 12px rgba(0, 0, 0, 0.2),
+    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow:
+    6px 6px 12px rgba(0, 0, 0, 0.2),
+    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -moz-box-shadow:
     6px 6px 12px rgba(0, 0, 0, 0.2),
     -2px -2px 4px rgba(255, 255, 255, 0.1);
 }
@@ -555,15 +625,33 @@
 
 .btn-stop:hover {
   background: #dc2626;
+  -webkit-transform: translateY(-2px);
+  -moz-transform: translateY(-2px);
+  -ms-transform: translateY(-2px);
   transform: translateY(-2px);
   box-shadow:
+    8px 8px 16px rgba(0, 0, 0, 0.25),
+    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow:
+    8px 8px 16px rgba(0, 0, 0, 0.25),
+    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -moz-box-shadow:
     8px 8px 16px rgba(0, 0, 0, 0.25),
     -2px -2px 4px rgba(255, 255, 255, 0.1);
 }
 
 .btn-stop:active {
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
   transform: translateY(0);
   box-shadow:
+    inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow:
+    inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -moz-box-shadow:
     inset 4px 4px 8px rgba(0, 0, 0, 0.2),
     inset -2px -2px 4px rgba(255, 255, 255, 0.1);
 }
@@ -574,14 +662,26 @@
   color: var(--success-text-color, #ffffff);
   border: none;
   border-radius: 16px;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
   transition: all 0.3s ease;
   display: flex;
+  -webkit-display: flex;
   align-items: center;
   gap: 8px;
   box-shadow:
+    6px 6px 12px rgba(0, 0, 0, 0.2),
+    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow:
+    6px 6px 12px rgba(0, 0, 0, 0.2),
+    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -moz-box-shadow:
     6px 6px 12px rgba(0, 0, 0, 0.2),
     -2px -2px 4px rgba(255, 255, 255, 0.1);
 }
@@ -592,15 +692,33 @@
 
 .btn-export:hover:not(:disabled) {
   background: #059669;
+  -webkit-transform: translateY(-2px);
+  -moz-transform: translateY(-2px);
+  -ms-transform: translateY(-2px);
   transform: translateY(-2px);
   box-shadow:
+    8px 8px 16px rgba(0, 0, 0, 0.25),
+    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow:
+    8px 8px 16px rgba(0, 0, 0, 0.25),
+    -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -moz-box-shadow:
     8px 8px 16px rgba(0, 0, 0, 0.25),
     -2px -2px 4px rgba(255, 255, 255, 0.1);
 }
 
 .btn-export:active:not(:disabled) {
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
   transform: translateY(0);
   box-shadow:
+    inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow:
+    inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+  -moz-box-shadow:
     inset 4px 4px 8px rgba(0, 0, 0, 0.2),
     inset -2px -2px 4px rgba(255, 255, 255, 0.1);
 }

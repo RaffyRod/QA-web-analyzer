@@ -28,8 +28,12 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   opacity: 0;
+  -webkit-transition: opacity 0.3s ease;
+  -moz-transition: opacity 0.3s ease;
+  -o-transition: opacity 0.3s ease;
   transition: opacity 0.3s ease;
 }
 
@@ -41,20 +45,34 @@
   position: relative;
   background: var(--card-bg, #ffffff);
   border-radius: 16px;
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
   max-width: 90vw;
   max-height: 85vh;
   width: 800px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  -webkit-transform: scale(0.9) translateY(20px);
+  -moz-transform: scale(0.9) translateY(20px);
+  -ms-transform: scale(0.9) translateY(20px);
   transform: scale(0.9) translateY(20px);
   opacity: 0;
+  -webkit-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -moz-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -o-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   display: flex;
+  -webkit-display: flex;
   flex-direction: column;
   border: 2px solid var(--border-color, #e2e8f0);
 }
 
 .wcag-info-modal:not(.hidden) .wcag-modal-content {
+  -webkit-transform: scale(1) translateY(0);
+  -moz-transform: scale(1) translateY(0);
+  -ms-transform: scale(1) translateY(0);
   transform: scale(1) translateY(0);
   opacity: 1;
 }
@@ -94,6 +112,9 @@
 
 .wcag-modal-close:hover {
   background: var(--modal-close-bg-hover, rgba(255, 255, 255, 0.3));
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
   transform: rotate(90deg);
 }
 
@@ -126,8 +147,13 @@
 
 .wcag-item:hover {
   background: #f1f5f9;
+  -webkit-transform: translateX(4px);
+  -moz-transform: translateX(4px);
+  -ms-transform: translateX(4px);
   transform: translateX(4px);
   box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -webkit-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+  -moz-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
 }
 
 .wcag-item strong {
