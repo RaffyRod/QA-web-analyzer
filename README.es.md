@@ -192,18 +192,34 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 
 ## 📊 Ejemplo de Análisis
 
-**Entrada:** `https://example.com`
+<div align="center">
 
-**Salida:**
+### 🔍 **Analizando un Sitio Web**
 
-| Métrica                   | Valor | Estado |
-| ------------------------- | ----- | ------ |
-| Total Imágenes            | 15    | -      |
-| Imágenes sin Alt          | 3     | ❌     |
-| Total Enlaces             | 42    | -      |
-| Enlaces sin Accesibilidad | 5     | ❌     |
-| Total Botones             | 8     | -      |
-| Botones sin Accesibilidad | 2     | ❌     |
+**📥 URL de Entrada:**
+
+```
+https://example.com
+```
+
+**📤 Resultados del Análisis:**
+
+</div>
+
+| 📊 Métrica                       | 🔢 Valor | ✅ Estado      |
+| -------------------------------- | -------- | -------------- |
+| 🖼️ **Total Imágenes**            | **15**   | ✅             |
+| ⚠️ **Imágenes sin Alt**          | **3**    | ❌ **Fallido** |
+| 🔗 **Total Enlaces**             | **42**   | ✅             |
+| ⚠️ **Enlaces sin Accesibilidad** | **5**    | ❌ **Fallido** |
+| 🔘 **Total Botones**             | **8**    | ✅             |
+| ⚠️ **Botones sin Accesibilidad** | **2**    | ❌ **Fallido** |
+
+<div align="center">
+
+**📈 Resumen:** 3 problemas encontrados en 65 elementos analizados
+
+</div>
 
 ## 🏗️ Estructura del Proyecto
 

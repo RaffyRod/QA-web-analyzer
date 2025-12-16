@@ -162,18 +162,34 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 
 ## 📊 Example Analysis
 
-**Input:** `https://example.com`
+<div align="center">
 
-**Output:**
+### 🔍 **Analyzing a Website**
 
-| Metric                        | Value | Status |
-| ----------------------------- | ----- | ------ |
-| Total Images                  | 15    | -      |
-| Images without Alt            | 3     | ❌     |
-| Total Links                   | 42    | -      |
-| Links without Accessibility   | 5     | ❌     |
-| Total Buttons                 | 8     | -      |
-| Buttons without Accessibility | 2     | ❌     |
+**📥 Input URL:**
+
+```
+https://example.com
+```
+
+**📤 Analysis Results:**
+
+</div>
+
+| 📊 Metric                            | 🔢 Value | ✅ Status     |
+| ------------------------------------ | -------- | ------------- |
+| 🖼️ **Total Images**                  | **15**   | ✅            |
+| ⚠️ **Images without Alt**            | **3**    | ❌ **Failed** |
+| 🔗 **Total Links**                   | **42**   | ✅            |
+| ⚠️ **Links without Accessibility**   | **5**    | ❌ **Failed** |
+| 🔘 **Total Buttons**                 | **8**    | ✅            |
+| ⚠️ **Buttons without Accessibility** | **2**    | ❌ **Failed** |
+
+<div align="center">
+
+**📈 Summary:** 3 issues found across 65 elements analyzed
+
+</div>
 
 ## 🏗️ Project Structure
 
