@@ -44,7 +44,7 @@ describe('savedUrls store', () => {
       expect(store.savedUrls).toEqual([]);
     });
 
-    it('should limit loaded URLs to maximum of 5', () => {
+    it('should limit loaded URLs to maximum of 10', () => {
       const manyUrls = [
         'https://url1.com',
         'https://url2.com',
@@ -53,12 +53,17 @@ describe('savedUrls store', () => {
         'https://url5.com',
         'https://url6.com',
         'https://url7.com',
+        'https://url8.com',
+        'https://url9.com',
+        'https://url10.com',
+        'https://url11.com',
+        'https://url12.com',
       ];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(manyUrls));
 
       const store = useSavedUrlsStore();
-      expect(store.savedUrls.length).toBe(5);
-      expect(store.savedUrls).toEqual(manyUrls.slice(0, 5));
+      expect(store.savedUrls.length).toBe(10);
+      expect(store.savedUrls).toEqual(manyUrls.slice(0, 10));
     });
   });
 
@@ -114,23 +119,28 @@ describe('savedUrls store', () => {
 
     it('should remove oldest URL when at max capacity', () => {
       const store = useSavedUrlsStore();
-      // Add 5 URLs
+      // Add 10 URLs
       store.addUrl('https://url1.com');
       store.addUrl('https://url2.com');
       store.addUrl('https://url3.com');
       store.addUrl('https://url4.com');
       store.addUrl('https://url5.com');
+      store.addUrl('https://url6.com');
+      store.addUrl('https://url7.com');
+      store.addUrl('https://url8.com');
+      store.addUrl('https://url9.com');
+      store.addUrl('https://url10.com');
 
-      expect(store.savedUrls.length).toBe(5);
+      expect(store.savedUrls.length).toBe(10);
       expect(store.canSaveMore).toBe(false);
 
-      // Add 6th URL - should remove first one
-      store.addUrl('https://url6.com');
+      // Add 11th URL - should remove first one
+      store.addUrl('https://url11.com');
 
-      expect(store.savedUrls.length).toBe(5);
+      expect(store.savedUrls.length).toBe(10);
       expect(store.savedUrls).not.toContain('https://url1.com');
-      expect(store.savedUrls).toContain('https://url6.com');
-      expect(store.savedUrls[store.savedUrls.length - 1]).toBe('https://url6.com');
+      expect(store.savedUrls).toContain('https://url11.com');
+      expect(store.savedUrls[store.savedUrls.length - 1]).toBe('https://url11.com');
     });
 
     it('should persist URLs to localStorage when adding', () => {
@@ -258,7 +268,7 @@ describe('savedUrls store', () => {
   });
 
   describe('canSaveMore', () => {
-    it('should return true when less than 5 URLs saved', () => {
+    it('should return true when less than 10 URLs saved', () => {
       const store = useSavedUrlsStore();
       store.addUrl('https://url1.com');
       store.addUrl('https://url2.com');
@@ -267,25 +277,35 @@ describe('savedUrls store', () => {
       expect(store.canSaveMore).toBe(true);
     });
 
-    it('should return false when 5 URLs saved', () => {
+    it('should return false when 10 URLs saved', () => {
       const store = useSavedUrlsStore();
       store.addUrl('https://url1.com');
       store.addUrl('https://url2.com');
       store.addUrl('https://url3.com');
       store.addUrl('https://url4.com');
       store.addUrl('https://url5.com');
+      store.addUrl('https://url6.com');
+      store.addUrl('https://url7.com');
+      store.addUrl('https://url8.com');
+      store.addUrl('https://url9.com');
+      store.addUrl('https://url10.com');
 
       expect(store.canSaveMore).toBe(false);
     });
 
     it('should return true after removing a URL when at max capacity', () => {
       const store = useSavedUrlsStore();
-      // Add 5 URLs
+      // Add 10 URLs
       store.addUrl('https://url1.com');
       store.addUrl('https://url2.com');
       store.addUrl('https://url3.com');
       store.addUrl('https://url4.com');
       store.addUrl('https://url5.com');
+      store.addUrl('https://url6.com');
+      store.addUrl('https://url7.com');
+      store.addUrl('https://url8.com');
+      store.addUrl('https://url9.com');
+      store.addUrl('https://url10.com');
 
       expect(store.canSaveMore).toBe(false);
 
@@ -353,11 +373,16 @@ describe('savedUrls store', () => {
         'https://subdomain.example.com',
         'http://192.168.1.1:8080',
         'https://example.com:443',
+        'https://test1.com',
+        'https://test2.com',
+        'https://test3.com',
+        'https://test4.com',
+        'https://test5.com',
       ];
 
       urls.forEach((url) => store.addUrl(url));
 
-      expect(store.savedUrls.length).toBe(5);
+      expect(store.savedUrls.length).toBe(10);
       urls.forEach((url) => {
         expect(store.isUrlSaved(url)).toBe(true);
       });

@@ -5,7 +5,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 
-const MAX_SAVED_URLS = 5;
+const MAX_SAVED_URLS = 10;
 const STORAGE_KEY = 'qa-web-analyzer-saved-urls';
 
 export const useSavedUrlsStore = defineStore('savedUrls', () => {
