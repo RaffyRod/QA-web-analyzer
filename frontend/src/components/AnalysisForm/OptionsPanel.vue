@@ -596,8 +596,8 @@ function deselectAllAttributes() {
 
 .checkbox-group label {
   color: var(--text-primary, #1e293b);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
+  -webkit-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .checkbox-group label span {
@@ -674,8 +674,8 @@ function deselectAllAttributes() {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   flex: 1;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
+  -webkit-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .category-toggle {
@@ -708,12 +708,14 @@ function deselectAllAttributes() {
 
 .category-content .checkbox-group label {
   color: var(--text-primary, #1e293b) !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
+  -webkit-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .category-content .checkbox-group label span {
   color: var(--text-primary, #1e293b) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
+  -webkit-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .category-content .checkbox-group label:has(input[type="checkbox"]:checked) {
