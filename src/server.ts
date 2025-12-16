@@ -100,34 +100,24 @@ app.post('/api/analyze', async (req: Request<{}, {}, AnalyzeRequest>, res: Respo
 
 /**
  * Finds an available port with priority strategy:
- * 1. Try ports 3002-3005 first (avoiding 3000 and 3001)
- * 2. If those 4 ports are occupied, fall back to 3000 or 3001 if available
- * 3. If all are occupied, find any available port starting from 3000
+ * Uses ports 4000-4005 and 5000-5005 which are rarely used by common frameworks on Mac/Windows
+ * If all are occupied, finds any available port starting from 4000
  * @returns Promise resolving to an available port number
  */
 const findPortWithPriority = async (): Promise<number> => {
-  // First, try alternative ports (3002-3005) to avoid 3000 and 3001
-  const alternativePorts = [3002, 3003, 3004, 3005];
+  // Use ports 4000-4005 and 5000-5005 which are rarely used by common frameworks
+  // (React, Next.js, Express typically use 3000-3999)
+  const preferredPorts = [4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005];
 
-  for (const port of alternativePorts) {
+  for (const port of preferredPorts) {
     const isAvailable = await isPortAvailable(port);
     if (isAvailable) {
       return port;
     }
   }
 
-  // If all 4 alternative ports are occupied, try 3000 and 3001 as fallback
-  const fallbackPorts = [3000, 3001];
-
-  for (const port of fallbackPorts) {
-    const isAvailable = await isPortAvailable(port);
-    if (isAvailable) {
-      return port;
-    }
-  }
-
-  // If all preferred ports are occupied, find any available port starting from 3000
-  return await findAvailablePort(3000);
+  // If all preferred ports are occupied, find any available port starting from 4000
+  return await findAvailablePort(4000);
 };
 
 const startServer = async (): Promise<void> => {

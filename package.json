@@ -9,7 +9,7 @@
     "_build:backend": "tsc",
     "_build:frontend": "cd frontend && npm install && npm run build",
     "start": "node dist/server.js",
-    "start:all": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm start\" \"cd frontend && npm run dev\"",
+    "start:all": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"npm start\" \"cd frontend && npm run dev\"",
     "setup": "node setup-and-run.js",
     "dev": "tsc --watch & node --watch dist/server.js",
     "dev:all": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm dev\" \"cd frontend && npm run dev\"",

@@ -69,31 +69,26 @@ if (!existsSync(frontendNodeModules)) {
 if (!existsSync(distPath) || !existsSync(join(distPath, 'server.js'))) {
   console.log('🔨 Step 3/4: Building backend (TypeScript compilation)...');
   try {
-    // Try pnpm first, fallback to npm
-    let buildSuccess = false;
-    try {
+    // Use detected package manager
+    if (pkgManager === 'pnpm') {
       execSync('pnpm exec tsc', { stdio: 'inherit', cwd: __dirname });
-      buildSuccess = true;
-    } catch {
-      try {
-        execSync('npx tsc', { stdio: 'inherit', cwd: __dirname });
-        buildSuccess = true;
-      } catch {
-        console.error(
-          '❌ Error: TypeScript compiler not found. Please install dependencies first.'
-        );
-        process.exit(1);
-      }
+    } else {
+      execSync('npx tsc', { stdio: 'inherit', cwd: __dirname });
     }
-    if (buildSuccess) {
-      console.log('✅ Backend built successfully!\n');
-    }
+    console.log('✅ Backend built successfully!\n');
   } catch (error) {
     console.error('❌ Error building backend');
+    console.error('💡 Make sure TypeScript is installed: ' + pkgManager + ' install');
     process.exit(1);
   }
 } else {
   console.log('✅ Backend already built\n');
+}
+
+// Verify backend is compiled before starting
+if (!existsSync(join(distPath, 'server.js'))) {
+  console.error('❌ Error: Backend not compiled. Please run the build step first.');
+  process.exit(1);
 }
 
 // Step 4: Start both servers
@@ -104,10 +99,14 @@ console.log('💡 The frontend will automatically connect to the backend\n');
 console.log('📝 Check the console output for the exact URLs\n');
 console.log('='.repeat(60) + '\n');
 
+// Build the start command based on package manager
+const startCommand = pkgManager === 'pnpm' ? 'pnpm run start:all' : 'npm run start:all';
+
 try {
-  execSync(`${pkgManager} run start:all`, { stdio: 'inherit', cwd: __dirname });
+  execSync(startCommand, { stdio: 'inherit', cwd: __dirname });
 } catch (error) {
   console.error('❌ Error starting servers');
-  console.error('💡 Make sure concurrently is installed: npm install -g concurrently');
+  console.error('💡 Make sure concurrently is installed: ' + pkgManager + ' install');
+  console.error('💡 Or install globally: npm install -g concurrently');
   process.exit(1);
 }

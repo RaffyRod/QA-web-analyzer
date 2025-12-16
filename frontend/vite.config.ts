@@ -2,14 +2,33 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
 
-// Backend ports to try in order (matches server.ts priority)
-// The backend automatically finds an available port from this list
-const BACKEND_PORTS = [3002, 3003, 3004, 3005, 3000, 3001];
+/**
+ * @author RaffyRod (https://github.com/RaffyRod)
+ */
 
-// Use environment variable if set, otherwise default to first priority port
-// Note: The backend will automatically find an available port, so if it's not on 3002,
-// you may need to set VITE_API_URL to match the actual backend port
-const DEFAULT_BACKEND = process.env.VITE_API_URL || `http://localhost:${BACKEND_PORTS[0]}`;
+// Backend ports to try in order (matches server.ts priority)
+// Uses ports 4000-4005 and 5000-5005 which are rarely used by common frameworks on Mac/Windows
+const BACKEND_PORTS = [4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005];
+
+/**
+ * Gets the default backend port
+ * The frontend store will auto-detect the correct port if this one doesn't work
+ */
+function getDefaultBackendPort(): number {
+  // If VITE_API_URL is set, extract port from it
+  if (process.env.VITE_API_URL) {
+    const match = process.env.VITE_API_URL.match(/:(\d+)/);
+    if (match) {
+      return parseInt(match[1], 10);
+    }
+  }
+
+  // Return first port in priority list
+  // The frontend store will auto-detect the correct port if this one doesn't work
+  return BACKEND_PORTS[0];
+}
+
+const DEFAULT_BACKEND = `http://localhost:${getDefaultBackendPort()}`;
 
 export default defineConfig({
   plugins: [vue()],
@@ -35,71 +54,22 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         configure: (proxy, _options) => {
-          // Try multiple ports if the default fails
-          let currentPortIndex = 0;
-
-          proxy.on('error', async (err, req, res) => {
-            console.error('❌ Proxy error on port:', BACKEND_PORTS[currentPortIndex]);
-            console.error('Error:', err.message);
-
-            // Try next port in the list
-            if (currentPortIndex < BACKEND_PORTS.length - 1) {
-              currentPortIndex++;
-              const nextPort = BACKEND_PORTS[currentPortIndex];
-              console.log(`🔄 Trying next port: ${nextPort}`);
-
-              // Update proxy target (this requires recreating the proxy, so we'll handle it differently)
-              // For now, just log and suggest manual configuration
-            }
-
-            console.error(
-              '💡 Tip: The backend automatically finds an available port from:',
-              BACKEND_PORTS.join(', ')
-            );
-            console.error("💡 Tip: Check the backend console to see which port it's using");
-            console.error(
-              '💡 Tip: Set VITE_API_URL=http://localhost:PORT to match the backend port'
-            );
-
+          proxy.on('error', (err, req, res) => {
+            // Only log if response hasn't been sent (avoid duplicate errors)
             if (!res.headersSent) {
-              res.writeHead(500, {
-                'Content-Type': 'application/json',
-              });
-              res.end(
-                JSON.stringify({
-                  error: 'Proxy error',
-                  message: `Failed to connect to backend server. The backend automatically finds an available port.`,
-                  details: [
-                    '1. Ensure the backend server is running',
-                    `2. Check the backend console - it will show which port it's using`,
-                    `3. The backend tries ports in this order: ${BACKEND_PORTS.join(', ')}`,
-                    `4. Set VITE_API_URL=http://localhost:PORT (replace PORT with the actual port from backend console)`,
-                    `5. Current proxy target: ${DEFAULT_BACKEND}`,
-                  ].join('\n'),
-                  originalError: err.message,
-                  triedPort: BACKEND_PORTS[currentPortIndex],
-                  availablePorts: BACKEND_PORTS,
-                })
+              console.error('❌ Proxy error connecting to backend:', err.message);
+              console.error(
+                `💡 Backend should be running on one of these ports: ${BACKEND_PORTS.join(', ')}`
               );
+              console.error(`💡 The frontend will auto-detect and connect directly if proxy fails`);
             }
           });
           proxy.on('proxyReq', (proxyReq, req, _res) => {
-            console.log('🔄 Proxying:', req.method, req.url, '→', DEFAULT_BACKEND + req.url);
-            // Ensure Content-Type is set for POST requests
-            if (req.method === 'POST' && req.headers['content-type']) {
-              proxyReq.setHeader('Content-Type', req.headers['content-type']);
-            }
+            // Silent proxy logging - the store will handle connection errors
           });
           proxy.on('proxyRes', (proxyRes, req, _res) => {
             if (proxyRes.statusCode && proxyRes.statusCode >= 400) {
               console.error('❌ Backend error:', proxyRes.statusCode, req.url);
-            }
-            // Ensure response has correct Content-Type
-            if (
-              !proxyRes.headers['content-type'] ||
-              !proxyRes.headers['content-type'].includes('application/json')
-            ) {
-              console.warn('⚠️ Backend response is not JSON:', proxyRes.headers['content-type']);
             }
           });
         },

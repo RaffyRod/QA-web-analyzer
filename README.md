@@ -11,17 +11,39 @@
 
 ---
 
-## 🚀 HOW TO RUN - QUICK START
+## 🚀 QUICK START - ONE COMMAND
 
-### ⚡ **One Command - Fully Automatic**
+<div align="center">
 
-After cloning the repository, simply run:
+### ⚡ **START IN SECONDS - ZERO CONFIGURATION**
 
 ```bash
 npm run setup
 ```
 
-**✨ That's it! The script automatically:**
+**✨ That's it! No configuration needed. Everything is automatic.**
+
+</div>
+
+### 📋 What `npm run setup` does automatically:
+
+- ✅ Installs backend dependencies (if needed)
+- ✅ Installs frontend dependencies (if needed)
+- ✅ Builds the TypeScript backend (if needed)
+- ✅ Starts both servers (Backend + Frontend)
+- ✅ Finds available ports automatically
+- ✅ Shows you the exact URLs in the console
+
+**✨ Servers will automatically find available ports and display the exact URLs in the console where they were deployed.**
+
+> 💡 **Alternative commands:**
+>
+> - `node setup-and-run.js` - Direct execution
+> - `start.bat` (Windows) or `./start.sh` (macOS/Linux) - Platform-specific scripts
+
+> 💡 **Note**: The frontend automatically proxies API requests to the backend. You only need to open the frontend URL that will appear in the console.
+
+**✨ That's it! No configuration needed. The script automatically:**
 
 - ✅ Installs backend dependencies (if needed)
 - ✅ Installs frontend dependencies (if needed)
@@ -42,7 +64,7 @@ npm run setup
 
 The application uses **intelligent port management**:
 
-- **Backend**: Automatically finds available ports in priority order (3002 → 3003 → 3004 → 3005 → 3000 → 3001 → any available)
+- **Backend**: Automatically finds available ports in priority order (4000 → 4001 → 4002 → 4003 → 4004 → 4005 → 5000 → 5001 → 5002 → 5003 → 5004 → 5005 → any available)
 - **Frontend**: Automatically detects which port the backend is using
 - **Proxy**: Dynamically connects to the correct backend port
 - **Multi-Server Support**: Works seamlessly even if you have other servers running on those ports
@@ -504,7 +526,9 @@ The analyzer follows WCAG 2.2 AA standards strictly:
 
 ## ⚙️ Configuration
 
-### Environment Variables
+> ⚠️ **IMPORTANT**: No configuration needed! The application works out of the box with automatic port detection. The `.env` file is **completely optional** and only needed if you want to customize default behavior.
+
+### Environment Variables (Optional)
 
 The `.env` file is **optional**. The application works without it using default settings and automatic port detection.
 
@@ -544,7 +568,8 @@ Available environment variables:
 
 **Backend Port Detection:**
 
-- Automatically finds available ports in priority order: **3002 → 3003 → 3004 → 3005 → 3000 → 3001 → any available**
+- Automatically finds available ports in priority order: **4000 → 4001 → 4002 → 4003 → 4004 → 4005 → 5000 → 5001 → 5002 → 5003 → 5004 → 5005 → any available**
+- Uses ports rarely used by common frameworks (React, Next.js typically use 3000-3999)
 - Skips occupied ports and uses the next available one
 - Works seamlessly even if you have other servers running on those ports
 

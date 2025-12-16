@@ -13,25 +13,37 @@
 
 ---
 
-## 🚀 CÓMO EJECUTAR - INICIO RÁPIDO
+## 🚀 INICIO RÁPIDO - UN SOLO COMANDO
 
-### ⚡ **Un Solo Comando - Completamente Automático**
+<div align="center">
 
-Después de clonar el repositorio, simplemente ejecuta:
+### ⚡ **INICIA EN SEGUNDOS - CERO CONFIGURACIÓN**
 
 ```bash
 npm run setup
 ```
 
-**✨ ¡Eso es todo! El script automáticamente:**
+**✨ ¡Eso es todo! No se necesita configuración. Todo es automático.**
+
+</div>
+
+### 📋 Lo que `npm run setup` hace automáticamente:
 
 - ✅ Instala dependencias del backend (si es necesario)
 - ✅ Instala dependencias del frontend (si es necesario)
 - ✅ Compila el backend TypeScript (si es necesario)
 - ✅ Inicia ambos servidores (Backend + Frontend)
 - ✅ Busca puertos disponibles automáticamente
+- ✅ Te muestra las URLs exactas en la consola
 
 **✨ Los servidores buscarán puertos libres automáticamente y mostrarán en consola las URLs exactas donde se desplegaron.**
+
+> 💡 **Comandos alternativos:**
+>
+> - `node setup-and-run.js` - Ejecución directa
+> - `start.bat` (Windows) o `./start.sh` (macOS/Linux) - Scripts específicos de plataforma
+
+> 💡 **Nota**: El frontend automáticamente hace proxy de las peticiones API al backend. Solo necesitas abrir la URL del frontend que aparecerá en consola.
 
 > 💡 **Comandos alternativos:**
 >
@@ -44,7 +56,7 @@ npm run setup
 
 La aplicación utiliza **gestión inteligente de puertos**:
 
-- **Backend**: Busca automáticamente puertos disponibles en orden de prioridad (3002 → 3003 → 3004 → 3005 → 3000 → 3001 → cualquier disponible)
+- **Backend**: Busca automáticamente puertos disponibles en orden de prioridad (4000 → 4001 → 4002 → 4003 → 4004 → 4005 → 5000 → 5001 → 5002 → 5003 → 5004 → 5005 → cualquier disponible)
 - **Frontend**: Detecta automáticamente en qué puerto está corriendo el backend
 - **Proxy**: Se conecta dinámicamente al puerto correcto del backend
 - **Soporte Multi-Servidor**: Funciona perfectamente incluso si tienes otros servidores corriendo en esos puertos
@@ -500,7 +512,9 @@ El analizador sigue estrictamente los estándares WCAG 2.2 AA:
 
 ## ⚙️ Configuración
 
-### Variables de Entorno
+> ⚠️ **IMPORTANTE**: ¡No se necesita configuración! La aplicación funciona de inmediato con detección automática de puertos. El archivo `.env` es **completamente opcional** y solo se necesita si quieres personalizar el comportamiento por defecto.
+
+### Variables de Entorno (Opcional)
 
 El archivo `.env` es **opcional**. La aplicación funciona sin él usando configuraciones por defecto y detección automática de puertos.
 
@@ -540,7 +554,8 @@ Variables de entorno disponibles:
 
 **Detección de Puerto del Backend:**
 
-- Busca automáticamente puertos disponibles en orden de prioridad: **3002 → 3003 → 3004 → 3005 → 3000 → 3001 → cualquier disponible**
+- Busca automáticamente puertos disponibles en orden de prioridad: **4000 → 4001 → 4002 → 4003 → 4004 → 4005 → 5000 → 5001 → 5002 → 5003 → 5004 → 5005 → cualquier disponible**
+- Usa puertos poco comunes para frameworks (React, Next.js típicamente usan 3000-3999)
 - Salta puertos ocupados y usa el siguiente disponible
 - Funciona perfectamente incluso si tienes otros servidores corriendo en esos puertos
 

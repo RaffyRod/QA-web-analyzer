@@ -99,7 +99,8 @@ export const useAnalysisStore = defineStore('analysis', () => {
     }
 
     // Try ports in priority order (matches server.ts)
-    const portsToTry = [3002, 3003, 3004, 3005, 3000, 3001];
+    // Uses ports 4000-4005 and 5000-5005 which are rarely used by common frameworks
+    const portsToTry = [4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005];
 
     // First, try the default proxy endpoint (Vite will handle the proxy)
     try {
@@ -184,7 +185,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
         lastError = proxyError;
 
         // If proxy fails, try direct connection to backend ports
-        const portsToTry = [3002, 3003, 3004, 3005, 3000, 3001];
+        const portsToTry = [4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005];
         let directSuccess = false;
 
         for (const port of portsToTry) {
