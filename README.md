@@ -310,6 +310,7 @@ qa-web-analyzer/
   - **Default Expanded State**: All categories are expanded by default on app load/reload
   - **Discrete Show More Button**: Simplified "Show More/Less" button with cleaner design (no numbers in parentheses)
   - **WCAG Modal Translations**: Complete Spanish translation for all WCAG information modal content, including titles, descriptions, and notes
+  - **Category Headers Translations**: Attribute category headers (ARIA Labels & Names, ARIA States, Form Attributes, etc.) are fully translated to Spanish, while technical attribute names (aria-label, aria-checked, etc.) remain in English per accessibility standards
 - **📸 Screenshot Optimization**: Only captures screenshots of visible elements, preventing timeouts
 - **📝 Code Attribution**: All source files include author attribution comments
 - **🚀 Production Builds**: Disabled for local development (can be re-enabled when needed)

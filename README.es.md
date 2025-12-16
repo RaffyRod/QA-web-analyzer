@@ -111,7 +111,7 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - 🎯 **Filtrado Inteligente**: Filtra por atributos faltantes o presentes
 - 📸 **Retroalimentación Visual**: Capturas de pantalla de elementos problemáticos
 - 📱 **Totalmente Responsive**: Optimizado para smartphones, tablets y desktop
-- 🎭 **Modal de Información WCAG**: Guía de referencia rápida para estándares de accesibilidad con reglas detalladas para imágenes y `aria-label` según WCAG 2.2 AA
+- 🎭 **Modal de Información WCAG**: Guía de referencia rápida para estándares de accesibilidad con reglas detalladas para imágenes y `aria-label` según WCAG 2.2 AA. Completamente traducido al inglés y español.
 
 ## 🎯 Mejoras Recientes
 
@@ -126,6 +126,8 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
   - **Emojis de Categorías**: Iconos visuales para cada categoría de atributos (🏷️ Labels, 🔄 States, 🔗 Relationships, 📢 Live Regions, 📝 Form, ⚙️ Other)
   - **Highlight Persistente de Checkboxes**: Los checkboxes seleccionados mantienen el resaltado visual (color azul y texto en negrita)
   - **Layout Mejorado**: Layout de una sola columna para categorías de atributos para mejor organización
+  - **Traducciones de Headers de Categorías**: Los headers de las categorías de atributos (Etiquetas y Nombres ARIA, Estados ARIA, Atributos de Formulario, etc.) están completamente traducidos al español, mientras que los nombres técnicos de atributos (aria-label, aria-checked, etc.) permanecen en inglés según los estándares de accesibilidad
+  - **Traducciones del Modal WCAG**: Traducción completa al español de todo el contenido del modal de información WCAG, incluyendo títulos, descripciones y notas
 - **📸 Optimización de Screenshots**: Solo captura screenshots de elementos visibles, previniendo timeouts
 - **📝 Atribución de Código**: Todos los archivos fuente incluyen comentarios de atribución del autor
 - **🚀 Builds de Producción**: Desactivados para desarrollo local (pueden reactivarse cuando se necesiten)
