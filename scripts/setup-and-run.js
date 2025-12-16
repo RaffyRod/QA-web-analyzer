@@ -12,10 +12,12 @@ import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+// Get project root (one level up from scripts/)
+const projectRoot = join(__dirname, '..');
 
-const backendNodeModules = join(__dirname, 'node_modules');
-const frontendNodeModules = join(__dirname, 'frontend', 'node_modules');
-const distPath = join(__dirname, 'dist');
+const backendNodeModules = join(projectRoot, 'node_modules');
+const frontendNodeModules = join(projectRoot, 'frontend', 'node_modules');
+const distPath = join(projectRoot, 'dist');
 
 console.log('🚀 QA Web Analyzer - Automatic Setup & Run\n');
 console.log('='.repeat(60));
@@ -41,7 +43,7 @@ if (pkgManager === 'npm') {
 if (!existsSync(backendNodeModules)) {
   console.log('📦 Step 1/5: Installing backend dependencies...');
   try {
-    execSync(`${pkgManager} install`, { stdio: 'inherit', cwd: __dirname });
+    execSync(`${pkgManager} install`, { stdio: 'inherit', cwd: projectRoot });
     console.log('✅ Backend dependencies installed!\n');
   } catch (error) {
     console.error('❌ Error installing backend dependencies');
@@ -58,7 +60,7 @@ if (!existsSync(playwrightPath)) {
   console.log('⚠️  Playwright package not found. Installing backend dependencies first...');
   // If Playwright package is missing, reinstall backend dependencies
   try {
-    execSync(`${pkgManager} install`, { stdio: 'inherit', cwd: __dirname });
+    execSync(`${pkgManager} install`, { stdio: 'inherit', cwd: projectRoot });
     console.log('✅ Backend dependencies (including Playwright) installed!\n');
   } catch (error) {
     console.error('❌ Error installing Playwright package');
@@ -86,7 +88,7 @@ try {
 if (!existsSync(frontendNodeModules)) {
   console.log('📦 Step 3/5: Installing frontend dependencies...');
   try {
-    execSync('npm install', { stdio: 'inherit', cwd: join(__dirname, 'frontend') });
+    execSync('npm install', { stdio: 'inherit', cwd: join(projectRoot, 'frontend') });
     console.log('✅ Frontend dependencies installed!\n');
   } catch (error) {
     console.error('❌ Error installing frontend dependencies');
@@ -102,9 +104,9 @@ if (!existsSync(distPath) || !existsSync(join(distPath, 'server.js'))) {
   try {
     // Use detected package manager
     if (pkgManager === 'pnpm') {
-      execSync('pnpm exec tsc', { stdio: 'inherit', cwd: __dirname });
+      execSync('pnpm exec tsc', { stdio: 'inherit', cwd: projectRoot });
     } else {
-      execSync('npx tsc', { stdio: 'inherit', cwd: __dirname });
+      execSync('npx tsc', { stdio: 'inherit', cwd: projectRoot });
     }
     console.log('✅ Backend built successfully!\n');
   } catch (error) {
@@ -134,7 +136,7 @@ console.log('='.repeat(60) + '\n');
 const startCommand = pkgManager === 'pnpm' ? 'pnpm run start:all' : 'npm run start:all';
 
 try {
-  execSync(startCommand, { stdio: 'inherit', cwd: __dirname });
+  execSync(startCommand, { stdio: 'inherit', cwd: projectRoot });
 } catch (error) {
   console.error('❌ Error starting servers');
   console.error('💡 Make sure concurrently is installed: ' + pkgManager + ' install');

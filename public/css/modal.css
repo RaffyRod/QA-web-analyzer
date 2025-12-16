@@ -146,7 +146,9 @@
 }
 
 .wcag-item:hover {
-  background: #f1f5f9;
+  background: var(--card-bg, #ffffff);
+  filter: brightness(0.95);
+  -webkit-filter: brightness(0.95);
   -webkit-transform: translateX(4px);
   -moz-transform: translateX(4px);
   -ms-transform: translateX(4px);
@@ -154,6 +156,19 @@
   box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
   -webkit-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
   -moz-box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.1));
+}
+
+/* Ensure text remains readable on hover - use !important to override any theme conflicts */
+.wcag-item:hover strong {
+  color: var(--text-primary, #1e293b) !important;
+}
+
+.wcag-item:hover p {
+  color: var(--text-secondary, #64748b) !important;
+}
+
+.wcag-item:hover p strong {
+  color: var(--primary-color, #2563eb) !important;
 }
 
 .wcag-item strong {

@@ -8,7 +8,7 @@ echo   - Start both servers
 echo.
 echo.
 
-node setup-and-run.js
+node scripts/setup-and-run.js
 
 
 

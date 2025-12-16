@@ -265,7 +265,8 @@ qa-web-analyzer/
 ├── .prettierrc.json           # Configuración de Prettier
 ├── .lintstagedrc.json         # Configuración de lint-staged
 ├── .env.example               # Plantilla de variables de entorno
-├── setup-and-run.js           # Script automatizado de configuración y ejecución
+├── scripts/                   # Scripts utilitarios
+│   └── setup-and-run.js      # Script automatizado de configuración y ejecución
 ├── start.bat                  # Script de inicio para Windows
 ├── start.sh                   # Script de inicio para Unix
 ├── start.js                   # Script de inicio legacy
