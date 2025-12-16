@@ -147,7 +147,7 @@
           :disabled="!hasResults || isLoading"
           @click="openExportModal"
         >
-          {{ t('exportAsPDF') }}
+          {{ t('exportReport') }}
         </button>
       </div>
     </div>
@@ -487,36 +487,57 @@ async function handleExportPDF(exportOptions: any) {
   }
 
   try {
-    const { exportReportAsPDF } = await import('@/utils/export')
-    const doc = await exportReportAsPDF({
-      data: results.value as any,
-      analysisOptions: analysisOptions.value,
-      showMissing: showMissing.value,
-      showHasAttributes: showHasAttributes.value,
-      sectionsVisible: {
-        images: exportOptions.elements.images,
-        links: exportOptions.elements.links,
-        buttons: exportOptions.elements.buttons,
-        inputs: exportOptions.elements.inputs,
-        roles: exportOptions.elements.roles,
-      },
-      exportOptions: exportOptions,
-    })
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)
-    doc.save(`accessibility-report-${timestamp}.pdf`)
+    
+    if (exportOptions.formats.pdf) {
+      const { exportReportAsPDF } = await import('@/utils/export')
+      const doc = await exportReportAsPDF({
+        data: results.value as any,
+        analysisOptions: analysisOptions.value,
+        showMissing: showMissing.value,
+        showHasAttributes: showHasAttributes.value,
+        sectionsVisible: {
+          images: exportOptions.elements.images,
+          links: exportOptions.elements.links,
+          buttons: exportOptions.elements.buttons,
+          inputs: exportOptions.elements.inputs,
+          roles: exportOptions.elements.roles,
+        },
+        exportOptions: exportOptions,
+      })
+      doc.save(`accessibility-report-${timestamp}.pdf`)
+    }
+
+    if (exportOptions.formats.html) {
+      const { exportReportAsHTML } = await import('@/utils/export')
+      await exportReportAsHTML({
+        data: results.value as any,
+        analysisOptions: analysisOptions.value,
+        showMissing: showMissing.value,
+        showHasAttributes: showHasAttributes.value,
+        sectionsVisible: {
+          images: exportOptions.elements.images,
+          links: exportOptions.elements.links,
+          buttons: exportOptions.elements.buttons,
+          inputs: exportOptions.elements.inputs,
+          roles: exportOptions.elements.roles,
+        },
+        exportOptions: exportOptions,
+      }, timestamp)
+    }
 
     if (exportBtn) {
       exportBtn.textContent = `✅ ${t('exported')}`
       setTimeout(() => {
         if (exportBtn) {
-          exportBtn.textContent = t('exportAsPDF')
+          exportBtn.textContent = t('exportReport')
         }
       }, 2000)
     }
   } catch (err: any) {
     alert(t('errorExportFailed') + ': ' + err.message)
     if (exportBtn) {
-      exportBtn.textContent = t('exportAsPDF')
+      exportBtn.textContent = t('exportReport')
     }
   } finally {
     if (exportBtn) {

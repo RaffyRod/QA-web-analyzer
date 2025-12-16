@@ -896,19 +896,9 @@ function buildAttributeRows(
     }
   }
 
-  // Add HTML/outerHTML (only if includeHTML option is enabled)
-  // Note: This check will be done in the calling function based on exportOptions
-
-  // Add HTML/outerHTML (only if includeHTML option is enabled)
-  if (exportOptions?.options.includeHTML && (item.outerHTML || elem.outerHTML)) {
-    const htmlText = String(item.outerHTML || elem.outerHTML || '');
-    const truncatedHtml = htmlText.length > 300 ? htmlText.substring(0, 300) + '...' : htmlText;
-    attributeRows.push({
-      name: 'HTML',
-      value: sanitizeText(truncatedHtml),
-      status: 'normal',
-    });
-  }
+  // Note: HTML/outerHTML is NOT added here for HTML export
+  // It's shown in a separate "HTML Code" section below to avoid redundancy
+  // For PDF export, HTML can be added if needed (but currently not included in attributes)
 
   // Add selector
   if (item.selector && String(item.selector).trim().length > 0) {
@@ -1649,4 +1639,898 @@ export async function exportReportAsPDF(options: ExportOptions): Promise<jsPDF> 
   }
 
   return doc;
+}
+
+export async function exportReportAsHTML(options: ExportOptions, timestamp: string): Promise<void> {
+  const { data, analysisOptions, showMissing, showHasAttributes, sectionsVisible } = options;
+  const languageStore = useLanguageStore();
+  const t = languageStore.t;
+  const currentLang = languageStore.currentLanguage.value;
+
+  const { items, sectionItems } = processItems(
+    data,
+    analysisOptions,
+    showMissing,
+    showHasAttributes,
+    sectionsVisible
+  );
+
+  function escapeHtml(text: string | null | undefined): string {
+    if (text === null || text === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+  }
+
+  function formatHTML(html: string): string {
+    if (!html) return '';
+
+    // Simple HTML formatter - adds indentation and line breaks
+    let formatted = '';
+    let indent = 0;
+    const indentSize = 2;
+
+    // Remove existing whitespace and normalize
+    const cleanHtml = html.replace(/>\s+</g, '><').trim();
+
+    // Split by tags
+    const parts = cleanHtml.split(/(<[^>]+>)/);
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i].trim();
+      if (!part) continue;
+
+      if (part.startsWith('</')) {
+        // Closing tag
+        indent = Math.max(0, indent - indentSize);
+        formatted += ' '.repeat(indent) + part + '\n';
+      } else if (part.startsWith('<')) {
+        // Opening or self-closing tag
+        const isSelfClosing =
+          part.endsWith('/>') ||
+          part.match(
+            /<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr|button|script|style)/i
+          );
+        formatted += ' '.repeat(indent) + part + '\n';
+        if (!isSelfClosing && !part.startsWith('</')) {
+          indent += indentSize;
+        }
+      } else {
+        // Text content
+        if (part.length > 0) {
+          formatted += ' '.repeat(indent) + part + '\n';
+        }
+      }
+    }
+
+    return formatted.trim();
+  }
+
+  function getAttributeStatus(
+    item: ProcessedItem,
+    analysisOptions: AnalysisOptions,
+    itemType: 'image' | 'link' | 'button' | 'input' | 'role'
+  ): { status: string; passed: boolean; details: string; passedAttribute: string } {
+    const elem = item.originalData;
+    const missingAttrs = item.missingAttributes || [];
+
+    // Determine if element passes validation and which attribute made it pass
+    let passed = false;
+    let passedAttribute = '';
+
+    if (itemType === 'image') {
+      passed = elem.hasAlt === true;
+      if (passed) {
+        const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
+        const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+        const hasAriaLabelledby =
+          elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+        if (hasAlt) {
+          passedAttribute = `Alt: "${escapeHtml(String(elem.alt))}"`;
+        } else if (hasAriaLabel) {
+          passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
+        } else if (hasAriaLabelledby) {
+          passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+        }
+      }
+    } else {
+      passed = item.hasAccessibility === true;
+      if (passed) {
+        // Find which attribute made it pass
+        if (
+          analysisOptions.checkAriaLabel &&
+          elem.ariaLabel !== null &&
+          String(elem.ariaLabel || '').trim() !== ''
+        ) {
+          passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
+        } else if (
+          analysisOptions.checkAriaLabelledby &&
+          elem.ariaLabelledby !== null &&
+          String(elem.ariaLabelledby || '').trim() !== ''
+        ) {
+          passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+        } else if (itemType === 'input' && analysisOptions.checkLabels && elem.label) {
+          passedAttribute = `<label>: "${escapeHtml(String(elem.label))}"`;
+        } else if (itemType === 'link' && analysisOptions.checkTitle && elem.title) {
+          passedAttribute = `title: "${escapeHtml(String(elem.title))}"`;
+        } else {
+          passedAttribute = 'Accessibility attributes present';
+        }
+      }
+    }
+
+    const statusText = passed ? '✓ PASSED' : '✗ FAILED';
+
+    // Build details
+    const details: string[] = [];
+
+    if (passed && passedAttribute) {
+      details.push(`Found: ${passedAttribute}`);
+    }
+
+    if (itemType === 'Image') {
+      if (analysisOptions.checkAltText) {
+        const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
+        const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+        const hasAriaLabelledby =
+          elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+        if (hasAlt || hasAriaLabel || hasAriaLabelledby) {
+          if (!passedAttribute) {
+            details.push(
+              `Alt: ${hasAlt ? '✓ Present' : '✗ Missing (using aria-label/aria-labelledby)'}`
+            );
+          }
+        } else {
+          details.push('Alt: ✗ MISSING');
+        }
+      }
+    } else {
+      if (analysisOptions.checkAriaLabel) {
+        const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+        if (!passedAttribute || !passedAttribute.includes('aria-label')) {
+          details.push(`aria-label: ${hasAriaLabel ? '✓ Present' : '✗ Missing'}`);
+        }
+      }
+      if (analysisOptions.checkAriaLabelledby) {
+        const hasAriaLabelledby =
+          elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+        if (!passedAttribute || !passedAttribute.includes('aria-labelledby')) {
+          details.push(`aria-labelledby: ${hasAriaLabelledby ? '✓ Present' : '✗ Missing'}`);
+        }
+      }
+    }
+
+    if (missingAttrs.length > 0) {
+      details.push(`Missing: ${missingAttrs.join(', ')}`);
+    }
+
+    return {
+      status: statusText,
+      passed: passed,
+      details:
+        details.length > 0
+          ? details.join(' | ')
+          : passed
+            ? 'All required attributes present'
+            : 'Validation failed',
+      passedAttribute: passedAttribute,
+    };
+  }
+
+  function formatItem(
+    item: ProcessedItem,
+    itemType: 'image' | 'link' | 'button' | 'input' | 'role'
+  ): string {
+    const elem = item.originalData;
+    const hasAttributes =
+      itemType === 'image' ? elem.hasAlt === true : item.hasAccessibility === true;
+    const statusClass = hasAttributes ? 'has-attributes' : 'missing';
+
+    // Determine item title based on type
+    let itemTitle = '';
+    switch (itemType) {
+      case 'image':
+        itemTitle = t('images');
+        break;
+      case 'link':
+        itemTitle = `${t('links')}: "${escapeHtml(String(item.text || t('noText')))}"`;
+        break;
+      case 'button':
+        itemTitle = `${t('buttons')}: "${escapeHtml(String(item.text || t('noText')))}"`;
+        break;
+      case 'input':
+        itemTitle = `${elem.type || ''} ${elem.name ? `(${escapeHtml(String(elem.name))})` : ''}`;
+        break;
+      case 'role':
+        itemTitle = `${elem.tag || ''} (role: ${escapeHtml(String(item.role || ''))})`;
+        break;
+    }
+
+    // Status badge
+    let statusBadge = '';
+    if (itemType === 'image') {
+      if (!elem.hasAlt && analysisOptions.checkAltText) {
+        statusBadge = `<span class="status-badge error">${t('missing')} Alt</span>`;
+      } else if (elem.hasAlt) {
+        statusBadge = `<span class="status-badge success">✓ Alt</span>`;
+      }
+    } else {
+      const missingAttrs = item.missingAttributes || [];
+      if (hasAttributes) {
+        statusBadge = `<span class="status-badge success">✓ OK</span>`;
+      } else {
+        statusBadge = `<span class="status-badge error">${missingAttrs.length} ${t('missing')}</span>`;
+      }
+    }
+
+    // Build attributes using the same logic as ResultItem
+    const attributeRows = buildAttributeRows(item, analysisOptions, options.exportOptions);
+
+    let html = `<div class="result-item ${statusClass}">`;
+
+    // Header
+    html += `<div class="result-item-header">`;
+    html += `<span class="item-number">#${item.index}</span>`;
+    html += `<span class="item-title">${itemTitle}</span>`;
+    if (statusBadge) {
+      html += `<span class="status-badge-wrapper">${statusBadge}</span>`;
+    }
+    html += `</div>`;
+
+    // Screenshot - Always show if available (like in the app)
+    if (item.screenshot) {
+      html += `<div class="screenshot-container">`;
+      html += `<img src="${escapeHtml(String(item.screenshot))}" alt="Element screenshot" class="element-screenshot" />`;
+      html += `</div>`;
+    }
+
+    // Attributes grid
+    html += `<div class="attributes-grid">`;
+    for (const row of attributeRows) {
+      if (row.isHeader || row.isImage) continue; // Skip header and image rows
+      // Skip HTML row for HTML export - it's shown in the code section below
+      if (row.name === 'HTML') continue;
+      const attrValueClass =
+        row.status === 'present'
+          ? 'present'
+          : row.status === 'missing'
+            ? 'missing'
+            : row.status === 'warning'
+              ? 'warning'
+              : '';
+      const fullWidthClass = row.name === 'Source' || row.name === 'Href' ? 'full-width' : '';
+      html += `<div class="attr-item ${fullWidthClass}">`;
+      html += `<span class="attr-name">${escapeHtml(row.name)}:</span>`;
+      html += `<span class="attr-value ${attrValueClass}">${escapeHtml(row.value)}</span>`;
+      html += `</div>`;
+    }
+    html += `</div>`;
+
+    // Code section
+    if (options.exportOptions?.options.includeHTML && item.outerHTML) {
+      const formattedHTML = formatHTML(String(item.outerHTML));
+      const validation = getAttributeStatus(item, analysisOptions, itemType);
+      const uniqueId = 'code-' + Math.random().toString(36).substr(2, 9);
+      const isLong = formattedHTML.length > 200;
+      const truncated = isLong ? formattedHTML.substring(0, 200) + '...' : formattedHTML;
+
+      html += `<div class="code-section">`;
+      html += `<div class="code-header">`;
+      html += `<span>${t('htmlCode')}</span>`;
+      html += `<div class="validation-status">`;
+      html += `<span class="validation-badge ${validation.passed ? 'validation-passed' : 'validation-failed'}">${escapeHtml(validation.status)}</span>`;
+      if (validation.passed && validation.passedAttribute) {
+        html += `<span class="passed-attribute">${escapeHtml(validation.passedAttribute)}</span>`;
+      }
+      html += `<span class="attribute-status">${escapeHtml(validation.details)}</span>`;
+      html += `</div>`;
+      html += `</div>`;
+      html += `<div class="code-content">`;
+
+      if (isLong) {
+        html += `<div class="code-container">`;
+        html += `<code class="code-snippet" id="${uniqueId}-short">${escapeHtml(truncated)}</code>`;
+        html += `<code class="code-snippet hidden" id="${uniqueId}-full">${escapeHtml(formattedHTML)}</code>`;
+        html += `<button class="code-toggle" onclick="toggleCode('${uniqueId}')" data-expanded="false">`;
+        html += `<span class="toggle-text">${t('expand') || 'Expand'}</span>`;
+        html += `</button>`;
+        html += `</div>`;
+      } else {
+        html += `<code class="code-snippet">${escapeHtml(formattedHTML)}</code>`;
+      }
+
+      html += `</div>`;
+      html += `</div>`;
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  let htmlContent = `<!DOCTYPE html>
+<html lang="${currentLang}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${t('exportReport')} - ${t('title')}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background: #e0e5ec;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { color: #0f172a; margin-bottom: 20px; font-size: 2rem; text-align: center; }
+    
+    /* Summary Section */
+    .summary-section {
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    .summary-section h2 {
+      margin-bottom: 20px;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .summary-card {
+      background: #f5f7fa;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+      position: relative;
+    }
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #3b82f6;
+      border-radius: 12px 0 0 12px;
+    }
+    .summary-card.danger::before { background: #ef4444; }
+    .summary-card.success::before { background: #10b981; }
+    .summary-card-label {
+      font-size: 0.75rem;
+      color: #1e293b;
+      margin-bottom: 4px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+    .summary-card-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    
+    /* Filters Section */
+    .filters-section {
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    .filters-section h2 {
+      margin-bottom: 15px;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    .filter-group {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .filter-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+    }
+    
+    /* Result Sections */
+    .result-section {
+      background: #f5f7fa;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 6px 6px 12px #b8bec4, -6px -6px 12px #ffffff;
+      margin-bottom: 24px;
+    }
+    .result-section h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: #1e293b;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .section-header .icon { font-size: 1.8rem; }
+    .section-header .count {
+      margin-left: auto;
+      background: #3b82f6;
+      color: #ffffff;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    /* Result Items */
+    .result-item {
+      background: #f5f7fa;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .result-item.missing::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #ef4444;
+      border-radius: 16px 0 0 16px;
+    }
+    .result-item.has-attributes::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #10b981;
+      border-radius: 16px 0 0 16px;
+    }
+    .result-item-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .item-number {
+      background: #e0e5ec;
+      color: #64748b;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .item-title {
+      flex: 1;
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 1rem;
+    }
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .status-badge.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .status-badge.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .screenshot-container {
+      margin-bottom: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .element-screenshot {
+      max-width: 100%;
+      max-height: 400px;
+      height: auto;
+      display: block;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 8px;
+      box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+    }
+    .attributes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #e0e5ec;
+      border-radius: 12px;
+      box-shadow: inset 2px 2px 4px #b8bec4, inset -2px -2px 4px #ffffff;
+    }
+    .attr-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .attr-item.full-width {
+      grid-column: 1 / -1;
+    }
+    .attr-name {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .attr-value {
+      font-size: 0.9rem;
+      color: #1e293b;
+      word-break: break-word;
+    }
+    .attr-value.present {
+      color: #10b981;
+      font-weight: 500;
+    }
+    .attr-value.missing {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    .attr-value.warning {
+      color: #f59e0b;
+      font-weight: 600;
+    }
+    .code-section {
+      margin-top: 12px;
+      border-top: 1px solid #cbd5e1;
+      padding-top: 12px;
+    }
+    .code-header {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .validation-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .validation-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .validation-badge.validation-passed {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .validation-badge.validation-failed {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .passed-attribute {
+      font-size: 0.8rem;
+      color: #065f46;
+      font-weight: 600;
+      background: #d1fae5;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .attribute-status {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 400;
+      font-style: italic;
+    }
+    .code-content {
+      margin-top: 4px;
+    }
+    .code-container {
+      position: relative;
+    }
+    .code-snippet {
+      display: block;
+      background: #1e293b !important;
+      color: #f1f5f9 !important;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin-top: 8px;
+      white-space: pre;
+      word-break: normal;
+      text-align: left;
+      line-height: 1.5;
+    }
+    .code-snippet.hidden {
+      display: none;
+    }
+    .code-toggle {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: #3b82f6;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .code-toggle:hover {
+      background: #2563eb;
+    }
+    .no-results {
+      text-align: center;
+      color: #64748b;
+      padding: 20px;
+      font-style: italic;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .result-section { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>${t('exportReport')} - ${t('title')}</h1>
+    
+    <div style="background: #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <p style="margin: 5px 0;"><strong>${t('url')}:</strong> ${escapeHtml(String(data.url || 'N/A'))}</p>
+      <p style="margin: 5px 0;"><strong>${t('date')}:</strong> ${data.analyzedAt ? new Date(data.analyzedAt).toLocaleString() : new Date().toLocaleString()}</p>
+    </div>`;
+
+  if (options.exportOptions?.options.includeSummary !== false && data.summary) {
+    htmlContent += `
+    <div class="summary-section">
+      <h2>${t('summary')}</h2>
+      <div class="summary-grid">`;
+
+    if (sectionsVisible.images) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalImages')}</div>
+          <div class="summary-card-value">${data.summary.totalImages || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.imagesWithoutAlt || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('imagesWithoutAlt')}</div>
+          <div class="summary-card-value">${data.summary.imagesWithoutAlt || 0}</div>
+        </div>`;
+      if (data.summary.imagesWithoutFocusState !== undefined) {
+        htmlContent += `
+        <div class="summary-card ${(data.summary.imagesWithoutFocusState || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('imagesWithoutFocusState')}</div>
+          <div class="summary-card-value">${data.summary.imagesWithoutFocusState || 0}</div>
+        </div>`;
+      }
+    }
+
+    if (sectionsVisible.links) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalLinks')}</div>
+          <div class="summary-card-value">${data.summary.totalLinks || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.linksWithoutAccessibility || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('linksWithoutAccessibility')}</div>
+          <div class="summary-card-value">${data.summary.linksWithoutAccessibility || 0}</div>
+        </div>`;
+      if (data.summary.linksWithoutFocusState !== undefined) {
+        htmlContent += `
+        <div class="summary-card ${(data.summary.linksWithoutFocusState || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('linksWithoutFocusState')}</div>
+          <div class="summary-card-value">${data.summary.linksWithoutFocusState || 0}</div>
+        </div>`;
+      }
+    }
+
+    if (sectionsVisible.buttons) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalButtons')}</div>
+          <div class="summary-card-value">${data.summary.totalButtons || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.buttonsWithoutAccessibility || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('buttonsWithoutAccessibility')}</div>
+          <div class="summary-card-value">${data.summary.buttonsWithoutAccessibility || 0}</div>
+        </div>`;
+      if (data.summary.buttonsWithoutFocusState !== undefined) {
+        htmlContent += `
+        <div class="summary-card ${(data.summary.buttonsWithoutFocusState || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('buttonsWithoutFocusState')}</div>
+          <div class="summary-card-value">${data.summary.buttonsWithoutFocusState || 0}</div>
+        </div>`;
+      }
+    }
+
+    if (sectionsVisible.inputs) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalInputs')}</div>
+          <div class="summary-card-value">${data.summary.totalInputs || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.inputsWithoutAccessibility || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('inputsWithoutAccessibility')}</div>
+          <div class="summary-card-value">${data.summary.inputsWithoutAccessibility || 0}</div>
+        </div>`;
+    }
+
+    if (sectionsVisible.roles) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalRoles')}</div>
+          <div class="summary-card-value">${data.summary.totalRoles || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.rolesWithoutAccessibility || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('rolesWithoutAccessibility')}</div>
+          <div class="summary-card-value">${data.summary.rolesWithoutAccessibility || 0}</div>
+        </div>`;
+    }
+
+    htmlContent += `</div></div>`;
+  }
+
+  htmlContent += `
+    <div class="filters-section">
+      <h2>${t('filters')}</h2>
+      <div class="filter-group">
+        <label>${showMissing ? '✓' : '☐'} ${t('showMissing')}</label>
+        <label>${showHasAttributes ? '✓' : '☐'} ${t('showHasAttributes')}</label>
+      </div>
+    </div>`;
+
+  const sections = [
+    {
+      name: t('images'),
+      icon: '🖼️',
+      items: sectionItems.Images,
+      enabled: sectionsVisible.images,
+      type: 'image' as const,
+    },
+    {
+      name: t('links'),
+      icon: '🔗',
+      items: sectionItems.Links,
+      enabled: sectionsVisible.links,
+      type: 'link' as const,
+    },
+    {
+      name: t('buttons'),
+      icon: '🔘',
+      items: sectionItems.Buttons,
+      enabled: sectionsVisible.buttons,
+      type: 'button' as const,
+    },
+    {
+      name: t('inputs'),
+      icon: '📝',
+      items: sectionItems.Inputs,
+      enabled: sectionsVisible.inputs,
+      type: 'input' as const,
+    },
+    {
+      name: t('elementsWithRole'),
+      icon: '🎭',
+      items: sectionItems.Roles,
+      enabled: sectionsVisible.roles,
+      type: 'role' as const,
+    },
+  ];
+
+  for (const section of sections) {
+    if (section.enabled && section.items.length > 0) {
+      const filteredItems = section.items.filter((item) => {
+        if (options.exportOptions) {
+          const hasMissing = item.missingAttributes && item.missingAttributes.length > 0;
+          if (hasMissing && !options.exportOptions.status.failed) return false;
+          if (!hasMissing && !options.exportOptions.status.passed) return false;
+        }
+        return true;
+      });
+
+      if (filteredItems.length > 0) {
+        htmlContent += `
+    <div class="result-section">
+      <h2 class="section-header">
+        <span class="icon">${section.icon}</span>
+        ${section.name}
+        <span class="count">${filteredItems.length}</span>
+      </h2>
+      <div class="results-list">`;
+
+        for (const item of filteredItems) {
+          htmlContent += formatItem(item, section.type);
+        }
+
+        htmlContent += `</div></div>`;
+      }
+    } else if (section.enabled) {
+      const noResultsKey =
+        section.type === 'image'
+          ? 'noImages'
+          : section.type === 'link'
+            ? 'noLinks'
+            : section.type === 'button'
+              ? 'noButtons'
+              : section.type === 'input'
+                ? 'noInputs'
+                : 'noRoles';
+      htmlContent += `
+    <div class="result-section">
+      <h2 class="section-header">
+        <span class="icon">${section.icon}</span>
+        ${section.name}
+        <span class="count">0</span>
+      </h2>
+      <div class="results-list">
+        <p class="no-results">${t(noResultsKey)}</p>
+      </div>
+    </div>`;
+    }
+  }
+
+  htmlContent += `
+  </div>
+  <script>
+    function toggleCode(id) {
+      const shortEl = document.getElementById(id + '-short');
+      const fullEl = document.getElementById(id + '-full');
+      const button = shortEl ? shortEl.nextElementSibling : null;
+      
+      if (!shortEl || !fullEl) return;
+      
+      const isExpanded = button && button.getAttribute('data-expanded') === 'true';
+      
+      if (isExpanded) {
+        shortEl.classList.remove('hidden');
+        fullEl.classList.add('hidden');
+        if (button) {
+          button.setAttribute('data-expanded', 'false');
+          const toggleText = button.querySelector('.toggle-text');
+          if (toggleText) toggleText.textContent = '${t('expand') || 'Expand'}';
+        }
+      } else {
+        shortEl.classList.add('hidden');
+        fullEl.classList.remove('hidden');
+        if (button) {
+          button.setAttribute('data-expanded', 'true');
+          const toggleText = button.querySelector('.toggle-text');
+          if (toggleText) toggleText.textContent = '${t('collapse') || 'Collapse'}';
+        }
+      }
+    }
+  </script>
+</body>
+</html>`;
+
+  const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `accessibility-report-${timestamp}.html`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }

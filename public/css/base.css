@@ -48,7 +48,8 @@ body {
 .result-item,
 .attr-name,
 .attr-value,
-.code-content,
+.code-content:not(.code-snippet):not(.code-snippet *),
+.code-header,
 .modal-content p,
 .modal-content label,
 .modal-content span:not(.status-badge):not(.theme-option),
@@ -79,11 +80,12 @@ body[data-theme='glassmorphism'] .summary-card-value,
 body[data-theme='glassmorphism'] .result-item,
 body[data-theme='glassmorphism']
   .result-item
-  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *),
+  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *):not(
+    .code-snippet
+  ):not(.code-snippet *),
 body[data-theme='glassmorphism'] .attr-name,
 body[data-theme='glassmorphism'] .attr-value,
-body[data-theme='glassmorphism'] .code-content,
-body[data-theme='glassmorphism'] .code-content *,
+body[data-theme='glassmorphism'] .code-header,
 body[data-theme='glassmorphism'] .modal-content p,
 body[data-theme='glassmorphism'] .modal-content label,
 body[data-theme='glassmorphism'] .modal-content span:not(.status-badge):not(.theme-option),
@@ -102,11 +104,12 @@ body[data-theme='dark'] .summary-card-value,
 body[data-theme='dark'] .result-item,
 body[data-theme='dark']
   .result-item
-  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *),
+  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *):not(
+    .code-snippet
+  ):not(.code-snippet *),
 body[data-theme='dark'] .attr-name,
 body[data-theme='dark'] .attr-value,
-body[data-theme='dark'] .code-content,
-body[data-theme='dark'] .code-content *,
+body[data-theme='dark'] .code-header,
 body[data-theme='dark'] .modal-content p,
 body[data-theme='dark'] .modal-content label,
 body[data-theme='dark'] .modal-content span:not(.status-badge):not(.theme-option),
@@ -125,11 +128,12 @@ body[data-theme='cyberpunk'] .summary-card-value,
 body[data-theme='cyberpunk'] .result-item,
 body[data-theme='cyberpunk']
   .result-item
-  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *),
+  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *):not(
+    .code-snippet
+  ):not(.code-snippet *),
 body[data-theme='cyberpunk'] .attr-name,
 body[data-theme='cyberpunk'] .attr-value,
-body[data-theme='cyberpunk'] .code-content,
-body[data-theme='cyberpunk'] .code-content *,
+body[data-theme='cyberpunk'] .code-header,
 body[data-theme='cyberpunk'] .modal-content p,
 body[data-theme='cyberpunk'] .modal-content label,
 body[data-theme='cyberpunk'] .modal-content span:not(.status-badge):not(.theme-option),
