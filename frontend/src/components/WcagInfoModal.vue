@@ -5,16 +5,16 @@
   <div
     id="wcagInfoSection"
     :class="['wcag-info-modal', { hidden: !isOpen }]"
-    @click.self="closeModal"
+    @click.self="handleClose"
   >
-    <div class="wcag-modal-overlay" @click="closeModal"></div>
+    <div class="wcag-modal-overlay" @click="handleClose"></div>
     <div class="wcag-modal-content">
       <div class="wcag-modal-header">
         <h4>WCAG 2.2 AA Accessibility Guidelines</h4>
         <button
           id="wcagInfoClose"
           class="wcag-modal-close"
-          @click="closeModal"
+          @click="handleClose"
           aria-label="Close"
         >
           ×
@@ -92,34 +92,74 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
-const isOpen = ref(false)
+const props = defineProps<{
+  isOpen?: boolean
+}>()
 
-function openModal() {
-  isOpen.value = true
-  document.body.style.overflow = 'hidden'
+const emit = defineEmits<{
+  'update:isOpen': [value: boolean]
+}>()
+
+const isOpen = ref(props.isOpen ?? false)
+
+// Watch prop changes
+watch(() => props.isOpen, (newValue) => {
+  if (newValue !== undefined) {
+    isOpen.value = newValue
+    updateBodyOverflow(newValue)
+  }
+})
+
+// Watch internal state changes
+watch(isOpen, (newValue) => {
+  emit('update:isOpen', newValue)
+  updateBodyOverflow(newValue)
+})
+
+function updateBodyOverflow(open: boolean) {
+  if (open) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
 }
 
-function closeModal() {
+function handleClose() {
   isOpen.value = false
-  document.body.style.overflow = ''
 }
 
 function handleEscape(e: KeyboardEvent) {
   if (e.key === 'Escape' && isOpen.value) {
-    closeModal()
+    handleClose()
   }
+}
+
+// Keep window methods for backward compatibility with legacy code
+function openModal() {
+  isOpen.value = true
+}
+
+function closeModal() {
+  isOpen.value = false
 }
 
 onMounted(() => {
   document.addEventListener('keydown', handleEscape)
+  // Initialize from prop
+  if (props.isOpen !== undefined) {
+    isOpen.value = props.isOpen
+    updateBodyOverflow(props.isOpen)
+  }
+  // Keep for backward compatibility
   ;(window as any).openWcagModal = openModal
   ;(window as any).closeWcagModal = closeModal
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleEscape)
+  document.body.style.overflow = ''
   delete (window as any).openWcagModal
   delete (window as any).closeWcagModal
 })

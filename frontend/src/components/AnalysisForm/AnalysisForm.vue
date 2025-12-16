@@ -57,7 +57,7 @@
       </span>
     </div>
     <OptionsPanel />
-    <WcagInfoModal />
+    <WcagInfoModal v-model:is-open="wcagModalOpen" />
     <NotificationAlert
       v-if="showNotification"
       :key="notificationKey"
@@ -133,11 +133,6 @@ function closeNotification() {
 
 function toggleWcagModal() {
   wcagModalOpen.value = !wcagModalOpen.value
-  if ((window as any).openWcagModal && wcagModalOpen.value) {
-    (window as any).openWcagModal()
-  } else if ((window as any).closeWcagModal && !wcagModalOpen.value) {
-    (window as any).closeWcagModal()
-  }
 }
 
 async function handleAnalyze() {
