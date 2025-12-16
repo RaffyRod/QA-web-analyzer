@@ -124,6 +124,7 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - ✅ **Glassmorphism Hover Fix**: Fixed hover color in glassmorphism theme dropdown (now uses purple instead of white)
 - ✅ **URL Removal Notification**: Added confirmation notification when removing URLs from saved list
 - ✅ **Analysis Cancellation Message**: Changed cancellation message from error to success notification in both languages
+- ✅ **Cancellation Notification Fix**: Fixed notification display when analysis is cancelled - now shows success message correctly
 
 ## 📖 How to Use
 

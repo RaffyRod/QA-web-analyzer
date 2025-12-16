@@ -230,6 +230,7 @@ const urlNotificationMessage = ref('')
 const showCancelledNotification = ref(false)
 const cancelledNotificationKey = ref(0)
 const showCancelModal = ref(false)
+const wasCancelled = ref(false)
 const showSavedUrlsDropdown = ref(false)
 const showMaxUrlsModal = ref(false)
 const urlToSave = ref('')
@@ -407,9 +408,32 @@ function closeCancelModal() {
 }
 
 function confirmCancel() {
+  wasCancelled.value = true
   analysisStore.stop()
   showCancelModal.value = false
+  // Show notification after a short delay to ensure cancellation is processed
+  setTimeout(() => {
+    if (wasCancelled.value && !isLoading.value) {
+      cancelledNotificationKey.value++
+      showCancelledNotification.value = true
+      wasCancelled.value = false
+    }
+  }, 100)
 }
+
+function closeCancelledNotification() {
+  showCancelledNotification.value = false
+}
+
+// Watch for when analysis stops after cancellation
+watch(isLoading, (newValue, oldValue) => {
+  if (oldValue === true && newValue === false && wasCancelled.value) {
+    // Analysis was cancelled and has now stopped
+    cancelledNotificationKey.value++
+    showCancelledNotification.value = true
+    wasCancelled.value = false
+  }
+})
 
 // Close modal on Escape key
 watch(showCancelModal, (isOpen) => {

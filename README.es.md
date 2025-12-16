@@ -126,6 +126,7 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - ✅ **Corrección de Hover en Glassmorphism**: Corregido el color de hover en el dropdown de temas glassmorphism (ahora usa púrpura en lugar de blanco)
 - ✅ **Notificación al Eliminar URL**: Agregada notificación de confirmación al eliminar URLs de la lista guardada
 - ✅ **Mensaje de Cancelación de Análisis**: Cambiado el mensaje de cancelación de error a notificación de éxito en ambos idiomas
+- ✅ **Corrección de Notificación de Cancelación**: Corregida la visualización de la notificación al cancelar el análisis - ahora muestra el mensaje de éxito correctamente
 
 ## 🎯 Mejoras Recientes
 
