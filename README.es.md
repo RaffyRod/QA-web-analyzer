@@ -30,6 +30,7 @@ npm run setup
 ### 📋 Lo que `npm run setup` hace automáticamente:
 
 - ✅ Instala dependencias del backend (si es necesario)
+- ✅ Instala navegadores de Playwright (requerido para análisis web)
 - ✅ Instala dependencias del frontend (si es necesario)
 - ✅ Compila el backend TypeScript (si es necesario)
 - ✅ Inicia ambos servidores (Backend + Frontend)

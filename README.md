@@ -28,6 +28,7 @@ npm run setup
 ### 📋 What `npm run setup` does automatically:
 
 - ✅ Installs backend dependencies (if needed)
+- ✅ Installs Playwright browsers (required for web analysis)
 - ✅ Installs frontend dependencies (if needed)
 - ✅ Builds the TypeScript backend (if needed)
 - ✅ Starts both servers (Backend + Frontend)

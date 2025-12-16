@@ -39,7 +39,7 @@ if (pkgManager === 'npm') {
 
 // Step 1: Install backend dependencies
 if (!existsSync(backendNodeModules)) {
-  console.log('📦 Step 1/4: Installing backend dependencies...');
+  console.log('📦 Step 1/5: Installing backend dependencies...');
   try {
     execSync(`${pkgManager} install`, { stdio: 'inherit', cwd: __dirname });
     console.log('✅ Backend dependencies installed!\n');
@@ -51,9 +51,24 @@ if (!existsSync(backendNodeModules)) {
   console.log('✅ Backend dependencies already installed\n');
 }
 
-// Step 2: Install frontend dependencies
+// Step 1.5: Install Playwright browsers (required for Playwright to work)
+console.log('🌐 Step 2/5: Installing Playwright browsers...');
+try {
+  if (pkgManager === 'pnpm') {
+    execSync('pnpm exec playwright install', { stdio: 'inherit', cwd: __dirname });
+  } else {
+    execSync('npx playwright install', { stdio: 'inherit', cwd: __dirname });
+  }
+  console.log('✅ Playwright browsers installed!\n');
+} catch (error) {
+  console.error('❌ Error installing Playwright browsers');
+  console.error('💡 This is required for Playwright to work. Trying to continue...\n');
+  // Don't exit - Playwright might already be installed or might work without it
+}
+
+// Step 3: Install frontend dependencies
 if (!existsSync(frontendNodeModules)) {
-  console.log('📦 Step 2/4: Installing frontend dependencies...');
+  console.log('📦 Step 3/5: Installing frontend dependencies...');
   try {
     execSync('npm install', { stdio: 'inherit', cwd: join(__dirname, 'frontend') });
     console.log('✅ Frontend dependencies installed!\n');
@@ -65,9 +80,9 @@ if (!existsSync(frontendNodeModules)) {
   console.log('✅ Frontend dependencies already installed\n');
 }
 
-// Step 3: Build backend (if needed)
+// Step 4: Build backend (if needed)
 if (!existsSync(distPath) || !existsSync(join(distPath, 'server.js'))) {
-  console.log('🔨 Step 3/4: Building backend (TypeScript compilation)...');
+  console.log('🔨 Step 4/5: Building backend (TypeScript compilation)...');
   try {
     // Use detected package manager
     if (pkgManager === 'pnpm') {
@@ -91,8 +106,8 @@ if (!existsSync(join(distPath, 'server.js'))) {
   process.exit(1);
 }
 
-// Step 4: Start both servers
-console.log('🎯 Step 4/4: Starting servers...\n');
+// Step 5: Start both servers
+console.log('🎯 Step 5/5: Starting servers...\n');
 console.log('='.repeat(60));
 console.log('✨ Servers will start automatically\n');
 console.log('💡 The frontend will automatically connect to the backend\n');
