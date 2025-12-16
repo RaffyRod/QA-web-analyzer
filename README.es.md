@@ -113,6 +113,32 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - 📱 **Totalmente Responsive**: Optimizado para smartphones, tablets y desktop
 - 🎭 **Modal de Información WCAG**: Guía de referencia rápida para estándares de accesibilidad con reglas detalladas para imágenes y `aria-label` según WCAG 2.2 AA
 
+## 🎯 Mejoras Recientes
+
+### ✨ Características Mejoradas
+
+- **🔄 Detección Automática de Puertos**: Backend y frontend encuentran y se conectan automáticamente a puertos disponibles
+- **🔍 Detección Inteligente del Backend**: El frontend detecta automáticamente el puerto correcto del backend, incluso con múltiples servidores corriendo
+- **🛡️ Manejo Robusto de Errores**: Mensajes de error mejorados con información detallada de depuración
+- **🎨 Mejoras de UI**:
+  - Spinner redundante eliminado (la animación del emoji es suficiente)
+  - **Categorías de Atributos Colapsables**: Las categorías se pueden expandir/contraer con animaciones suaves
+  - **Emojis de Categorías**: Iconos visuales para cada categoría de atributos (🏷️ Labels, 🔄 States, 🔗 Relationships, 📢 Live Regions, 📝 Form, ⚙️ Other)
+  - **Highlight Persistente de Checkboxes**: Los checkboxes seleccionados mantienen el resaltado visual (color azul y texto en negrita)
+  - **Layout Mejorado**: Layout de una sola columna para categorías de atributos para mejor organización
+- **📸 Optimización de Screenshots**: Solo captura screenshots de elementos visibles, previniendo timeouts
+- **📝 Atribución de Código**: Todos los archivos fuente incluyen comentarios de atribución del autor
+- **🚀 Builds de Producción**: Desactivados para desarrollo local (pueden reactivarse cuando se necesiten)
+
+### 🔧 Mejoras Técnicas
+
+- **Inteligencia de Proxy**: El proxy de Vite detecta automáticamente el puerto del backend
+- **Soporte Multi-Servidor**: Funciona perfectamente con otros servidores en puertos comunes
+- **Recuperación de Errores**: Mejores mensajes de error ayudan a identificar y corregir problemas rápidamente
+- **Enfoque en Desarrollo**: Optimizado para el flujo de trabajo de desarrollo local
+- **Manejo de Screenshots**: Manejo mejorado de errores para elementos no visibles (los omite en lugar de hacer timeout)
+- **Toggle de Categorías**: Funcionalidad de expandir/contraer corregida para categorías de atributos
+
 ## 📖 Cómo Usar
 
 ### Guía Paso a Paso

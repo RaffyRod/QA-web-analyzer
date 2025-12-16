@@ -13,13 +13,12 @@
 }
 
 .option-group.attributes-group {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .option-group.attributes-group h4 {
-  grid-column: 1 / -1;
   margin-bottom: 0;
 }
 
@@ -38,10 +37,6 @@
 
 .option-group:not(.attributes-group) .option-group-header {
   margin-bottom: 8px;
-}
-
-.option-group.attributes-group .option-group-header {
-  grid-column: 1 / -1;
 }
 
 .option-group h4 {
@@ -72,10 +67,23 @@
   color: var(--primary-color);
 }
 
+.option-group label:has(input[type='checkbox']:checked) {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.option-group label:has(input[type='checkbox']:checked) span {
+  color: var(--primary-color);
+}
+
 .option-group input[type='checkbox'] {
   width: 18px;
   height: 18px;
   cursor: pointer;
+}
+
+.option-group input[type='checkbox']:checked {
+  accent-color: var(--primary-color);
 }
 
 /* Radio Buttons */

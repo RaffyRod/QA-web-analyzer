@@ -714,49 +714,92 @@ export class AnalyzerService {
 
           const elementHandle = await page.locator(`[data-qa-analyzer-id="${selectorId}"]`).first();
 
-          if ((await elementHandle.count()) > 0) {
-            await elementHandle.evaluate((el: Element) => {
-              const htmlEl = el as HTMLElement;
-              htmlEl.style.outline = '3px solid #ef4444';
-              htmlEl.style.outlineOffset = '2px';
-              htmlEl.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.3)';
-            });
+          if ((await elementHandle.count()) === 0) {
+            continue;
+          }
 
-            await page.waitForTimeout(100);
+          // Check if element is visible before attempting screenshot
+          const isVisible = await elementHandle.isVisible().catch(() => false);
+          if (!isVisible) {
+            // Skip screenshot for non-visible elements instead of timing out
+            continue;
+          }
 
-            const screenshot = await elementHandle.screenshot({
+          await elementHandle.evaluate((el: Element) => {
+            const htmlEl = el as HTMLElement;
+            htmlEl.style.outline = '3px solid #ef4444';
+            htmlEl.style.outlineOffset = '2px';
+            htmlEl.style.boxShadow = '0 0 0 2px rgba(239, 68, 68, 0.3)';
+          });
+
+          await page.waitForTimeout(100);
+
+          // Use a shorter timeout for screenshots (5 seconds instead of default 30)
+          const screenshot = await elementHandle
+            .screenshot({
               type: 'png',
+              timeout: 5000,
+            })
+            .catch((error) => {
+              // If screenshot fails, log but don't throw - continue with analysis
+              console.warn(
+                `Screenshot failed for element ${selectorId}:`,
+                error instanceof Error ? error.message : 'Unknown error'
+              );
+              return null;
             });
 
-            const base64Screenshot = screenshot.toString('base64');
-            const dataUrl = `data:image/png;base64,${base64Screenshot}`;
+          if (!screenshot) {
+            // Remove styling if screenshot failed
+            await elementHandle
+              .evaluate((el: Element) => {
+                const htmlEl = el as HTMLElement;
+                htmlEl.style.outline = '';
+                htmlEl.style.outlineOffset = '';
+                htmlEl.style.boxShadow = '';
+              })
+              .catch(() => {
+                // Ignore errors when removing styles
+              });
+            continue;
+          }
 
-            if (element.type === 'image') {
-              const img = results.images.find((i) => i.selector === element.selector);
-              if (img) img.screenshot = dataUrl;
-            } else if (element.type === 'link') {
-              const link = results.links.find((l) => l.selector === element.selector);
-              if (link) link.screenshot = dataUrl;
-            } else if (element.type === 'button') {
-              const btn = results.buttons.find((b) => b.selector === element.selector);
-              if (btn) btn.screenshot = dataUrl;
-            } else if (element.type === 'input') {
-              const input = results.inputs.find((inp) => inp.selector === element.selector);
-              if (input) input.screenshot = dataUrl;
-            } else if (element.type === 'role') {
-              const role = results.roles.find((r) => r.selector === element.selector);
-              if (role) role.screenshot = dataUrl;
-            }
+          const base64Screenshot = screenshot.toString('base64');
+          const dataUrl = `data:image/png;base64,${base64Screenshot}`;
 
-            await elementHandle.evaluate((el: Element) => {
+          if (element.type === 'image') {
+            const img = results.images.find((i) => i.selector === element.selector);
+            if (img) img.screenshot = dataUrl;
+          } else if (element.type === 'link') {
+            const link = results.links.find((l) => l.selector === element.selector);
+            if (link) link.screenshot = dataUrl;
+          } else if (element.type === 'button') {
+            const btn = results.buttons.find((b) => b.selector === element.selector);
+            if (btn) btn.screenshot = dataUrl;
+          } else if (element.type === 'input') {
+            const input = results.inputs.find((inp) => inp.selector === element.selector);
+            if (input) input.screenshot = dataUrl;
+          } else if (element.type === 'role') {
+            const role = results.roles.find((r) => r.selector === element.selector);
+            if (role) role.screenshot = dataUrl;
+          }
+
+          await elementHandle
+            .evaluate((el: Element) => {
               const htmlEl = el as HTMLElement;
               htmlEl.style.outline = '';
               htmlEl.style.outlineOffset = '';
               htmlEl.style.boxShadow = '';
+            })
+            .catch(() => {
+              // Ignore errors when removing styles
             });
-          }
         } catch (error) {
-          console.error(`Error taking screenshot for ${element.selector}:`, error);
+          // Log error but continue with analysis - don't let screenshot failures stop the process
+          console.warn(
+            `Error processing screenshot for ${element.selector}:`,
+            error instanceof Error ? error.message : 'Unknown error'
+          );
         }
       }
 

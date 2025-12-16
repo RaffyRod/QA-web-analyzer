@@ -300,7 +300,16 @@ qa-web-analyzer/
 - **🔄 Automatic Port Detection**: Backend and frontend automatically find and connect to available ports
 - **🔍 Smart Backend Detection**: Frontend automatically detects the correct backend port, even with multiple servers running
 - **🛡️ Robust Error Handling**: Improved error messages with detailed debugging information
-- **🎨 UI Improvements**: Removed redundant spinner (emoji animation is sufficient)
+- **🎨 UI Improvements**:
+  - Removed redundant spinner (emoji animation is sufficient)
+  - **Collapsible Attribute Categories**: Categories can be expanded/collapsed with smooth animations
+  - **Category Emojis**: Visual icons for each attribute category (🏷️ Labels, 🔄 States, 🔗 Relationships, 📢 Live Regions, 📝 Form, ⚙️ Other)
+  - **Persistent Checkbox Highlight**: Selected checkboxes maintain visual highlight (blue color and bold text)
+  - **Improved Layout**: Single-column layout for attribute categories for better organization
+  - **Auto-Expand on Select All**: All categories automatically expand when "Select All" is clicked
+  - **Default Expanded State**: All categories are expanded by default on app load/reload
+  - **Discrete Show More Button**: Simplified "Show More/Less" button with cleaner design (no numbers in parentheses)
+- **📸 Screenshot Optimization**: Only captures screenshots of visible elements, preventing timeouts
 - **📝 Code Attribution**: All source files include author attribution comments
 - **🚀 Production Builds**: Disabled for local development (can be re-enabled when needed)
 
@@ -310,6 +319,8 @@ qa-web-analyzer/
 - **Multi-Server Support**: Works seamlessly with other servers on common ports
 - **Error Recovery**: Better error messages help identify and fix issues quickly
 - **Development Focus**: Optimized for local development workflow
+- **Screenshot Handling**: Improved error handling for non-visible elements (skips instead of timing out)
+- **Category Toggle**: Fixed expand/collapse functionality for attribute categories
 
 ## 📝 Available Scripts
 
@@ -469,6 +480,7 @@ The project includes comprehensive unit tests for both backend and frontend code
   - `stores/analysis.test.ts` - Analysis store tests
   - `stores/language.test.ts` - Language/i18n store tests
   - `stores/theme.test.ts` - Theme store tests
+  - `components/OptionsPanel.test.ts` - OptionsPanel component tests (category expansion, select all, etc.)
   - `utils/html.test.ts` - HTML utility tests
   - `utils/export.test.ts` - PDF export utility tests
 

@@ -81,9 +81,10 @@
             :aria-expanded="expandedCategories.ariaLabels"
           >
             <span class="category-title">ARIA Labels & Names</span>
-            <span class="category-toggle">{{ expandedCategories.ariaLabels ? '−' : '+' }}</span>
+            <span class="category-toggle">🏷️</span>
           </button>
-          <div v-show="expandedCategories.ariaLabels || !isMobile" class="category-content">
+          <transition name="slide-fade">
+            <div v-if="expandedCategories.ariaLabels" class="category-content">
             <div class="checkbox-group">
               <label
                 v-for="attr in getVisibleAttrsForCategory(ariaLabels)"
@@ -99,6 +100,7 @@
               </label>
             </div>
           </div>
+          </transition>
         </div>
 
         <!-- ARIA States -->
@@ -110,9 +112,10 @@
             :aria-expanded="expandedCategories.ariaStates"
           >
             <span class="category-title">ARIA States</span>
-            <span class="category-toggle">{{ expandedCategories.ariaStates ? '−' : '+' }}</span>
+            <span class="category-toggle">🔄</span>
           </button>
-          <div v-show="expandedCategories.ariaStates || !isMobile" class="category-content">
+          <transition name="slide-fade">
+            <div v-if="expandedCategories.ariaStates" class="category-content">
             <div class="checkbox-group">
               <label
                 v-for="attr in getVisibleAttrsForCategory(ariaStates)"
@@ -128,6 +131,7 @@
               </label>
             </div>
           </div>
+          </transition>
         </div>
 
         <!-- ARIA Relationships -->
@@ -139,9 +143,10 @@
             :aria-expanded="expandedCategories.ariaRelationships"
           >
             <span class="category-title">ARIA Relationships</span>
-            <span class="category-toggle">{{ expandedCategories.ariaRelationships ? '−' : '+' }}</span>
+            <span class="category-toggle">🔗</span>
           </button>
-          <div v-show="expandedCategories.ariaRelationships || !isMobile" class="category-content">
+          <transition name="slide-fade">
+            <div v-if="expandedCategories.ariaRelationships" class="category-content">
             <div class="checkbox-group">
               <label
                 v-for="attr in getVisibleAttrsForCategory(ariaRelationships)"
@@ -157,6 +162,7 @@
               </label>
             </div>
           </div>
+          </transition>
         </div>
 
         <!-- ARIA Live Regions -->
@@ -168,9 +174,10 @@
             :aria-expanded="expandedCategories.ariaLiveRegions"
           >
             <span class="category-title">ARIA Live Regions</span>
-            <span class="category-toggle">{{ expandedCategories.ariaLiveRegions ? '−' : '+' }}</span>
+            <span class="category-toggle">📢</span>
           </button>
-          <div v-show="expandedCategories.ariaLiveRegions || !isMobile" class="category-content">
+          <transition name="slide-fade">
+            <div v-if="expandedCategories.ariaLiveRegions" class="category-content">
             <div class="checkbox-group">
               <label
                 v-for="attr in getVisibleAttrsForCategory(ariaLiveRegions)"
@@ -186,6 +193,7 @@
               </label>
             </div>
           </div>
+          </transition>
         </div>
 
         <!-- Form Attributes -->
@@ -197,9 +205,10 @@
             :aria-expanded="expandedCategories.formAttributes"
           >
             <span class="category-title">Form Attributes</span>
-            <span class="category-toggle">{{ expandedCategories.formAttributes ? '−' : '+' }}</span>
+            <span class="category-toggle">📝</span>
           </button>
-          <div v-show="expandedCategories.formAttributes || !isMobile" class="category-content">
+          <transition name="slide-fade">
+            <div v-if="expandedCategories.formAttributes" class="category-content">
             <div class="checkbox-group">
               <label
                 v-for="attr in getVisibleAttrsForCategory(formAttributes)"
@@ -215,6 +224,7 @@
               </label>
             </div>
           </div>
+          </transition>
         </div>
 
         <!-- Other Attributes -->
@@ -226,9 +236,10 @@
             :aria-expanded="expandedCategories.otherAttributes"
           >
             <span class="category-title">Other Attributes</span>
-            <span class="category-toggle">{{ expandedCategories.otherAttributes ? '−' : '+' }}</span>
+            <span class="category-toggle">⚙️</span>
           </button>
-          <div v-show="expandedCategories.otherAttributes || !isMobile" class="category-content">
+          <transition name="slide-fade">
+            <div v-if="expandedCategories.otherAttributes" class="category-content">
             <div class="checkbox-group">
               <label
                 v-for="attr in getVisibleAttrsForCategory(otherAttributes)"
@@ -244,6 +255,7 @@
               </label>
             </div>
           </div>
+          </transition>
         </div>
 
         <!-- Show More/Less Button -->
@@ -253,7 +265,6 @@
           @click="showMoreAttributes = !showMoreAttributes"
         >
           {{ showMoreAttributes ? t('showLess') : t('showMore') }}
-          ({{ totalAttributesCount - 10 }} {{ showMoreAttributes ? 'less' : 'more' }})
         </button>
       </div>
     </div>
@@ -270,16 +281,16 @@ const languageStore = useLanguageStore()
 const { t } = languageStore
 
 const options = computed(() => analysisStore.options)
-const showMoreAttributes = ref(false)
+const showMoreAttributes = ref(true)
 const isMobile = ref(false)
 
 const expandedCategories = ref({
-  ariaLabels: false,
-  ariaStates: false,
-  ariaRelationships: false,
-  ariaLiveRegions: false,
-  formAttributes: false,
-  otherAttributes: false,
+  ariaLabels: true,
+  ariaStates: true,
+  ariaRelationships: true,
+  ariaLiveRegions: true,
+  formAttributes: true,
+  otherAttributes: true,
 })
 
 function checkMobile() {
@@ -293,10 +304,13 @@ function toggleCategory(category: keyof typeof expandedCategories.value) {
 onMounted(() => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
-  // On mobile, expand first category by default
-  if (isMobile.value) {
-    expandedCategories.value.ariaLabels = true
-  }
+  // Always expand all categories by default on app load/reload
+  expandedCategories.value.ariaLabels = true
+  expandedCategories.value.ariaStates = true
+  expandedCategories.value.ariaRelationships = true
+  expandedCategories.value.ariaLiveRegions = true
+  expandedCategories.value.formAttributes = true
+  expandedCategories.value.otherAttributes = true
 })
 
 onUnmounted(() => {
@@ -450,6 +464,15 @@ function selectAllAttributes() {
     newOptions[key] = true
   })
   analysisStore.updateOptions(newOptions)
+  
+  // Expand all categories and show all attributes
+  expandedCategories.value.ariaLabels = true
+  expandedCategories.value.ariaStates = true
+  expandedCategories.value.ariaRelationships = true
+  expandedCategories.value.ariaLiveRegions = true
+  expandedCategories.value.formAttributes = true
+  expandedCategories.value.otherAttributes = true
+  showMoreAttributes.value = true
 }
 
 function deselectAllAttributes() {
@@ -472,6 +495,19 @@ function deselectAllAttributes() {
 .option-group {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.option-group.attributes-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: stretch;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -moz-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -o-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .checkbox-group {
@@ -481,12 +517,32 @@ function deselectAllAttributes() {
   margin-top: 12px;
 }
 
+.checkbox-group label:has(input[type="checkbox"]:checked) {
+  color: var(--primary-color, #2563eb);
+  font-weight: 600;
+}
+
+.checkbox-group label:has(input[type="checkbox"]:checked) span {
+  color: var(--primary-color, #2563eb);
+}
+
+.checkbox-group input[type="checkbox"]:checked {
+  accent-color: var(--primary-color, #2563eb);
+}
+
 .attribute-category {
-  margin-top: 16px;
+  margin-top: 12px;
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
   overflow: hidden;
   background: var(--card-bg, #ffffff);
+  width: 100%;
+  transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1), -webkit-transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -moz-transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1), -moz-transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -o-transition: margin 0.4s cubic-bezier(0.4, 0, 0.2, 1), -o-transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: margin, transform;
+  -webkit-will-change: margin, transform;
 }
 
 .attribute-category:first-of-type {
@@ -532,76 +588,103 @@ function deselectAllAttributes() {
 }
 
 .category-toggle {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--text-secondary, #64748b);
-  width: 24px;
-  height: 24px;
+  font-size: 1.1rem;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--card-bg, #ffffff);
   transition: all 0.2s ease;
   -webkit-transition: all 0.2s ease;
   -moz-transition: all 0.2s ease;
   -o-transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .category-header.expanded .category-toggle {
-  color: var(--primary-color, #2563eb);
-  background: white;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .category-content {
   padding: 12px 16px;
-  animation: slideDown 0.2s ease;
-  -webkit-animation: slideDown 0.2s ease;
-  -moz-animation: slideDown 0.2s ease;
-  -o-animation: slideDown 0.2s ease;
+  overflow: hidden;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    max-height: 0;
-  }
-  to {
-    opacity: 1;
-    max-height: 1000px;
-  }
+/* Smooth slide-fade transition */
+.slide-fade-enter-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -moz-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -o-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-fade-leave-active {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  -moz-transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  -o-transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-fade-enter-from {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transform: translateY(-10px);
+  -webkit-transform: translateY(-10px);
+  -moz-transform: translateY(-10px);
+  -ms-transform: translateY(-10px);
+}
+
+.slide-fade-leave-to {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transform: translateY(-10px);
+  -webkit-transform: translateY(-10px);
+  -moz-transform: translateY(-10px);
+  -ms-transform: translateY(-10px);
+}
+
+.slide-fade-enter-to,
+.slide-fade-leave-from {
+  opacity: 1;
+  max-height: 1000px;
+  transform: translateY(0);
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
 }
 
 .show-more-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  width: 100%;
-  background: var(--primary-color, #2563eb);
-  color: white;
-  border: none;
-  border-radius: 8px;
+  margin-top: 16px;
+  padding: 6px 12px;
+  width: auto;
+  align-self: flex-start;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 500;
   transition: all 0.2s ease;
   -webkit-transition: all 0.2s ease;
   -moz-transition: all 0.2s ease;
   -o-transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .show-more-btn:hover {
-  background: var(--primary-hover, #1d4ed8);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  -webkit-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: var(--bg-color, #f8fafc);
+  color: var(--text-primary, #1e293b);
+  border-color: var(--primary-color, #2563eb);
 }
 
 .show-more-btn:active {
-  transform: translateY(0);
+  background: var(--card-hover-bg, rgba(0, 0, 0, 0.02));
 }
 
 .options-section > h2 {
@@ -665,9 +748,9 @@ function deselectAllAttributes() {
   }
 
   .show-more-btn {
-    margin-top: 16px;
-    padding: 12px 20px;
-    font-size: 0.95rem;
+    margin-top: 12px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
   }
 
   /* Touch-friendly checkboxes */

@@ -256,6 +256,7 @@ const wcagItems = computed(() => [
 ])
 
 // Filter items based on search query (minimum 3 characters)
+// Only searches in titles
 const filteredItems = computed(() => {
   if (searchQuery.value.length < 3) {
     return wcagItems.value
@@ -263,23 +264,8 @@ const filteredItems = computed(() => {
   
   const query = searchQuery.value.toLowerCase().trim()
   return wcagItems.value.filter(item => {
-    // Search in title
-    if (item.title.toLowerCase().includes(query)) {
-      return true
-    }
-    // Search in description
-    if (item.description.toLowerCase().includes(query)) {
-      return true
-    }
-    // Search in note
-    if (item.note && item.note.toLowerCase().includes(query)) {
-      return true
-    }
-    // Search in keywords
-    if (item.keywords.some(keyword => keyword.toLowerCase().includes(query))) {
-      return true
-    }
-    return false
+    // Search only in title
+    return item.title.toLowerCase().includes(query)
   })
 })
 
