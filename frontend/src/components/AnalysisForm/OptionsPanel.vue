@@ -80,7 +80,7 @@
             @click="toggleCategory('ariaLabels')"
             :aria-expanded="expandedCategories.ariaLabels"
           >
-            <span class="category-title">ARIA Labels & Names</span>
+            <span class="category-title">{{ t('categoryAriaLabels') }}</span>
             <span class="category-toggle">🏷️</span>
           </button>
           <transition name="slide-fade">
@@ -111,7 +111,7 @@
             @click="toggleCategory('ariaStates')"
             :aria-expanded="expandedCategories.ariaStates"
           >
-            <span class="category-title">ARIA States</span>
+            <span class="category-title">{{ t('categoryAriaStates') }}</span>
             <span class="category-toggle">🔄</span>
           </button>
           <transition name="slide-fade">
@@ -142,7 +142,7 @@
             @click="toggleCategory('ariaRelationships')"
             :aria-expanded="expandedCategories.ariaRelationships"
           >
-            <span class="category-title">ARIA Relationships</span>
+            <span class="category-title">{{ t('categoryAriaRelationships') }}</span>
             <span class="category-toggle">🔗</span>
           </button>
           <transition name="slide-fade">
@@ -173,7 +173,7 @@
             @click="toggleCategory('ariaLiveRegions')"
             :aria-expanded="expandedCategories.ariaLiveRegions"
           >
-            <span class="category-title">ARIA Live Regions</span>
+            <span class="category-title">{{ t('categoryAriaLiveRegions') }}</span>
             <span class="category-toggle">📢</span>
           </button>
           <transition name="slide-fade">
@@ -204,7 +204,7 @@
             @click="toggleCategory('formAttributes')"
             :aria-expanded="expandedCategories.formAttributes"
           >
-            <span class="category-title">Form Attributes</span>
+            <span class="category-title">{{ t('categoryFormAttributes') }}</span>
             <span class="category-toggle">📝</span>
           </button>
           <transition name="slide-fade">
@@ -235,7 +235,7 @@
             @click="toggleCategory('otherAttributes')"
             :aria-expanded="expandedCategories.otherAttributes"
           >
-            <span class="category-title">Other Attributes</span>
+            <span class="category-title">{{ t('categoryOtherAttributes') }}</span>
             <span class="category-toggle">⚙️</span>
           </button>
           <transition name="slide-fade">

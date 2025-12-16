@@ -309,6 +309,7 @@ qa-web-analyzer/
   - **Auto-Expand on Select All**: All categories automatically expand when "Select All" is clicked
   - **Default Expanded State**: All categories are expanded by default on app load/reload
   - **Discrete Show More Button**: Simplified "Show More/Less" button with cleaner design (no numbers in parentheses)
+  - **WCAG Modal Translations**: Complete Spanish translation for all WCAG information modal content, including titles, descriptions, and notes
 - **📸 Screenshot Optimization**: Only captures screenshots of visible elements, preventing timeouts
 - **📝 Code Attribution**: All source files include author attribution comments
 - **🚀 Production Builds**: Disabled for local development (can be re-enabled when needed)
