@@ -39,7 +39,7 @@ npm run setup
 
 > 💡 **Alternative commands:**
 >
-> - `node setup-and-run.js` - Direct execution
+> - `node scripts/setup-and-run.js` - Direct execution
 > - `start.bat` (Windows) or `./start.sh` (macOS/Linux) - Platform-specific scripts
 
 > 💡 **Note**: The frontend automatically proxies API requests to the backend. You only need to open the frontend URL that will appear in the console.
