@@ -141,7 +141,12 @@
     <!-- Export Section -->
     <div class="export-section">
       <div class="export-buttons">
-        <button id="exportPdfBtn" class="btn-export" @click="openExportModal">
+        <button
+          id="exportPdfBtn"
+          class="btn-export"
+          :disabled="!hasResults || isLoading"
+          @click="openExportModal"
+        >
           {{ t('exportAsPDF') }}
         </button>
       </div>
@@ -382,6 +387,10 @@ const { t } = languageStore
 
 const results = computed(() => analysisStore.results)
 const analysisOptions = computed(() => analysisStore.options)
+const isLoading = computed(() => analysisStore.isLoading)
+const hasResults = computed(() => {
+  return results.value !== null && results.value !== undefined && results.value.summary !== undefined
+})
 
 const showMissing = ref(true)
 const showHasAttributes = ref(true)

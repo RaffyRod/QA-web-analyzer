@@ -616,7 +616,7 @@ function deselectAllAttributes() {
 }
 
 .attribute-category {
-  margin-top: 12px;
+  margin-top: 18px;
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
   overflow: hidden;
@@ -665,6 +665,20 @@ function deselectAllAttributes() {
   color: white;
 }
 
+/* Fix for glassmorphism theme: use darker purple background when primary-color is white/light */
+body[data-theme="glassmorphism"] .category-header.expanded {
+  background: rgba(102, 126, 234, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+}
+
+body[data-theme="glassmorphism"] .category-header.expanded .category-title {
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.8);
+  -webkit-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
 .category-title {
   font-size: 0.85rem;
   font-weight: 600;
@@ -672,8 +686,13 @@ function deselectAllAttributes() {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   flex: 1;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
-  -webkit-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.8), 1px 1px 2px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 1px rgba(0, 0, 0, 0.2);
+  -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.category-header.expanded .category-title {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.4);
+  -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
 .category-toggle {
@@ -888,6 +907,20 @@ function deselectAllAttributes() {
     padding: 14px 16px;
   }
 
+  /* Fix for glassmorphism theme on mobile */
+  body[data-theme="glassmorphism"] .category-header.expanded {
+    background: rgba(102, 126, 234, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+  }
+
+  body[data-theme="glassmorphism"] .category-header.expanded .category-title {
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.8);
+    -webkit-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.8);
+  }
+
   .category-title {
     font-size: 0.8rem;
   }
@@ -954,6 +987,20 @@ function deselectAllAttributes() {
 
   .category-header {
     padding: 12px;
+  }
+
+  /* Fix for glassmorphism theme on very small screens */
+  body[data-theme="glassmorphism"] .category-header.expanded {
+    background: rgba(102, 126, 234, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+  }
+
+  body[data-theme="glassmorphism"] .category-header.expanded .category-title {
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.8);
+    -webkit-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 2px rgba(0, 0, 0, 0.8);
   }
 
   .category-content {

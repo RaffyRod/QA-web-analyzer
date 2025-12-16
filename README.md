@@ -110,6 +110,19 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - 📸 **Visual Feedback**: Screenshots of problematic elements
 - 📱 **Fully Responsive**: Optimized for smartphones, tablets, and desktop
 - 🎭 **WCAG Information Modal**: Quick reference guide for accessibility standards with detailed rules for images and `aria-label` according to WCAG 2.2 AA. Fully translated to English and Spanish.. Fully translated to English and Spanish.
+- 💾 **Saved URLs**: Save up to 5 frequently used URLs for quick access. Select saved URLs from a dropdown before analyzing.
+
+### 🆕 Recent Improvements
+
+- ✅ **Analysis Validation**: Prevents analysis from starting without selecting at least one element and one attribute, with clear multilingual error messages
+- ✅ **Export PDF Button**: Disabled until analysis completes, with animated green glow effect when results are available
+- ✅ **Smart Tooltips**: Hover hints on disabled buttons to guide users (e.g., "Please enter a URL to analyze")
+- ✅ **Improved UI Spacing**: Better spacing between attribute category cards to prevent overlapping
+- ✅ **Refined Visual Effects**: Reduced text shadows for better readability in collapsed attribute cards and error alerts
+- ✅ **Saved URLs Feature**: Save up to 5 URLs with a checkbox next to the URL input. Quick access dropdown to select saved URLs before analyzing
+- ✅ **Text Visibility Fix**: Ensured all text elements are visible across all themes with proper color contrast
+- ✅ **Glassmorphism Hover Fix**: Fixed hover color in glassmorphism theme dropdown (now uses purple instead of white)
+- ✅ **URL Removal Notification**: Added confirmation notification when removing URLs from saved list
 
 ## 📖 How to Use
 

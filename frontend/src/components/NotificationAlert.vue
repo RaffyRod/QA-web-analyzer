@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 interface Props {
   type?: 'info' | 'success' | 'warning' | 'error'
@@ -36,8 +36,19 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const visible = ref(false)
-// Use only one emoji for all notifications (informative)
-const icon = ref('ℹ️')
+// Use different emojis based on notification type
+const icon = computed(() => {
+  switch (props.type) {
+    case 'error':
+      return '❌'
+    case 'warning':
+      return '⚠️'
+    case 'success':
+      return '✅'
+    default:
+      return 'ℹ️'
+  }
+})
 
 onMounted(() => {
   visible.value = true
@@ -111,8 +122,90 @@ defineExpose({
 
 .notification-alert.error {
   border-left-color: var(--danger-color, #ef4444);
+  border-left-width: 6px;
   background: var(--card-bg, #ffffff);
   background-color: var(--card-bg, #ffffff);
+  box-shadow: 
+    0 10px 25px rgba(239, 68, 68, 0.3),
+    0 4px 10px rgba(239, 68, 68, 0.2),
+    0 0 0 2px rgba(239, 68, 68, 0.1);
+  animation: slideIn 0.3s ease-out, pulseError 2s ease-in-out infinite;
+}
+
+/* Fix for glassmorphism theme: better contrast for error alerts */
+body[data-theme="glassmorphism"] .notification-alert.error {
+  background: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 
+    0 10px 25px rgba(239, 68, 68, 0.4),
+    0 4px 10px rgba(239, 68, 68, 0.3),
+    0 0 0 2px rgba(239, 68, 68, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+body[data-theme="glassmorphism"] .notification-alert.error .notification-title {
+  color: #dc2626 !important;
+  text-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 0 1px rgba(255, 255, 255, 0.5);
+  -webkit-text-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+body[data-theme="glassmorphism"] .notification-alert.error .notification-message {
+  color: #991b1b !important;
+  text-shadow: 
+    0 1px 1px rgba(0, 0, 0, 0.1),
+    0 0 1px rgba(255, 255, 255, 0.4);
+  -webkit-text-shadow: 
+    0 1px 1px rgba(0, 0, 0, 0.1),
+    0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+body[data-theme="glassmorphism"] .notification-alert.error .notification-icon {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+  -webkit-filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes pulseError {
+  0%, 100% {
+    box-shadow: 
+      0 10px 25px rgba(239, 68, 68, 0.3),
+      0 4px 10px rgba(239, 68, 68, 0.2),
+      0 0 0 2px rgba(239, 68, 68, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 10px 25px rgba(239, 68, 68, 0.5),
+      0 4px 10px rgba(239, 68, 68, 0.4),
+      0 0 0 4px rgba(239, 68, 68, 0.2);
+  }
+}
+
+/* Enhanced pulse animation for glassmorphism theme */
+body[data-theme="glassmorphism"] .notification-alert.error {
+  animation: slideIn 0.3s ease-out, pulseErrorGlassmorphism 2s ease-in-out infinite;
+}
+
+@keyframes pulseErrorGlassmorphism {
+  0%, 100% {
+    box-shadow: 
+      0 10px 25px rgba(239, 68, 68, 0.4),
+      0 4px 10px rgba(239, 68, 68, 0.3),
+      0 0 0 2px rgba(239, 68, 68, 0.2),
+      0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 10px 25px rgba(239, 68, 68, 0.6),
+      0 4px 10px rgba(239, 68, 68, 0.5),
+      0 0 0 4px rgba(239, 68, 68, 0.3),
+      0 8px 32px rgba(0, 0, 0, 0.4);
+  }
 }
 
 .notification-content {
@@ -126,6 +219,23 @@ defineExpose({
   font-size: 1.5rem;
   flex-shrink: 0;
   line-height: 1;
+}
+
+.notification-alert.error .notification-icon {
+  font-size: 2rem;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 .notification-text {
@@ -144,6 +254,15 @@ defineExpose({
   text-shadow: 
     0 1px 2px rgba(0, 0, 0, 0.2),
     0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+.notification-alert.error .notification-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--danger-color, #ef4444) !important;
+  text-shadow: 
+    0 1px 2px rgba(239, 68, 68, 0.2),
+    0 0 1px rgba(239, 68, 68, 0.3);
 }
 
 .notification-message {

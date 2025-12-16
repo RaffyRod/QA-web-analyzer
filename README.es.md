@@ -112,6 +112,19 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - 📸 **Retroalimentación Visual**: Capturas de pantalla de elementos problemáticos
 - 📱 **Totalmente Responsive**: Optimizado para smartphones, tablets y desktop
 - 🎭 **Modal de Información WCAG**: Guía de referencia rápida para estándares de accesibilidad con reglas detalladas para imágenes y `aria-label` según WCAG 2.2 AA. Completamente traducido al inglés y español.
+- 💾 **URLs Guardadas**: Guarda hasta 5 URLs de uso frecuente para acceso rápido. Selecciona URLs guardadas desde un dropdown antes de analizar.
+
+### 🆕 Mejoras Recientes
+
+- ✅ **Validación de Análisis**: Previene que el análisis se inicie sin seleccionar al menos un elemento y un atributo, con mensajes de error claros en múltiples idiomas
+- ✅ **Botón Exportar PDF**: Deshabilitado hasta que el análisis se complete, con efecto de brillo verde animado cuando hay resultados disponibles
+- ✅ **Tooltips Inteligentes**: Hints al hacer hover en botones deshabilitados para guiar a los usuarios (ej: "Por favor ingresa una URL para analizar")
+- ✅ **Espaciado de UI Mejorado**: Mejor espaciado entre los cards de categorías de atributos para prevenir solapamiento
+- ✅ **Efectos Visuales Refinados**: Sombras de texto reducidas para mejor legibilidad en cards de atributos colapsados y alertas de error
+- ✅ **Funcionalidad de URLs Guardadas**: Guarda hasta 5 URLs con un checkbox al lado del input de URL. Dropdown de acceso rápido para seleccionar URLs guardadas antes de analizar
+- ✅ **Corrección de Visibilidad de Texto**: Asegurado que todos los elementos de texto sean visibles en todos los temas con contraste de color adecuado
+- ✅ **Corrección de Hover en Glassmorphism**: Corregido el color de hover en el dropdown de temas glassmorphism (ahora usa púrpura en lugar de blanco)
+- ✅ **Notificación al Eliminar URL**: Agregada notificación de confirmación al eliminar URLs de la lista guardada
 
 ## 🎯 Mejoras Recientes
 

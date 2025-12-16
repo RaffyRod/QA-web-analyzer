@@ -32,3 +32,152 @@ body {
     user-select: none;
   }
 }
+
+/* ============================================
+   TEXT VISIBILITY ENFORCEMENT FOR ALL THEMES
+   ============================================ */
+
+/* Base text color - use CSS variables for theme compatibility */
+body {
+  color: var(--text-primary, #1e293b);
+}
+
+/* Ensure text in cards and containers is visible - only when needed */
+.summary-card-label,
+.summary-card-value,
+.result-item,
+.attr-name,
+.attr-value,
+.code-content,
+.modal-content p,
+.modal-content label,
+.modal-content span:not(.status-badge):not(.theme-option),
+.modal-content
+  div:not(.modal-header):not(.modal-header *):not(.theme-dropdown):not(.theme-dropdown *),
+.wcag-item strong,
+.wcag-item p {
+  color: var(--text-primary, #1e293b);
+}
+
+/* Exclude theme dropdown and other interactive elements from text color enforcement */
+.theme-dropdown,
+.theme-dropdown *,
+.theme-option,
+.theme-option:hover,
+.theme-option:active,
+.theme-option[data-selected='true'],
+.url-select-btn,
+.url-select-btn:hover,
+.url-remove-btn,
+.url-remove-btn:hover {
+  /* Let these elements handle their own colors for proper hover states */
+}
+
+/* Glassmorphism theme - ensure dark text on light backgrounds */
+body[data-theme='glassmorphism'] .summary-card-label,
+body[data-theme='glassmorphism'] .summary-card-value,
+body[data-theme='glassmorphism'] .result-item,
+body[data-theme='glassmorphism']
+  .result-item
+  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *),
+body[data-theme='glassmorphism'] .attr-name,
+body[data-theme='glassmorphism'] .attr-value,
+body[data-theme='glassmorphism'] .code-content,
+body[data-theme='glassmorphism'] .code-content *,
+body[data-theme='glassmorphism'] .modal-content p,
+body[data-theme='glassmorphism'] .modal-content label,
+body[data-theme='glassmorphism'] .modal-content span:not(.status-badge):not(.theme-option),
+body[data-theme='glassmorphism']
+  .modal-content
+  div:not(.modal-header):not(.modal-header *):not(.theme-dropdown):not(.theme-dropdown *),
+body[data-theme='glassmorphism'] .wcag-item strong,
+body[data-theme='glassmorphism'] .wcag-item p,
+body[data-theme='glassmorphism'] .wcag-item p * {
+  color: #1e293b !important;
+}
+
+/* Dark themes - ensure light text on dark backgrounds */
+body[data-theme='dark'] .summary-card-label,
+body[data-theme='dark'] .summary-card-value,
+body[data-theme='dark'] .result-item,
+body[data-theme='dark']
+  .result-item
+  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *),
+body[data-theme='dark'] .attr-name,
+body[data-theme='dark'] .attr-value,
+body[data-theme='dark'] .code-content,
+body[data-theme='dark'] .code-content *,
+body[data-theme='dark'] .modal-content p,
+body[data-theme='dark'] .modal-content label,
+body[data-theme='dark'] .modal-content span:not(.status-badge):not(.theme-option),
+body[data-theme='dark']
+  .modal-content
+  div:not(.modal-header):not(.modal-header *):not(.theme-dropdown):not(.theme-dropdown *),
+body[data-theme='dark'] .wcag-item strong,
+body[data-theme='dark'] .wcag-item p,
+body[data-theme='dark'] .wcag-item p * {
+  color: var(--text-primary, #f1f5f9) !important;
+}
+
+/* Cyberpunk theme - ensure neon text is visible */
+body[data-theme='cyberpunk'] .summary-card-label,
+body[data-theme='cyberpunk'] .summary-card-value,
+body[data-theme='cyberpunk'] .result-item,
+body[data-theme='cyberpunk']
+  .result-item
+  *:not(.category-header):not(.category-header *):not(.theme-option):not(.theme-option *),
+body[data-theme='cyberpunk'] .attr-name,
+body[data-theme='cyberpunk'] .attr-value,
+body[data-theme='cyberpunk'] .code-content,
+body[data-theme='cyberpunk'] .code-content *,
+body[data-theme='cyberpunk'] .modal-content p,
+body[data-theme='cyberpunk'] .modal-content label,
+body[data-theme='cyberpunk'] .modal-content span:not(.status-badge):not(.theme-option),
+body[data-theme='cyberpunk']
+  .modal-content
+  div:not(.modal-header):not(.modal-header *):not(.theme-dropdown):not(.theme-dropdown *),
+body[data-theme='cyberpunk'] .wcag-item strong,
+body[data-theme='cyberpunk'] .wcag-item p,
+body[data-theme='cyberpunk'] .wcag-item p * {
+  color: var(--text-primary, #00ff88) !important;
+}
+
+/* Light themes with light backgrounds - ensure dark text (already handled by base rule, but explicit for clarity) */
+body[data-theme='light'] .summary-card-label,
+body[data-theme='light'] .summary-card-value,
+body[data-theme='light'] .result-item,
+body[data-theme='light'] .attr-name,
+body[data-theme='light'] .attr-value,
+body[data-theme='light'] .code-content,
+body[data-theme='flat'] .summary-card-label,
+body[data-theme='flat'] .summary-card-value,
+body[data-theme='flat'] .result-item,
+body[data-theme='flat'] .attr-name,
+body[data-theme='flat'] .attr-value,
+body[data-theme='flat'] .code-content,
+body[data-theme='material'] .summary-card-label,
+body[data-theme='material'] .summary-card-value,
+body[data-theme='material'] .result-item,
+body[data-theme='material'] .attr-name,
+body[data-theme='material'] .attr-value,
+body[data-theme='material'] .code-content,
+body[data-theme='minimal'] .summary-card-label,
+body[data-theme='minimal'] .summary-card-value,
+body[data-theme='minimal'] .result-item,
+body[data-theme='minimal'] .attr-name,
+body[data-theme='minimal'] .attr-value,
+body[data-theme='minimal'] .code-content,
+body[data-theme='monochrome'] .summary-card-label,
+body[data-theme='monochrome'] .summary-card-value,
+body[data-theme='monochrome'] .result-item,
+body[data-theme='monochrome'] .attr-name,
+body[data-theme='monochrome'] .attr-value,
+body[data-theme='monochrome'] .code-content,
+body[data-theme='highContrast'] .summary-card-label,
+body[data-theme='highContrast'] .summary-card-value,
+body[data-theme='highContrast'] .result-item,
+body[data-theme='highContrast'] .attr-name,
+body[data-theme='highContrast'] .attr-value,
+body[data-theme='highContrast'] .code-content {
+  color: var(--text-primary, #1e293b);
+}
