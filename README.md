@@ -180,96 +180,97 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 ```
 qa-web-analyzer/
 │
-├── src/                       # Backend TypeScript source code
-│   ├── types/                 # Type definitions
+├── 📁 src/                          Backend TypeScript source code
+│   ├── 📁 types/                    Type definitions
 │   │   └── index.ts
-│   ├── services/              # Business logic
+│   ├── 📁 services/                 Business logic
 │   │   └── analyzer.service.ts
-│   ├── utils/                 # Utilities
+│   ├── 📁 utils/                     Utilities
 │   │   └── port-finder.util.ts
-│   └── server.ts              # Express server
+│   └── server.ts                     Express server
 │
-├── frontend/                   # Vue 3 Frontend Application
-│   ├── src/
-│   │   ├── components/        # Vue components
-│   │   │   ├── Header/        # Header with language & theme
+├── 📁 frontend/                      Vue 3 Frontend Application
+│   ├── 📁 src/
+│   │   ├── 📁 components/           Vue components
+│   │   │   ├── 📁 Header/           Header with language & theme
 │   │   │   │   ├── Header.vue
 │   │   │   │   ├── LanguageToggle.vue
 │   │   │   │   └── ThemeSelector.vue
-│   │   │   ├── AnalysisForm/  # Analysis form & options
+│   │   │   ├── 📁 AnalysisForm/      Analysis form & options
 │   │   │   │   ├── AnalysisForm.vue
 │   │   │   │   └── OptionsPanel.vue
-│   │   │   ├── Results/       # Results display (lazy loaded)
+│   │   │   ├── 📁 Results/           Results display (lazy loaded)
 │   │   │   │   ├── Results.vue
 │   │   │   │   └── ResultItem.vue
-│   │   │   ├── ExportModal.vue    # PDF export modal
+│   │   │   ├── ExportModal.vue       PDF export modal
 │   │   │   ├── NotificationAlert.vue
-│   │   │   └── WcagInfoModal.vue  # WCAG information modal
-│   │   ├── stores/            # Pinia stores (state management)
-│   │   │   ├── analysis.ts    # Analysis state management
-│   │   │   ├── theme.ts       # Theme management
-│   │   │   └── language.ts    # i18n management
-│   │   ├── utils/             # Utility functions
-│   │   │   ├── export.ts      # PDF export logic
-│   │   │   ├── html.ts        # HTML utilities
-│   │   │   └── themes.ts      # Theme utilities
-│   │   ├── assets/            # Static assets (CSS imports)
-│   │   │   └── main.css       # Main CSS entry point
-│   │   ├── App.vue            # Root component
-│   │   └── main.ts            # Application entry point
-│   ├── public/                # Public assets (Vite static files)
-│   │   └── favicon.svg        # Application favicon
-│   ├── tests/                 # Frontend unit tests
-│   │   ├── stores/            # Store tests
-│   │   └── utils/             # Utility tests
-│   ├── vite.config.ts         # Vite configuration
-│   ├── vitest.config.ts       # Vitest test configuration
-│   ├── tsconfig.json          # TypeScript config
-│   └── package.json           # Frontend dependencies
+│   │   │   └── WcagInfoModal.vue     WCAG information modal
+│   │   ├── 📁 stores/                Pinia stores (state management)
+│   │   │   ├── analysis.ts           Analysis state management
+│   │   │   ├── theme.ts              Theme management
+│   │   │   └── language.ts           i18n management
+│   │   ├── 📁 utils/                 Utility functions
+│   │   │   ├── export.ts             PDF export logic
+│   │   │   ├── html.ts               HTML utilities
+│   │   │   └── themes.ts             Theme utilities
+│   │   ├── 📁 assets/                Static assets (CSS imports)
+│   │   │   └── main.css              Main CSS entry point
+│   │   ├── App.vue                   Root component
+│   │   └── main.ts                   Application entry point
+│   ├── 📁 public/                    Public assets (Vite static files)
+│   │   └── favicon.svg               Application favicon
+│   ├── 📁 tests/                     Frontend unit tests
+│   │   ├── 📁 stores/                Store tests
+│   │   └── 📁 utils/                 Utility tests
+│   ├── vite.config.ts                Vite configuration
+│   ├── vitest.config.ts              Vitest test configuration
+│   ├── tsconfig.json                 TypeScript config
+│   └── package.json                  Frontend dependencies
 │
-├── public/                    # Shared public directory (served by Express)
-│   ├── index.html             # Legacy HTML (fallback)
-│   ├── css/                   # Modular CSS architecture (shared)
-│   │   ├── variables.css      # CSS variables and theme colors
-│   │   ├── base.css           # Base styles and reset
-│   │   ├── layout.css         # Layout components
-│   │   ├── components.css     # UI components (buttons, inputs)
-│   │   ├── options.css        # Analysis options styles
-│   │   ├── modal.css          # Modal styles
-│   │   ├── results.css        # Results display styles
-│   │   └── responsive.css     # Responsive design rules
-│   ├── js/                    # Legacy JavaScript modules
-│   │   ├── app.js             # Main application logic
-│   │   ├── export.js          # PDF export functionality
-│   │   ├── themes.js          # Theme management
-│   │   └── i18n.js            # Internationalization
-│   ├── assets/                # Vite build output (auto-generated)
-│   └── favicon.svg            # Application favicon
+├── 📁 public/                        Shared public directory (served by Express)
+│   ├── index.html                    Legacy HTML (fallback)
+│   ├── 📁 css/                       Modular CSS architecture (shared)
+│   │   ├── variables.css              CSS variables and theme colors
+│   │   ├── base.css                  Base styles and reset
+│   │   ├── layout.css                Layout components
+│   │   ├── components.css             UI components (buttons, inputs)
+│   │   ├── options.css               Analysis options styles
+│   │   ├── modal.css                 Modal styles
+│   │   ├── results.css               Results display styles
+│   │   └── responsive.css             Responsive design rules
+│   ├── 📁 js/                        Legacy JavaScript modules
+│   │   ├── app.js                    Main application logic
+│   │   ├── export.js                 PDF export functionality
+│   │   ├── themes.js                 Theme management
+│   │   └── i18n.js                   Internationalization
+│   ├── 📁 assets/                    Vite build output (auto-generated)
+│   └── favicon.svg                   Application favicon
 │
-├── dist/                      # Backend compiled JavaScript (auto-generated)
+├── 📁 dist/                          Backend compiled JavaScript (auto-generated)
 │   ├── server.js
-│   ├── services/
-│   ├── types/
-│   └── utils/
+│   ├── 📁 services/
+│   ├── 📁 types/
+│   └── 📁 utils/
 │
-├── tests/                     # Backend unit tests
-│   ├── services/              # Service tests
-│   └── utils/                 # Utility tests
+├── 📁 tests/                         Backend unit tests
+│   ├── 📁 services/                  Service tests
+│   └── 📁 utils/                     Utility tests
 │
-├── package.json               # Backend dependencies and scripts
-├── tsconfig.json              # Backend TypeScript config
-├── vitest.config.ts           # Backend test configuration
-├── .gitignore                 # Git ignore rules
-├── .prettierrc.json           # Prettier configuration
-├── .lintstagedrc.json         # lint-staged configuration
-├── .env.example               # Environment variables template
-├── scripts/                   # Utility scripts
-│   └── setup-and-run.js      # Automated setup and run script
-├── start.bat                  # Windows startup script
-├── start.sh                   # Unix startup script
-├── start.js                   # Legacy startup script
-├── README.md                  # This file
-└── README.es.md               # Spanish README
+├── 📁 scripts/                       Utility scripts
+│   └── setup-and-run.js              Automated setup and run script
+│
+├── package.json                      Backend dependencies and scripts
+├── tsconfig.json                     Backend TypeScript config
+├── vitest.config.ts                  Backend test configuration
+├── .gitignore                        Git ignore rules
+├── .prettierrc.json                  Prettier configuration
+├── .lintstagedrc.json                lint-staged configuration
+├── .env.example                      Environment variables template
+├── start.bat                         Windows startup script
+├── start.sh                          Unix startup script
+├── start.js                          Legacy startup script
+├── README.md                         This file
+└── README.es.md                      Spanish README
 ```
 
 ## 🛠️ Technologies Used
