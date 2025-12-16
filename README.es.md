@@ -210,97 +210,97 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 ```
 qa-web-analyzer/
 │
-├── 📁 src/                          Código fuente TypeScript del backend
-│   ├── 📁 types/                    Definiciones de tipos
+├── 📁 src/                                    Código fuente TypeScript del backend
+│   ├── 📁 types/                              Definiciones de tipos
 │   │   └── index.ts
-│   ├── 📁 services/                 Lógica de negocio
+│   ├── 📁 services/                           Lógica de negocio
 │   │   └── analyzer.service.ts
-│   ├── 📁 utils/                     Utilidades
+│   ├── 📁 utils/                              Utilidades
 │   │   └── port-finder.util.ts
-│   └── server.ts                     Servidor Express
+│   └── server.ts                              Servidor Express
 │
-├── 📁 frontend/                      Aplicación Frontend Vue 3
+├── 📁 frontend/                                Aplicación Frontend Vue 3
 │   ├── 📁 src/
-│   │   ├── 📁 components/           Componentes Vue
-│   │   │   ├── 📁 Header/           Header con idioma y tema
+│   │   ├── 📁 components/                     Componentes Vue
+│   │   │   ├── 📁 Header/                     Header con idioma y tema
 │   │   │   │   ├── Header.vue
 │   │   │   │   ├── LanguageToggle.vue
 │   │   │   │   └── ThemeSelector.vue
-│   │   │   ├── 📁 AnalysisForm/      Formulario y opciones de análisis
+│   │   │   ├── 📁 AnalysisForm/                Formulario y opciones de análisis
 │   │   │   │   ├── AnalysisForm.vue
 │   │   │   │   └── OptionsPanel.vue
-│   │   │   ├── 📁 Results/           Visualización de resultados
+│   │   │   ├── 📁 Results/                     Visualización de resultados
 │   │   │   │   ├── Results.vue
 │   │   │   │   └── ResultItem.vue
-│   │   │   ├── ExportModal.vue       Modal de exportación PDF
+│   │   │   ├── ExportModal.vue                 Modal de exportación PDF
 │   │   │   ├── NotificationAlert.vue
-│   │   │   └── WcagInfoModal.vue     Modal de información WCAG
-│   │   ├── 📁 stores/                Stores Pinia (gestión de estado)
-│   │   │   ├── analysis.ts           Gestión de estado de análisis
-│   │   │   ├── theme.ts              Gestión de temas
-│   │   │   └── language.ts            Gestión de i18n
-│   │   ├── 📁 utils/                 Funciones utilitarias
-│   │   │   ├── export.ts             Lógica de exportación PDF
-│   │   │   ├── html.ts               Utilidades HTML
-│   │   │   └── themes.ts             Utilidades de temas
-│   │   ├── 📁 assets/                Assets estáticos (importaciones CSS)
-│   │   │   └── main.css              Punto de entrada CSS principal
-│   │   ├── App.vue                   Componente raíz
-│   │   └── main.ts                   Punto de entrada de la aplicación
-│   ├── 📁 public/                    Assets públicos (archivos estáticos de Vite)
-│   │   └── favicon.svg               Favicon de la aplicación
-│   ├── 📁 tests/                     Pruebas unitarias del frontend
-│   │   ├── 📁 stores/                Pruebas de stores
-│   │   └── 📁 utils/                 Pruebas de utilidades
-│   ├── vite.config.ts                Configuración de Vite
-│   ├── vitest.config.ts              Configuración de pruebas Vitest
-│   ├── tsconfig.json                 Configuración TypeScript
-│   └── package.json                  Dependencias del frontend
+│   │   │   └── WcagInfoModal.vue               Modal de información WCAG
+│   │   ├── 📁 stores/                          Stores Pinia (gestión de estado)
+│   │   │   ├── analysis.ts                     Gestión de estado de análisis
+│   │   │   ├── theme.ts                        Gestión de temas
+│   │   │   └── language.ts                     Gestión de i18n
+│   │   ├── 📁 utils/                           Funciones utilitarias
+│   │   │   ├── export.ts                       Lógica de exportación PDF
+│   │   │   ├── html.ts                         Utilidades HTML
+│   │   │   └── themes.ts                       Utilidades de temas
+│   │   ├── 📁 assets/                          Assets estáticos (importaciones CSS)
+│   │   │   └── main.css                        Punto de entrada CSS principal
+│   │   ├── App.vue                             Componente raíz
+│   │   └── main.ts                             Punto de entrada de la aplicación
+│   ├── 📁 public/                              Assets públicos (archivos estáticos de Vite)
+│   │   └── favicon.svg                         Favicon de la aplicación
+│   ├── 📁 tests/                               Pruebas unitarias del frontend
+│   │   ├── 📁 stores/                          Pruebas de stores
+│   │   └── 📁 utils/                           Pruebas de utilidades
+│   ├── vite.config.ts                          Configuración de Vite
+│   ├── vitest.config.ts                        Configuración de pruebas Vitest
+│   ├── tsconfig.json                           Configuración TypeScript
+│   └── package.json                            Dependencias del frontend
 │
-├── 📁 public/                        Directorio público compartido (servido por Express)
-│   ├── index.html                    HTML legacy (fallback)
-│   ├── 📁 css/                       Arquitectura CSS modular (compartida)
-│   │   ├── variables.css             Variables CSS y colores de tema
-│   │   ├── base.css                  Estilos base y reset
-│   │   ├── layout.css                Componentes de layout
-│   │   ├── components.css            Componentes UI (botones, inputs)
-│   │   ├── options.css               Estilos de opciones de análisis
-│   │   ├── modal.css                 Estilos de modales
-│   │   ├── results.css               Estilos de visualización de resultados
-│   │   └── responsive.css            Reglas de diseño responsive
-│   ├── 📁 js/                        Módulos JavaScript legacy
-│   │   ├── app.js                    Lógica principal de la aplicación
-│   │   ├── export.js                 Funcionalidad de exportación PDF
-│   │   ├── themes.js                 Gestión de temas
-│   │   └── i18n.js                   Internacionalización
-│   ├── 📁 assets/                    Salida de build de Vite (auto-generado)
-│   └── favicon.svg                   Favicon de la aplicación
+├── 📁 public/                                  Directorio público compartido (servido por Express)
+│   ├── index.html                              HTML legacy (fallback)
+│   ├── 📁 css/                                 Arquitectura CSS modular (compartida)
+│   │   ├── variables.css                       Variables CSS y colores de tema
+│   │   ├── base.css                            Estilos base y reset
+│   │   ├── layout.css                          Componentes de layout
+│   │   ├── components.css                      Componentes UI (botones, inputs)
+│   │   ├── options.css                         Estilos de opciones de análisis
+│   │   ├── modal.css                           Estilos de modales
+│   │   ├── results.css                         Estilos de visualización de resultados
+│   │   └── responsive.css                      Reglas de diseño responsive
+│   ├── 📁 js/                                  Módulos JavaScript legacy
+│   │   ├── app.js                              Lógica principal de la aplicación
+│   │   ├── export.js                           Funcionalidad de exportación PDF
+│   │   ├── themes.js                           Gestión de temas
+│   │   └── i18n.js                             Internacionalización
+│   ├── 📁 assets/                              Salida de build de Vite (auto-generado)
+│   └── favicon.svg                             Favicon de la aplicación
 │
-├── 📁 dist/                          JavaScript compilado del backend (auto-generado)
+├── 📁 dist/                                    JavaScript compilado del backend (auto-generado)
 │   ├── server.js
 │   ├── 📁 services/
 │   ├── 📁 types/
 │   └── 📁 utils/
 │
-├── 📁 tests/                         Pruebas unitarias del backend
-│   ├── 📁 services/                  Pruebas de servicios
-│   └── 📁 utils/                     Pruebas de utilidades
+├── 📁 tests/                                   Pruebas unitarias del backend
+│   ├── 📁 services/                            Pruebas de servicios
+│   └── 📁 utils/                               Pruebas de utilidades
 │
-├── 📁 scripts/                       Scripts utilitarios
-│   └── setup-and-run.js              Script automatizado de configuración y ejecución
+├── 📁 scripts/                                 Scripts utilitarios
+│   └── setup-and-run.js                        Script automatizado de configuración y ejecución
 │
-├── package.json                      Dependencias y scripts del backend
-├── tsconfig.json                     Configuración TypeScript del backend
-├── vitest.config.ts                  Configuración de pruebas del backend
-├── .gitignore                        Reglas de Git ignore
-├── .prettierrc.json                  Configuración de Prettier
-├── .lintstagedrc.json                Configuración de lint-staged
-├── .env.example                      Plantilla de variables de entorno
-├── start.bat                         Script de inicio para Windows
-├── start.sh                          Script de inicio para Unix
-├── start.js                          Script de inicio legacy
-├── README.md                         Este archivo (en inglés)
-└── README.es.md                      Este archivo
+├── package.json                                Dependencias y scripts del backend
+├── tsconfig.json                               Configuración TypeScript del backend
+├── vitest.config.ts                            Configuración de pruebas del backend
+├── .gitignore                                  Reglas de Git ignore
+├── .prettierrc.json                            Configuración de Prettier
+├── .lintstagedrc.json                          Configuración de lint-staged
+├── .env.example                                Plantilla de variables de entorno
+├── start.bat                                   Script de inicio para Windows
+├── start.sh                                    Script de inicio para Unix
+├── start.js                                    Script de inicio legacy
+├── README.md                                   Este archivo (en inglés)
+└── README.es.md                                Este archivo
 ```
 
 ## 🛠️ Tecnologías Utilizadas
