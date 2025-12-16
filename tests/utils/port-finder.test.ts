@@ -19,9 +19,23 @@ describe('port-finder.util', () => {
       expect(typeof port).toBe('number');
     });
 
-    it('should find an available port starting from custom port', async () => {
+    it('should find an available port starting from preferred port 4000', async () => {
       const port = await findAvailablePort(4000);
       expect(port).toBeGreaterThanOrEqual(4000);
+      expect(typeof port).toBe('number');
+    });
+
+    it('should find an available port in preferred range (4000-4005)', async () => {
+      const port = await findAvailablePort(4000);
+      expect(port).toBeGreaterThanOrEqual(4000);
+      expect(port).toBeLessThanOrEqual(4006); // Allow one port beyond range
+      expect(typeof port).toBe('number');
+    });
+
+    it('should find an available port in fallback range (5000-5005)', async () => {
+      const port = await findAvailablePort(5000);
+      expect(port).toBeGreaterThanOrEqual(5000);
+      expect(port).toBeLessThanOrEqual(5006); // Allow one port beyond range
       expect(typeof port).toBe('number');
     });
 
