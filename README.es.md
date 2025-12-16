@@ -307,21 +307,21 @@ qa-web-analyzer/
 
 ### Backend
 
-- **Node.js** - Entorno de ejecución
-- **Express** - Framework web
-- **TypeScript** - JavaScript con tipos
-- **Playwright** - Automatización de navegador para análisis
+- **[Node.js](https://nodejs.org/docs)** - Entorno de ejecución
+- **[Express](https://expressjs.com/)** - Framework web
+- **[TypeScript](https://www.typescriptlang.org/docs/)** - JavaScript con tipos
+- **[Playwright](https://playwright.dev/docs/intro)** - Automatización de navegador para análisis
 
 ### Frontend
 
-- **Vue 3** - Framework JavaScript progresivo con Composition API
-- **TypeScript** - Código frontend con tipos
-- **Vite** - Herramienta de construcción de próxima generación con HMR
-- **Pinia** - Gestión de estado para Vue
-- **HTML5** - Estructura
-- **CSS3** - Estilos modulares con variables CSS, neomorfismo y diseño responsive
+- **[Vue 3](https://vuejs.org/)** - Framework JavaScript progresivo con Composition API
+- **[TypeScript](https://www.typescriptlang.org/docs/)** - Código frontend con tipos
+- **[Vite](https://vitejs.dev/)** - Herramienta de construcción de próxima generación con HMR
+- **[Pinia](https://pinia.vuejs.org/)** - Gestión de estado para Vue
+- **[HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML)** - Estructura
+- **[CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS)** - Estilos modulares con variables CSS, neomorfismo y diseño responsive
 - **Lazy Loading** - Code splitting y carga asíncrona de componentes
-- **jsPDF** - Generación de PDF con renderizado personalizado de tablas
+- **[jsPDF](https://github.com/parallax/jsPDF)** - Generación de PDF con renderizado personalizado de tablas
 - **Modal de Exportación** - Componente Vue con adaptación de tema (Design 10: Dark Mode Style)
 
 ## 📝 Scripts Disponibles

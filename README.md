@@ -277,21 +277,21 @@ qa-web-analyzer/
 
 ### Backend
 
-- **Node.js** - Runtime environment
-- **Express** - Web framework
-- **TypeScript** - Type-safe JavaScript
-- **Playwright** - Browser automation for analysis
+- **[Node.js](https://nodejs.org/docs)** - Runtime environment
+- **[Express](https://expressjs.com/)** - Web framework
+- **[TypeScript](https://www.typescriptlang.org/docs/)** - Type-safe JavaScript
+- **[Playwright](https://playwright.dev/docs/intro)** - Browser automation for analysis
 
 ### Frontend
 
-- **Vue 3** - Progressive JavaScript framework with Composition API
-- **TypeScript** - Type-safe frontend code
-- **Vite** - Next-generation build tool with HMR
-- **Pinia** - State management for Vue
-- **HTML5** - Structure
-- **CSS3** - Modular styling with CSS variables, neomorphism, and responsive design
+- **[Vue 3](https://vuejs.org/)** - Progressive JavaScript framework with Composition API
+- **[TypeScript](https://www.typescriptlang.org/docs/)** - Type-safe frontend code
+- **[Vite](https://vitejs.dev/)** - Next-generation build tool with HMR
+- **[Pinia](https://pinia.vuejs.org/)** - State management for Vue
+- **[HTML5](https://developer.mozilla.org/en-US/docs/Web/HTML)** - Structure
+- **[CSS3](https://developer.mozilla.org/en-US/docs/Web/CSS)** - Modular styling with CSS variables, neomorphism, and responsive design
 - **Lazy Loading** - Code splitting and async component loading
-- **jsPDF** - PDF generation with custom table rendering (lazy loaded)
+- **[jsPDF](https://github.com/parallax/jsPDF)** - PDF generation with custom table rendering (lazy loaded)
 - **Export Modal** - Vue component with theme adaptation (Design 10: Dark Mode Style)
 
 ## 🎯 Recent Improvements
