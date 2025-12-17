@@ -1679,21 +1679,30 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
   function highlightAttributeInHTML(html: string, attributeName: string): string {
     if (!attributeName || !html) return escapeHtml(html);
 
-    // Escape HTML first to prevent XSS
+    // First escape HTML to prevent XSS
     const escapedHtml = escapeHtml(html);
 
-    // Pattern to match the attribute in the HTML
-    // Match: attributeName="value" or attributeName='value' or attributeName=value
-    // Also handle case-insensitive matching
-    const escapedAttrName = escapeHtml(attributeName);
+    // Escape the attribute name for regex
+    const escapedAttrName = attributeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // More comprehensive patterns to match attributes
+    // Pattern 1: attribute="value" or attribute='value' (with quotes)
+    // Pattern 2: attribute=value (without quotes, but not part of another attribute)
+    // Pattern 3: attribute (standalone, boolean attribute)
     const patterns = [
-      new RegExp(`(${escapedAttrName}\\s*=\\s*["'][^"']*["'])`, 'gi'),
-      new RegExp(`(${escapedAttrName}\\s*=\\s*[^\\s>]+)`, 'gi'),
+      // Match: attribute="value" or attribute='value' - handles multiline
+      new RegExp(`(${escapedAttrName}\\s*=\\s*["'][^"']*["'])`, 'gis'),
+      // Match: attribute=value (without quotes, until space or >)
+      new RegExp(`(${escapedAttrName}\\s*=\\s*[^\\s>]+)`, 'gis'),
+      // Match: attribute (standalone boolean attribute)
+      new RegExp(`(\\s${escapedAttrName}(?=\\s|>))`, 'gis'),
     ];
 
     let highlighted = escapedHtml;
     for (const pattern of patterns) {
       highlighted = highlighted.replace(pattern, (match) => {
+        // Don't double-wrap if already highlighted
+        if (match.includes('highlighted-attribute')) return match;
         return `<span class="highlighted-attribute" title="${escapeHtml(t('attributeHighlighted'))}">${match}</span>`;
       });
     }
@@ -1756,6 +1765,7 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     passedAttribute: string;
     explanation: string;
     attributeToHighlight: string;
+    highlightMissing: boolean;
   } {
     const elem = item.originalData;
     const missingAttrs = item.missingAttributes || [];
@@ -1809,7 +1819,10 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
 
     // Determine which attribute to highlight in HTML code
     let attributeToHighlight = '';
+    let highlightMissing = false;
+
     if (passed && passedAttribute) {
+      // Highlight the attribute that made it pass
       if (passedAttribute.includes('Alt:')) {
         attributeToHighlight = 'alt';
       } else if (passedAttribute.includes('aria-label:')) {
@@ -1822,7 +1835,8 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         attributeToHighlight = 'title';
       }
     } else {
-      // For failed, highlight the first missing required attribute
+      // For failed, we want to show what's missing
+      highlightMissing = true;
       if (itemType === 'image' && analysisOptions.checkAltText) {
         attributeToHighlight = 'alt';
       } else if (analysisOptions.checkAriaLabel) {
@@ -1935,6 +1949,7 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       passedAttribute: passedAttribute,
       explanation: explanation,
       attributeToHighlight: attributeToHighlight,
+      highlightMissing: highlightMissing,
     };
   }
 
@@ -2035,17 +2050,33 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       const isLong = formattedHTML.length > 200;
 
       // Highlight the attribute in the HTML code
-      const highlightedHTML = validation.attributeToHighlight
-        ? highlightAttributeInHTML(formattedHTML, validation.attributeToHighlight)
-        : escapeHtml(formattedHTML);
-      const truncated = isLong
-        ? validation.attributeToHighlight
-          ? highlightAttributeInHTML(
+      let highlightedHTML = escapeHtml(formattedHTML);
+      let truncated = isLong
+        ? escapeHtml(formattedHTML.substring(0, 200) + '...')
+        : highlightedHTML;
+
+      if (validation.attributeToHighlight) {
+        if (validation.highlightMissing) {
+          // For missing attributes, add a visible comment indicator
+          const missingIndicator = `<!-- ⚠️ MISSING: ${validation.attributeToHighlight} attribute required -->`;
+          highlightedHTML = missingIndicator + '\n' + highlightedHTML;
+          if (isLong) {
+            truncated = missingIndicator + '\n' + truncated;
+          }
+        } else {
+          // Highlight the found attribute
+          highlightedHTML = highlightAttributeInHTML(
+            formattedHTML,
+            validation.attributeToHighlight
+          );
+          if (isLong) {
+            truncated = highlightAttributeInHTML(
               formattedHTML.substring(0, 200) + '...',
               validation.attributeToHighlight
-            )
-          : escapeHtml(formattedHTML.substring(0, 200) + '...')
-        : highlightedHTML;
+            );
+          }
+        }
+      }
 
       html += `<div class="code-section">`;
       html += `<div class="code-header">`;
@@ -2417,12 +2448,21 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       background: #2563eb;
     }
     .highlighted-attribute {
-      background: #fef3c7;
-      color: #92400e;
-      padding: 2px 4px;
-      border-radius: 3px;
-      font-weight: 700;
-      box-shadow: 0 0 0 2px #fbbf24;
+      background: #fef3c7 !important;
+      color: #92400e !important;
+      padding: 3px 6px !important;
+      border-radius: 4px !important;
+      font-weight: 900 !important;
+      box-shadow: 0 0 0 3px #fbbf24, 0 0 10px rgba(251, 191, 36, 0.5) !important;
+      text-decoration: underline !important;
+      text-decoration-thickness: 2px !important;
+      text-underline-offset: 2px !important;
+      display: inline-block !important;
+      animation: highlightPulse 2s ease-in-out infinite !important;
+    }
+    @keyframes highlightPulse {
+      0%, 100% { box-shadow: 0 0 0 3px #fbbf24, 0 0 10px rgba(251, 191, 36, 0.5); }
+      50% { box-shadow: 0 0 0 4px #f59e0b, 0 0 15px rgba(245, 158, 11, 0.7); }
     }
     .validation-explanation {
       margin-top: 8px;
