@@ -1679,35 +1679,63 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
   function highlightAttributeInHTML(html: string, attributeName: string): string {
     if (!attributeName || !html) return escapeHtml(html);
 
-    // First escape HTML to prevent XSS
-    const escapedHtml = escapeHtml(html);
-
-    // Escape the attribute name for regex
+    // Escape the attribute name for regex (but don't escape the HTML yet)
     const escapedAttrName = attributeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    // More comprehensive patterns to match attributes
-    // Pattern 1: attribute="value" or attribute='value' (with quotes)
-    // Pattern 2: attribute=value (without quotes, but not part of another attribute)
-    // Pattern 3: attribute (standalone, boolean attribute)
+    // Patterns to match the attribute in the HTML (before escaping)
+    // This allows us to find the attribute even with formatting/whitespace
     const patterns = [
-      // Match: attribute="value" or attribute='value' - handles multiline
-      new RegExp(`(${escapedAttrName}\\s*=\\s*["'][^"']*["'])`, 'gis'),
-      // Match: attribute=value (without quotes, until space or >)
-      new RegExp(`(${escapedAttrName}\\s*=\\s*[^\\s>]+)`, 'gis'),
-      // Match: attribute (standalone boolean attribute)
-      new RegExp(`(\\s${escapedAttrName}(?=\\s|>))`, 'gis'),
+      // Pattern 1: attribute="value" or attribute='value' (with quotes)
+      // Matches: aria-label="Reset filters" with any whitespace
+      new RegExp(`(${escapedAttrName}\\s*=\\s*["'][^"']*["'])`, 'gi'),
+      // Pattern 2: attribute=value (without quotes)
+      new RegExp(`(${escapedAttrName}\\s*=\\s*[^\\s>]+)`, 'gi'),
     ];
 
-    let highlighted = escapedHtml;
+    let highlighted = html;
+    let foundMatch = false;
+
+    // First, try to find and highlight the attribute in the original HTML
     for (const pattern of patterns) {
-      highlighted = highlighted.replace(pattern, (match) => {
-        // Don't double-wrap if already highlighted
-        if (match.includes('highlighted-attribute')) return match;
-        return `<span class="highlighted-attribute" title="${escapeHtml(t('attributeHighlighted'))}">${match}</span>`;
-      });
+      const matches = [...html.matchAll(pattern)];
+      if (matches.length > 0) {
+        foundMatch = true;
+        // Replace from end to start to preserve indices
+        for (let i = matches.length - 1; i >= 0; i--) {
+          const match = matches[i];
+          const matchText = match[0];
+          // Don't double-wrap if already highlighted
+          if (!matchText.includes('highlighted-attribute') && !matchText.includes('<span')) {
+            const start = match.index!;
+            const end = start + matchText.length;
+            const before = highlighted.substring(0, start);
+            const after = highlighted.substring(end);
+            highlighted =
+              before +
+              `<span class="highlighted-attribute" title="${t('attributeHighlighted')}">${matchText}</span>` +
+              after;
+          }
+        }
+        break; // Found match, no need to try other patterns
+      }
     }
 
-    return highlighted;
+    // Now escape the HTML (this will escape everything except our span tags)
+    const escaped = escapeHtml(highlighted);
+
+    // If we found a match, we need to unescape our span tags
+    if (foundMatch) {
+      // Unescape the span tags we added
+      return escaped
+        .replace(/&lt;span class="highlighted-attribute"/g, '<span class="highlighted-attribute"')
+        .replace(/&lt;\/span&gt;/g, '</span>')
+        .replace(/title="([^"]*)"/g, (match, title) => {
+          return `title="${escapeHtml(title)}"`;
+        });
+    }
+
+    // No match found, just return escaped HTML
+    return escaped;
   }
 
   function formatHTML(html: string): string {
