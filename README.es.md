@@ -105,8 +105,8 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - 🎛️ **Opciones Configurables**: Selecciona exactamente qué quieres analizar
 - 📊 **Reportes Detallados**: Ve código HTML, capturas de pantalla y atributos faltantes
 - 🎨 **15+ Temas Visuales**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk y más
-- 📄 **Exportación PDF Profesional**: Genera reportes elegantes con opciones personalizables (Design 12: Highlight Rows + Design 13: Icon Badges)
-- 🎛️ **Modal de Exportación**: Selecciona qué elementos y estados incluir en los reportes PDF
+- 📄 **Exportación de Reportes Profesional**: Genera reportes elegantes en PDF y HTML con opciones personalizables (Design 12: Highlight Rows + Design 13: Icon Badges)
+- 🎛️ **Modal de Exportación**: Selecciona formato de reporte (PDF, HTML, o ambos) y qué elementos/estados incluir
 - 🌍 **Multi-idioma**: Soporte para inglés y español
 - 🎯 **Filtrado Inteligente**: Filtra por atributos faltantes o presentes
 - 📸 **Retroalimentación Visual**: Capturas de pantalla de elementos problemáticos
@@ -128,6 +128,13 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - ✅ **Mensaje de Cancelación de Análisis**: Cambiado el mensaje de cancelación de error a notificación de éxito en ambos idiomas
 - ✅ **Corrección de Notificación de Cancelación**: Corregida la visualización de la notificación al cancelar el análisis - ahora muestra el mensaje de éxito correctamente
 - ✅ **Espaciado de Secciones de Resultados**: Mejorado el espaciado entre las secciones de resultados (Imágenes, Enlaces, Botones, etc.) y entre los filtros y la primera sección para mejor legibilidad
+- ✅ **Exportación de Reporte HTML**: Nueva funcionalidad de exportación HTML que replica la estructura y estilo de la aplicación. Incluye código HTML formateado con funcionalidad de expandir/contraer, badges de estado de validación y etiquetas descriptivas de atributos
+- ✅ **Botón Exportar Reporte**: Renombrado de "Exportar como PDF" a "Exportar Reporte" con soporte para múltiples formatos (PDF, HTML, o ambos). El efecto de brillo del botón ahora se adapta a los colores del tema seleccionado
+- ✅ **Resaltado de Atributos en Código HTML**: Los atributos encontrados en los elementos ahora se resaltan en la sección de código HTML con énfasis visual (fondo amarillo, texto en negrita)
+- ✅ **Explicaciones de Validación**: Explicaciones detalladas en ambos idiomas (Inglés/Español) que explican por qué los elementos pasaron o fallaron la validación, con mensajes específicos según el contexto para imágenes, enlaces, botones, inputs y roles
+- ✅ **Filtros Interactivos en Reporte HTML**: Los filtros "Mostrar Faltantes" y "Mostrar con Atributos" ahora son funcionales en las exportaciones HTML, permitiendo a los usuarios filtrar resultados dinámicamente
+- ✅ **Estado No Validado**: Cuando no se seleccionan atributos para validación, los elementos ahora muestran el estado "⚠ NO VALIDADO" en lugar de mostrar incorrectamente "PASÓ", con mensajes claros en múltiples idiomas que explican por qué se omitió la validación
+- ✅ **Modo de Validación Estricta**: Lógica de validación simplificada - los elementos pasan SOLO si tienen el(los) atributo(s) seleccionado(s), y fallan si no lo tienen. Sin reglas de respaldo WCAG (texto visible, alt text de imágenes en enlaces). La validación ahora se basa estrictamente en los atributos seleccionados por el usuario
 
 ## 🎯 Mejoras Recientes
 
@@ -161,15 +168,15 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 
 ### Guía Paso a Paso
 
-| Paso                    | Descripción                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------ |
-| 1. Ingresa URL          | Ingresa la URL a analizar (ej: `http://localhost:3000`)                                    |
-| 2. Selecciona Elementos | Elige qué elementos verificar: ☑ Imágenes ☑ Enlaces ☑ Botones ☑ Inputs ☑ Roles             |
-| 3. Selecciona Atributos | Elige qué atributos verificar: ☑ Alt Text ☑ aria-label ☑ Focus States etc.                 |
-| 4. Analizar             | Haz clic en el botón "Analizar" para iniciar el análisis                                   |
-| 5. Revisar Reporte      | Examina los resultados: • Tarjetas de resumen • Análisis detallado • Capturas de problemas |
-| 6. Filtrar y Exportar   | Usa filtros para mostrar atributos faltantes/presentes y exporta como PDF                  |
-| 7. Exportar PDF         | Haz clic en "Exportar PDF" → Selecciona elementos/estados a incluir → Genera reporte       |
+| Paso                    | Descripción                                                                                                     |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| 1. Ingresa URL          | Ingresa la URL a analizar (ej: `http://localhost:3000`)                                                         |
+| 2. Selecciona Elementos | Elige qué elementos verificar: ☑ Imágenes ☑ Enlaces ☑ Botones ☑ Inputs ☑ Roles                                  |
+| 3. Selecciona Atributos | Elige qué atributos verificar: ☑ Alt Text ☑ aria-label ☑ Focus States etc.                                      |
+| 4. Analizar             | Haz clic en el botón "Analizar" para iniciar el análisis                                                        |
+| 5. Revisar Reporte      | Examina los resultados: • Tarjetas de resumen • Análisis detallado • Capturas de problemas                      |
+| 6. Filtrar y Exportar   | Usa filtros para mostrar atributos faltantes/presentes y exporta reportes                                       |
+| 7. Exportar Reporte     | Haz clic en "Exportar Reporte" → Elige formato (PDF/HTML/ambos) → Selecciona elementos/estados → Genera reporte |
 
 ### 🎛️ Opciones de Configuración
 
@@ -432,13 +439,14 @@ La herramienta verifica el cumplimiento de los **estándares WCAG 2.2 AA**:
 - 📸 **Capturas de Pantalla**: Resaltado visual de elementos problemáticos
 - 💻 **Código HTML**: Fragmentos de código expandibles para cada elemento
 - 🔍 **Filtros Inteligentes**: Mostrar solo atributos faltantes o presentes
-- 📄 **Exportación PDF**: Reportes profesionales con modal de selección personalizable
+- 📄 **Exportación de Reportes**: Reportes profesionales en PDF y HTML con modal de selección personalizable
+  - **Formato de Reporte**: Elige formato PDF, HTML, o ambos
   - Selecciona qué elementos incluir (Imágenes, Enlaces, Botones, Inputs, Roles)
   - Elige tipos de estado (Aprobado, Fallido)
   - Opciones adicionales (Resumen, Capturas, Código HTML)
   - Pre-seleccionado basado en tus opciones de análisis
-  - Diseño de tablas: Highlight Rows con Icon Badges (Design 12 + Design 13)
-  - **Orden Inteligente**: Elementos aprobados primero, luego los fallidos
+  - **Características PDF**: Diseño de tablas con Highlight Rows e Icon Badges (Design 12 + Design 13), orden inteligente (Aprobados primero, luego Fallidos)
+  - **Características HTML**: Replica la estructura y estilo de la aplicación, código HTML formateado con expandir/contraer, badges de estado de validación, etiquetas descriptivas de atributos (ej: "Texto de Enlace (texto visible)"), siempre incluye capturas cuando están disponibles, resaltado de atributos en código HTML, explicaciones detalladas de validación en ambos idiomas, filtros interactivos (Mostrar Faltantes/Mostrar con Atributos)
 - 🎨 **15+ Temas**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk, Minimal, Ocean, Sunset, Forest, Monochrome, High Contrast, Rose, Amber, Teal
 - 🌍 **i18n**: Soporte para inglés y español
 - 📱 **Responsive**: Totalmente optimizado para móvil, tablet y desktop

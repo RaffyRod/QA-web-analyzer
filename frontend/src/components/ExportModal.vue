@@ -5,8 +5,39 @@
   <div v-if="isOpen" class="modal-overlay" @click.self="close">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>{{ t('exportPDF') }}</h2>
+        <h2>{{ t('exportReport') }}</h2>
         <button class="close-btn" @click="close" aria-label="Close">×</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">{{ t('reportFormat') }}</div>
+        <div class="format-group">
+          <div class="format-item">
+            <input
+              type="checkbox"
+              id="exportPDF"
+              v-model="exportOptions.formats.pdf"
+            />
+            <label for="exportPDF">
+              <span class="format-icon">📄</span>
+              {{ t('pdfFormat') }}
+            </label>
+          </div>
+          <div class="format-item">
+            <input
+              type="checkbox"
+              id="exportHTML"
+              v-model="exportOptions.formats.html"
+            />
+            <label for="exportHTML">
+              <span class="format-icon">🌐</span>
+              {{ t('htmlFormat') }}
+            </label>
+          </div>
+        </div>
+        <div class="info-text">
+          {{ t('exportFormatInfo') }}
+        </div>
       </div>
 
       <div class="section">
@@ -123,7 +154,7 @@
           :disabled="!canExport"
           @click="handleExport"
         >
-          {{ t('exportPDF') }}
+          {{ t('exportReport') }}
         </button>
       </div>
     </div>
@@ -154,6 +185,10 @@ const languageStore = useLanguageStore()
 const { t } = languageStore
 
 const exportOptions = ref({
+  formats: {
+    pdf: true,
+    html: false,
+  },
   elements: {
     images: true,
     links: true,
@@ -174,10 +209,10 @@ const exportOptions = ref({
 
 // Pre-select elements based on analysis options
 watch(
-  () => props.isOpen,
-  (isOpen) => {
-    if (isOpen && props.analysisOptions) {
-      const opts = props.analysisOptions
+  () => [props.isOpen, props.analysisOptions],
+  ([isOpen, analysisOptions]) => {
+    if (isOpen && analysisOptions) {
+      const opts = analysisOptions
       exportOptions.value.elements.images = opts.checkImages ?? false
       exportOptions.value.elements.links = opts.checkLinks ?? false
       exportOptions.value.elements.buttons = opts.checkButtons ?? false
@@ -189,6 +224,10 @@ watch(
 )
 
 interface ExportOptions {
+  formats: {
+    pdf: boolean
+    html: boolean
+  }
   elements: {
     images: boolean
     links: boolean
@@ -208,6 +247,7 @@ interface ExportOptions {
 }
 
 const canExport = computed(() => {
+  const hasFormat = exportOptions.value.formats.pdf || exportOptions.value.formats.html
   const hasElements =
     exportOptions.value.elements.images ||
     exportOptions.value.elements.links ||
@@ -215,7 +255,7 @@ const canExport = computed(() => {
     exportOptions.value.elements.inputs ||
     exportOptions.value.elements.roles
   const hasStatus = exportOptions.value.status.passed || exportOptions.value.status.failed
-  return hasElements && hasStatus
+  return hasFormat && hasElements && hasStatus
 })
 
 function close() {
@@ -373,6 +413,51 @@ watch(
   color: var(--text-primary, #f1f5f9);
   font-weight: 500;
   flex: 1;
+}
+
+.format-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.format-item {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--bg-color, #334155);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.format-item:hover {
+  background: var(--border-color, #475569);
+}
+
+.format-item input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary-color, #3b82f6);
+}
+
+.format-item label {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-primary, #f1f5f9);
+  font-weight: 500;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.format-icon {
+  font-size: 1.2rem;
 }
 
 .status-group {

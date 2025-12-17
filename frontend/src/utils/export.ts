@@ -467,15 +467,29 @@ function buildAttributeRows(
     });
   }
 
-  // Text content
+  // Text content - label with context based on element type
   if (item.text) {
     const cleanText = sanitizeText(item.text);
     if (cleanText) {
       const maxLength = 200;
       const truncatedText =
         cleanText.length > maxLength ? cleanText.substring(0, maxLength) + '...' : cleanText;
+
+      // Determine text type label based on element type
+      let textLabel = 'Text';
+      if (item.type === 'Link') {
+        textLabel = 'Link Text (visible text)';
+      } else if (item.type === 'Button') {
+        textLabel = 'Button Text (visible text)';
+      } else if (item.type === 'Input') {
+        textLabel = 'Input Text (visible/label text)';
+      } else if (item.type === 'Role') {
+        textLabel = 'Element Text (visible text)';
+      }
+      // For Images, we don't show text content as it's not relevant
+
       attributeRows.push({
-        name: 'Text',
+        name: textLabel,
         value: truncatedText,
         status: 'normal',
       });
@@ -896,19 +910,9 @@ function buildAttributeRows(
     }
   }
 
-  // Add HTML/outerHTML (only if includeHTML option is enabled)
-  // Note: This check will be done in the calling function based on exportOptions
-
-  // Add HTML/outerHTML (only if includeHTML option is enabled)
-  if (exportOptions?.options.includeHTML && (item.outerHTML || elem.outerHTML)) {
-    const htmlText = String(item.outerHTML || elem.outerHTML || '');
-    const truncatedHtml = htmlText.length > 300 ? htmlText.substring(0, 300) + '...' : htmlText;
-    attributeRows.push({
-      name: 'HTML',
-      value: sanitizeText(truncatedHtml),
-      status: 'normal',
-    });
-  }
+  // Note: HTML/outerHTML is NOT added here for HTML export
+  // It's shown in a separate "HTML Code" section below to avoid redundancy
+  // For PDF export, HTML can be added if needed (but currently not included in attributes)
 
   // Add selector
   if (item.selector && String(item.selector).trim().length > 0) {
@@ -1649,4 +1653,1461 @@ export async function exportReportAsPDF(options: ExportOptions): Promise<jsPDF> 
   }
 
   return doc;
+}
+
+export async function exportReportAsHTML(options: ExportOptions, timestamp: string): Promise<void> {
+  const { data, analysisOptions, showMissing, showHasAttributes, sectionsVisible } = options;
+  const languageStore = useLanguageStore();
+  const t = languageStore.t;
+  const currentLang = languageStore.currentLanguage;
+
+  const { items, sectionItems } = processItems(
+    data,
+    analysisOptions,
+    showMissing,
+    showHasAttributes,
+    sectionsVisible
+  );
+
+  function escapeHtml(text: string | null | undefined): string {
+    if (text === null || text === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+  }
+
+  function highlightAttributeInHTML(html: string, attributeName: string): string {
+    if (!attributeName || !html) return escapeHtml(html);
+
+    // Escape the attribute name for regex (but don't escape the HTML yet)
+    const escapedAttrName = attributeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // Patterns to match the attribute in the HTML (before escaping)
+    // This allows us to find the attribute even with formatting/whitespace
+    const patterns = [
+      // Pattern 1: attribute="value" or attribute='value' (with quotes)
+      // Matches: aria-label="Reset filters" with any whitespace
+      new RegExp(`(${escapedAttrName}\\s*=\\s*["'][^"']*["'])`, 'gi'),
+      // Pattern 2: attribute=value (without quotes)
+      new RegExp(`(${escapedAttrName}\\s*=\\s*[^\\s>]+)`, 'gi'),
+    ];
+
+    let highlighted = html;
+    let foundMatch = false;
+
+    // First, try to find and highlight the attribute in the original HTML
+    for (const pattern of patterns) {
+      const matches = [...html.matchAll(pattern)];
+      if (matches.length > 0) {
+        foundMatch = true;
+        // Replace from end to start to preserve indices
+        for (let i = matches.length - 1; i >= 0; i--) {
+          const match = matches[i];
+          const matchText = match[0];
+          // Don't double-wrap if already highlighted
+          if (!matchText.includes('highlighted-attribute') && !matchText.includes('<span')) {
+            const start = match.index!;
+            const end = start + matchText.length;
+            const before = highlighted.substring(0, start);
+            const after = highlighted.substring(end);
+            highlighted =
+              before +
+              `<span class="highlighted-attribute" title="${t('attributeHighlighted')}">${matchText}</span>` +
+              after;
+          }
+        }
+        break; // Found match, no need to try other patterns
+      }
+    }
+
+    // Now escape the HTML (this will escape everything including our span tags)
+    let escaped = escapeHtml(highlighted);
+
+    // If we found a match, we need to unescape our span tags and their content
+    if (foundMatch) {
+      // Use a more robust approach: find the escaped span tags and unescape them
+      // Pattern to match: &lt;span class="highlighted-attribute" title="..."&gt;...&lt;/span&gt;
+      const spanPattern =
+        /&lt;span class="highlighted-attribute" title="([^"]*)"&gt;([^&]*(?:&[^;]+;[^&]*)*)&lt;\/span&gt;/g;
+
+      escaped = escaped.replace(spanPattern, (match, title, content) => {
+        // Unescape the title and content
+        const unescapedTitle = title
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"');
+        const unescapedContent = content
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"');
+
+        return `<span class="highlighted-attribute" title="${escapeHtml(unescapedTitle)}">${unescapedContent}</span>`;
+      });
+    }
+
+    // No match found, just return escaped HTML
+    return escaped;
+  }
+
+  function formatHTML(html: string): string {
+    if (!html) return '';
+
+    // Simple HTML formatter - adds indentation and line breaks
+    let formatted = '';
+    let indent = 0;
+    const indentSize = 2;
+
+    // Remove existing whitespace and normalize
+    const cleanHtml = html.replace(/>\s+</g, '><').trim();
+
+    // Split by tags
+    const parts = cleanHtml.split(/(<[^>]+>)/);
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i].trim();
+      if (!part) continue;
+
+      if (part.startsWith('</')) {
+        // Closing tag
+        indent = Math.max(0, indent - indentSize);
+        formatted += ' '.repeat(indent) + part + '\n';
+      } else if (part.startsWith('<')) {
+        // Opening or self-closing tag
+        const isSelfClosing =
+          part.endsWith('/>') ||
+          part.match(
+            /<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr|button|script|style)/i
+          );
+        formatted += ' '.repeat(indent) + part + '\n';
+        if (!isSelfClosing && !part.startsWith('</')) {
+          indent += indentSize;
+        }
+      } else {
+        // Text content
+        if (part.length > 0) {
+          formatted += ' '.repeat(indent) + part + '\n';
+        }
+      }
+    }
+
+    return formatted.trim();
+  }
+
+  function getAttributeStatus(
+    item: ProcessedItem,
+    analysisOptions: AnalysisOptions,
+    itemType: 'image' | 'link' | 'button' | 'input' | 'role'
+  ): {
+    status: string;
+    passed: boolean;
+    details: string;
+    passedAttribute: string;
+    explanation: string;
+    attributeToHighlight: string;
+    highlightMissing: boolean;
+  } {
+    const elem = item.originalData;
+    const missingAttrs = item.missingAttributes || [];
+
+    // Check if any attributes are selected for validation for this element type
+    let hasAttributesSelected = false;
+    if (itemType === 'image') {
+      hasAttributesSelected = analysisOptions.checkAltText === true;
+    } else if (itemType === 'link') {
+      hasAttributesSelected =
+        analysisOptions.checkAriaLabel === true ||
+        analysisOptions.checkAriaLabelledby === true ||
+        analysisOptions.checkTitle === true;
+    } else if (itemType === 'button') {
+      hasAttributesSelected =
+        analysisOptions.checkAriaLabel === true || analysisOptions.checkAriaLabelledby === true;
+    } else if (itemType === 'input') {
+      hasAttributesSelected =
+        analysisOptions.checkAriaLabel === true ||
+        analysisOptions.checkAriaLabelledby === true ||
+        analysisOptions.checkLabels === true;
+    } else if (itemType === 'role') {
+      hasAttributesSelected =
+        analysisOptions.checkAriaLabel === true || analysisOptions.checkAriaLabelledby === true;
+    }
+
+    // If no attributes are selected, return "not validated"
+    if (!hasAttributesSelected) {
+      return {
+        status: '⚠ NOT VALIDATED',
+        passed: false,
+        details: t('notValidatedNoAttributes'),
+        passedAttribute: '',
+        explanation: t('notValidatedExplanation'),
+        attributeToHighlight: '',
+        highlightMissing: false,
+      };
+    }
+
+    // STRICT VALIDATION: Only evaluate attributes that were selected by the user
+    // Pass ONLY if the selected attribute(s) are present, fail otherwise
+    let passed = false;
+    let passedAttribute = '';
+
+    if (itemType === 'image') {
+      // For images: alt, aria-label, or aria-labelledby are all valid alternative text methods
+      // If checkAltText is selected, verify at least one of these exists
+      if (analysisOptions.checkAltText) {
+        const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
+        const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+        const hasAriaLabelledby =
+          elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+
+        // Pass if at least one alternative text method exists
+        passed = hasAlt || hasAriaLabel || hasAriaLabelledby;
+
+        if (passed) {
+          // Report which one made it pass (priority: alt > aria-label > aria-labelledby)
+          if (hasAlt) {
+            passedAttribute = `Alt: "${escapeHtml(String(elem.alt))}"`;
+          } else if (hasAriaLabel) {
+            passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
+          } else if (hasAriaLabelledby) {
+            passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+          }
+        }
+      }
+    } else {
+      // For links, buttons, inputs, roles: Only check selected attributes
+      // Pass ONLY if the selected attribute is present
+      const selectedAttributes: string[] = [];
+      const presentAttributes: string[] = [];
+
+      // Check which attributes are selected and which are present
+      if (analysisOptions.checkAriaLabel) {
+        selectedAttributes.push('aria-label');
+        if (elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '') {
+          presentAttributes.push('aria-label');
+        }
+      }
+      if (analysisOptions.checkAriaLabelledby) {
+        selectedAttributes.push('aria-labelledby');
+        if (elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '') {
+          presentAttributes.push('aria-labelledby');
+        }
+      }
+      if (itemType === 'link' && analysisOptions.checkTitle) {
+        selectedAttributes.push('title');
+        if (elem.title !== null && String(elem.title || '').trim() !== '') {
+          presentAttributes.push('title');
+        }
+      }
+      if (itemType === 'input' && analysisOptions.checkLabels) {
+        selectedAttributes.push('label');
+        if (elem.label !== null && String(elem.label || '').trim() !== '') {
+          presentAttributes.push('label');
+        }
+      }
+
+      // STRICT: Pass ONLY if at least one selected attribute is present
+      if (presentAttributes.length > 0) {
+        passed = true;
+        // Report the first found attribute (priority order)
+        if (presentAttributes.includes('aria-label')) {
+          passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
+        } else if (presentAttributes.includes('aria-labelledby')) {
+          passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+        } else if (presentAttributes.includes('title')) {
+          passedAttribute = `title: "${escapeHtml(String(elem.title))}"`;
+        } else if (presentAttributes.includes('label')) {
+          passedAttribute = `<label>: "${escapeHtml(String(elem.label))}"`;
+        }
+      } else {
+        // No selected attributes present = FAILED
+        passed = false;
+      }
+    }
+
+    const statusText = passed ? '✓ PASSED' : '✗ FAILED';
+
+    // ENSURE: If passed but no reason found, provide a default explanation
+    if (passed && !passedAttribute) {
+      // This should never happen, but if it does, provide a clear message
+      passedAttribute = t('noAttributesRequired');
+    }
+
+    // Determine which attribute to highlight in HTML code
+    let attributeToHighlight = '';
+    let highlightMissing = false;
+
+    if (passed && passedAttribute) {
+      // Highlight the attribute that made it pass
+      if (passedAttribute.includes('Alt:')) {
+        attributeToHighlight = 'alt';
+      } else if (passedAttribute.includes('aria-label:')) {
+        attributeToHighlight = 'aria-label';
+      } else if (passedAttribute.includes('aria-labelledby:')) {
+        attributeToHighlight = 'aria-labelledby';
+      } else if (passedAttribute.includes('<label>:')) {
+        attributeToHighlight = 'label';
+      } else if (passedAttribute.includes('title:')) {
+        attributeToHighlight = 'title';
+      } else if (passedAttribute.includes(t('visibleText'))) {
+        // For visible text, try to find aria-label if it exists in the element
+        // This helps highlight the attribute even if visible text was the primary reason
+        if (elem.ariaLabel && String(elem.ariaLabel || '').trim() !== '') {
+          attributeToHighlight = 'aria-label';
+        } else if (elem.ariaLabelledby && String(elem.ariaLabelledby || '').trim() !== '') {
+          attributeToHighlight = 'aria-labelledby';
+        } else if (itemType === 'link' && elem.title && String(elem.title || '').trim() !== '') {
+          attributeToHighlight = 'title';
+        }
+        // If none found, attributeToHighlight will remain empty (no highlighting for visible text only)
+      }
+    } else {
+      // For failed, we want to show what's missing
+      highlightMissing = true;
+      if (itemType === 'image' && analysisOptions.checkAltText) {
+        attributeToHighlight = 'alt';
+      } else if (analysisOptions.checkAriaLabel) {
+        attributeToHighlight = 'aria-label';
+      } else if (analysisOptions.checkAriaLabelledby) {
+        attributeToHighlight = 'aria-labelledby';
+      } else if (itemType === 'input' && analysisOptions.checkLabels) {
+        attributeToHighlight = 'label';
+      } else if (itemType === 'link' && analysisOptions.checkTitle) {
+        attributeToHighlight = 'title';
+      }
+    }
+
+    // Build explanation based on item type and status
+    let explanation = '';
+    if (passed) {
+      switch (itemType) {
+        case 'image':
+          explanation = t('validationPassedReasonImage');
+          break;
+        case 'link':
+          explanation = t('validationPassedReasonLink');
+          break;
+        case 'button':
+          explanation = t('validationPassedReasonButton');
+          break;
+        case 'input':
+          explanation = t('validationPassedReasonInput');
+          break;
+        case 'role':
+          explanation = t('validationPassedReasonRole');
+          break;
+        default:
+          explanation = t('validationPassedReason');
+      }
+    } else {
+      switch (itemType) {
+        case 'image':
+          explanation = t('validationFailedReasonImage');
+          break;
+        case 'link':
+          explanation = t('validationFailedReasonLink');
+          break;
+        case 'button':
+          explanation = t('validationFailedReasonButton');
+          break;
+        case 'input':
+          explanation = t('validationFailedReasonInput');
+          break;
+        case 'role':
+          explanation = t('validationFailedReasonRole');
+          break;
+        default:
+          explanation = t('validationFailedReason');
+      }
+    }
+
+    // Build details
+    const details: string[] = [];
+
+    // ALWAYS show why it passed or failed
+    if (passed) {
+      if (passedAttribute) {
+        details.push(`Found: ${passedAttribute}`);
+      } else {
+        // Fallback - should never reach here due to check above, but just in case
+        details.push(`Reason: ${t('noAttributesRequired')}`);
+      }
+    } else {
+      // ALWAYS show why it failed - build a specific reason based ONLY on selected attributes
+      const failedReasons: string[] = [];
+
+      if (itemType === 'image') {
+        // WCAG Rule: Images need alt, aria-label, OR aria-labelledby
+        // If checkAltText is selected and NONE of these exist, it fails
+        if (analysisOptions.checkAltText) {
+          const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
+          const hasAriaLabel =
+            elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+          const hasAriaLabelledby =
+            elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+          if (!hasAlt && !hasAriaLabel && !hasAriaLabelledby) {
+            failedReasons.push(
+              'Alt text missing (alt, aria-label, or aria-labelledby required per WCAG 2.2 AA)'
+            );
+          }
+        }
+      } else {
+        // For links, buttons, inputs, roles: Only check selected attributes
+        // Build list of what's missing based on what was selected
+        const missingSelectedAttrs: string[] = [];
+
+        if (analysisOptions.checkAriaLabel) {
+          const hasAriaLabel =
+            elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+          if (!hasAriaLabel) {
+            missingSelectedAttrs.push('aria-label');
+          }
+        }
+        if (analysisOptions.checkAriaLabelledby) {
+          const hasAriaLabelledby =
+            elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+          if (!hasAriaLabelledby) {
+            missingSelectedAttrs.push('aria-labelledby');
+          }
+        }
+        if (itemType === 'link' && analysisOptions.checkTitle) {
+          const hasTitle = elem.title !== null && String(elem.title || '').trim() !== '';
+          if (!hasTitle) {
+            missingSelectedAttrs.push('title');
+          }
+        }
+        if (itemType === 'input' && analysisOptions.checkLabels) {
+          const hasLabel = elem.label !== null && String(elem.label || '').trim() !== '';
+          if (!hasLabel) {
+            missingSelectedAttrs.push('label');
+          }
+        }
+
+        // STRICT: If selected attributes are missing, it fails
+        if (missingSelectedAttrs.length > 0) {
+          failedReasons.push(`Missing selected attributes: ${missingSelectedAttrs.join(', ')}`);
+        }
+      }
+
+      // Use missingAttrs from backend if available, otherwise use failedReasons
+      if (missingAttrs.length > 0) {
+        details.push(`Missing: ${missingAttrs.join(', ')}`);
+      } else if (failedReasons.length > 0) {
+        details.push(`Failed: ${failedReasons.join(' | ')}`);
+      } else {
+        // Fallback - should never happen, but provide a clear message
+        details.push('Validation failed: Required accessibility attributes are missing');
+      }
+    }
+
+    // Add additional attribute status for context (for both passed and failed)
+    if (itemType === 'image') {
+      if (analysisOptions.checkAltText) {
+        const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
+        const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+        const hasAriaLabelledby =
+          elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+        if (hasAlt || hasAriaLabel || hasAriaLabelledby) {
+          if (passed && !passedAttribute) {
+            details.push(
+              `Alt: ${hasAlt ? '✓ Present' : '✗ Missing (using aria-label/aria-labelledby)'}`
+            );
+          }
+        } else if (passed) {
+          // This shouldn't happen if validation is correct, but handle it
+          details.push('Alt: ✗ MISSING');
+        }
+      }
+    } else {
+      if (analysisOptions.checkAriaLabel) {
+        const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+        if (passed && (!passedAttribute || !passedAttribute.includes('aria-label'))) {
+          details.push(`aria-label: ${hasAriaLabel ? '✓ Present' : '✗ Missing'}`);
+        }
+      }
+      if (analysisOptions.checkAriaLabelledby) {
+        const hasAriaLabelledby =
+          elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+        if (passed && (!passedAttribute || !passedAttribute.includes('aria-labelledby'))) {
+          details.push(`aria-labelledby: ${hasAriaLabelledby ? '✓ Present' : '✗ Missing'}`);
+        }
+      }
+      if (itemType === 'link' && analysisOptions.checkTitle) {
+        const hasTitle = elem.title !== null && String(elem.title || '').trim() !== '';
+        if (passed && (!passedAttribute || !passedAttribute.includes('title'))) {
+          details.push(`title: ${hasTitle ? '✓ Present' : '✗ Missing'}`);
+        }
+      }
+      if (itemType === 'input' && analysisOptions.checkLabels) {
+        const hasLabel = elem.label !== null && String(elem.label || '').trim() !== '';
+        if (passed && (!passedAttribute || !passedAttribute.includes('<label>'))) {
+          details.push(`label: ${hasLabel ? '✓ Present' : '✗ Missing'}`);
+        }
+      }
+    }
+
+    return {
+      status: statusText,
+      passed: passed,
+      details:
+        details.length > 0
+          ? details.join(' | ')
+          : passed
+            ? 'All required attributes present'
+            : 'Validation failed: Required accessibility attributes are missing',
+      passedAttribute: passedAttribute,
+      explanation: explanation,
+      attributeToHighlight: attributeToHighlight,
+      highlightMissing: highlightMissing,
+    };
+  }
+
+  function formatItem(
+    item: ProcessedItem,
+    itemType: 'image' | 'link' | 'button' | 'input' | 'role'
+  ): string {
+    const elem = item.originalData;
+    const hasAttributes =
+      itemType === 'image' ? elem.hasAlt === true : item.hasAccessibility === true;
+    const statusClass = hasAttributes ? 'has-attributes' : 'missing';
+
+    // Determine item title based on type
+    let itemTitle = '';
+    switch (itemType) {
+      case 'image':
+        itemTitle = t('images');
+        break;
+      case 'link':
+        itemTitle = `${t('links')}: "${escapeHtml(String(item.text || t('noText')))}"`;
+        break;
+      case 'button':
+        itemTitle = `${t('buttons')}: "${escapeHtml(String(item.text || t('noText')))}"`;
+        break;
+      case 'input':
+        itemTitle = `${elem.type || ''} ${elem.name ? `(${escapeHtml(String(elem.name))})` : ''}`;
+        break;
+      case 'role':
+        itemTitle = `${elem.tag || ''} (role: ${escapeHtml(String(item.role || ''))})`;
+        break;
+    }
+
+    // Status badge
+    let statusBadge = '';
+    if (itemType === 'image') {
+      if (!elem.hasAlt && analysisOptions.checkAltText) {
+        statusBadge = `<span class="status-badge error">${t('missing')} Alt</span>`;
+      } else if (elem.hasAlt) {
+        statusBadge = `<span class="status-badge success">✓ Alt</span>`;
+      }
+    } else {
+      const missingAttrs = item.missingAttributes || [];
+      if (hasAttributes) {
+        statusBadge = `<span class="status-badge success">✓ OK</span>`;
+      } else {
+        statusBadge = `<span class="status-badge error">${missingAttrs.length} ${t('missing')}</span>`;
+      }
+    }
+
+    // Build attributes using the same logic as ResultItem
+    const attributeRows = buildAttributeRows(item, analysisOptions, options.exportOptions);
+
+    let html = `<div class="result-item ${statusClass}">`;
+
+    // Header
+    html += `<div class="result-item-header">`;
+    html += `<span class="item-number">#${item.index}</span>`;
+    html += `<span class="item-title">${itemTitle}</span>`;
+    if (statusBadge) {
+      html += `<span class="status-badge-wrapper">${statusBadge}</span>`;
+    }
+    html += `</div>`;
+
+    // Screenshot - Always show if available (like in the app)
+    // Screenshots are always included in HTML export to provide visual context
+    if (item.screenshot) {
+      html += `<div class="screenshot-container">`;
+      html += `<div class="screenshot-label">${t('elementScreenshot') || 'Element Screenshot'}</div>`;
+      html += `<img src="${escapeHtml(String(item.screenshot))}" alt="Element screenshot" class="element-screenshot" />`;
+      html += `</div>`;
+    } else if (itemType === 'image' && elem.src) {
+      // For image elements, also show the actual image being analyzed
+      html += `<div class="screenshot-container">`;
+      html += `<div class="screenshot-label">${t('analyzedImage') || 'Analyzed Image'}</div>`;
+      html += `<img src="${escapeHtml(String(elem.src))}" alt="Analyzed image" class="element-screenshot" />`;
+      html += `</div>`;
+    }
+
+    // Attributes grid
+    html += `<div class="attributes-grid">`;
+    for (const row of attributeRows) {
+      if (row.isHeader || row.isImage) continue; // Skip header and image rows
+      // Skip HTML and Selector rows for HTML export - not needed in attributes section
+      if (row.name === 'HTML' || row.name === 'Selector') continue;
+      const attrValueClass =
+        row.status === 'present'
+          ? 'present'
+          : row.status === 'missing'
+            ? 'missing'
+            : row.status === 'warning'
+              ? 'warning'
+              : '';
+      const fullWidthClass = row.name === 'Source' || row.name === 'Href' ? 'full-width' : '';
+      html += `<div class="attr-item ${fullWidthClass}">`;
+      html += `<span class="attr-name">${escapeHtml(row.name)}:</span>`;
+      html += `<span class="attr-value ${attrValueClass}">${escapeHtml(row.value)}</span>`;
+      html += `</div>`;
+    }
+    html += `</div>`;
+
+    // Code section
+    if (options.exportOptions?.options.includeHTML && item.outerHTML) {
+      const formattedHTML = formatHTML(String(item.outerHTML));
+      const validation = getAttributeStatus(item, analysisOptions, itemType);
+      const uniqueId = 'code-' + Math.random().toString(36).substr(2, 9);
+      const isLong = formattedHTML.length > 200;
+
+      // Highlight the attribute in the HTML code
+      let highlightedHTML = escapeHtml(formattedHTML);
+      let truncated = isLong
+        ? escapeHtml(formattedHTML.substring(0, 200) + '...')
+        : highlightedHTML;
+
+      if (validation.attributeToHighlight) {
+        if (validation.highlightMissing) {
+          // For missing attributes, add a visible comment indicator
+          const missingIndicator = `<!-- ⚠️ MISSING: ${validation.attributeToHighlight} attribute required -->`;
+          highlightedHTML = missingIndicator + '\n' + highlightedHTML;
+          if (isLong) {
+            truncated = missingIndicator + '\n' + truncated;
+          }
+        } else {
+          // Highlight the found attribute
+          highlightedHTML = highlightAttributeInHTML(
+            formattedHTML,
+            validation.attributeToHighlight
+          );
+          if (isLong) {
+            truncated = highlightAttributeInHTML(
+              formattedHTML.substring(0, 200) + '...',
+              validation.attributeToHighlight
+            );
+          }
+        }
+      }
+
+      html += `<div class="code-section">`;
+      html += `<div class="code-header">`;
+      html += `<span>${t('htmlCode')}</span>`;
+      html += `<div class="validation-status">`;
+      // Check if it's "not validated" status
+      const isNotValidated = validation.status.includes('NOT VALIDATED');
+      const badgeClass = isNotValidated
+        ? 'validation-not-validated'
+        : validation.passed
+          ? 'validation-passed'
+          : 'validation-failed';
+      html += `<span class="validation-badge ${badgeClass}">${escapeHtml(validation.status)}</span>`;
+      // ALWAYS show the reason why it passed, failed, or was not validated
+      if (isNotValidated) {
+        html += `<span class="not-validated-attribute">${escapeHtml(validation.details)}</span>`;
+      } else if (validation.passed) {
+        if (validation.passedAttribute) {
+          html += `<span class="passed-attribute">${escapeHtml(validation.passedAttribute)}</span>`;
+        } else {
+          // Fallback - show default message
+          html += `<span class="passed-attribute">${escapeHtml(t('noAttributesRequired'))}</span>`;
+        }
+      } else {
+        // ALWAYS show why it failed - extract the failure reason from details
+        const failedReason = validation.details
+          .split('|')
+          .find((detail) => detail.includes('Failed:') || detail.includes('Missing:'))
+          ?.trim();
+        if (failedReason) {
+          html += `<span class="failed-attribute">${escapeHtml(failedReason)}</span>`;
+        } else {
+          // Fallback - show generic failure message
+          html += `<span class="failed-attribute">${escapeHtml('Required accessibility attributes are missing')}</span>`;
+        }
+      }
+      html += `<span class="attribute-status">${escapeHtml(validation.details)}</span>`;
+      html += `</div>`;
+      html += `</div>`;
+      const explanationClass = isNotValidated
+        ? 'not-validated'
+        : validation.passed
+          ? 'passed'
+          : 'failed';
+      html += `<div class="validation-explanation ${explanationClass}">`;
+      html += `<p class="explanation-text ${explanationClass}">${escapeHtml(validation.explanation)}</p>`;
+      // Add WCAG note if element passed because of visible text
+      if (
+        validation.passed &&
+        validation.passedAttribute &&
+        validation.passedAttribute.includes(t('visibleText'))
+      ) {
+        html += `<div class="wcag-note">`;
+        html += `<p class="wcag-note-text">${escapeHtml(t('wcagVisibleTextNote'))}</p>`;
+        html += `</div>`;
+      }
+      // Add WCAG note if link passed because image has alt text
+      if (
+        validation.passed &&
+        validation.passedAttribute &&
+        validation.passedAttribute.includes('Image alt text:')
+      ) {
+        html += `<div class="wcag-note">`;
+        html += `<p class="wcag-note-text">${escapeHtml(t('wcagImageAltInLinkNote'))}</p>`;
+        html += `</div>`;
+      }
+      html += `</div>`;
+      html += `<div class="code-content">`;
+
+      if (isLong) {
+        html += `<div class="code-container">`;
+        html += `<code class="code-snippet" id="${uniqueId}-short">${truncated}</code>`;
+        html += `<code class="code-snippet hidden" id="${uniqueId}-full">${highlightedHTML}</code>`;
+        html += `<button class="code-toggle" onclick="toggleCode('${uniqueId}')" data-expanded="false">`;
+        html += `<span class="toggle-text">${t('expand') || 'Expand'}</span>`;
+        html += `</button>`;
+        html += `</div>`;
+      } else {
+        html += `<code class="code-snippet">${highlightedHTML}</code>`;
+      }
+
+      html += `</div>`;
+      html += `</div>`;
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  let htmlContent = `<!DOCTYPE html>
+<html lang="${currentLang}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${t('exportReport')} - ${t('title')}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background: #e0e5ec;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { color: #0f172a; margin-bottom: 20px; font-size: 2rem; text-align: center; }
+    
+    /* Summary Section */
+    .summary-section {
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    .summary-section h2 {
+      margin-bottom: 20px;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .summary-card {
+      background: #f5f7fa;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+      position: relative;
+    }
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #3b82f6;
+      border-radius: 12px 0 0 12px;
+    }
+    .summary-card.danger::before { background: #ef4444; }
+    .summary-card.success::before { background: #10b981; }
+    .summary-card-label {
+      font-size: 0.75rem;
+      color: #1e293b;
+      margin-bottom: 4px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+    .summary-card-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    
+    /* Filters Section */
+    .filters-section {
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    .filters-section h2 {
+      margin-bottom: 15px;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    .filter-group {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .filter-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+    }
+    
+    /* Result Sections */
+    .result-section {
+      background: #f5f7fa;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 6px 6px 12px #b8bec4, -6px -6px 12px #ffffff;
+      margin-bottom: 24px;
+    }
+    .result-section h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      color: #1e293b;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .section-header .icon { font-size: 1.8rem; }
+    .section-header .count {
+      margin-left: auto;
+      background: #3b82f6;
+      color: #ffffff;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    /* Result Items */
+    .result-item {
+      background: #f5f7fa;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .result-item.missing::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #ef4444;
+      border-radius: 16px 0 0 16px;
+    }
+    .result-item.has-attributes::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #10b981;
+      border-radius: 16px 0 0 16px;
+    }
+    .result-item-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .item-number {
+      background: #e0e5ec;
+      color: #64748b;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .item-title {
+      flex: 1;
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 1rem;
+    }
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .status-badge.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .status-badge.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .screenshot-container {
+      margin-bottom: 16px;
+      margin-top: 12px;
+      border-radius: 8px;
+      overflow: visible;
+      background: #f8f9fa;
+      padding: 12px;
+      border: 2px solid #e0e5ec;
+      box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+    }
+    .screenshot-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .element-screenshot {
+      max-width: 100%;
+      max-height: 500px;
+      height: auto;
+      display: block;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+      background: #ffffff;
+      padding: 4px;
+    }
+    .attributes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #e0e5ec;
+      border-radius: 12px;
+      box-shadow: inset 2px 2px 4px #b8bec4, inset -2px -2px 4px #ffffff;
+    }
+    .attr-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .attr-item.full-width {
+      grid-column: 1 / -1;
+    }
+    .attr-name {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .attr-value {
+      font-size: 0.9rem;
+      color: #1e293b;
+      word-break: break-word;
+    }
+    .attr-value.present {
+      color: #10b981;
+      font-weight: 500;
+    }
+    .attr-value.missing {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    .attr-value.warning {
+      color: #f59e0b;
+      font-weight: 600;
+    }
+    .code-section {
+      margin-top: 12px;
+      border-top: 1px solid #cbd5e1;
+      padding-top: 12px;
+    }
+    .code-header {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .validation-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .validation-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .validation-badge.validation-passed {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .validation-badge.validation-failed {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .validation-badge.validation-not-validated {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .passed-attribute {
+      font-size: 0.8rem;
+      color: #065f46;
+      font-weight: 600;
+      background: #d1fae5;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .failed-attribute {
+      font-size: 0.8rem;
+      color: #991b1b;
+      font-weight: 600;
+      background: #fee2e2;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .not-validated-attribute {
+      font-size: 0.8rem;
+      color: #92400e;
+      font-weight: 600;
+      background: #fef3c7;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .attribute-status {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 400;
+      font-style: italic;
+    }
+    .code-content {
+      margin-top: 4px;
+    }
+    .code-container {
+      position: relative;
+    }
+    .code-snippet {
+      display: block;
+      background: #1e293b !important;
+      color: #f1f5f9 !important;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      margin-top: 8px;
+      white-space: pre;
+      word-break: normal;
+      text-align: left;
+      line-height: 1.5;
+    }
+    .code-snippet.hidden {
+      display: none;
+    }
+    .code-toggle {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: #3b82f6;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .code-toggle:hover {
+      background: #2563eb;
+    }
+    .highlighted-attribute {
+      background: #fef3c7 !important;
+      color: #92400e !important;
+      padding: 3px 6px !important;
+      border-radius: 4px !important;
+      font-weight: 900 !important;
+      box-shadow: 0 0 0 3px #fbbf24, 0 0 10px rgba(251, 191, 36, 0.5) !important;
+      text-decoration: underline !important;
+      text-decoration-thickness: 2px !important;
+      text-underline-offset: 2px !important;
+      display: inline-block !important;
+      animation: highlightPulse 2s ease-in-out infinite !important;
+    }
+    @keyframes highlightPulse {
+      0%, 100% { box-shadow: 0 0 0 3px #fbbf24, 0 0 10px rgba(251, 191, 36, 0.5); }
+      50% { box-shadow: 0 0 0 4px #f59e0b, 0 0 15px rgba(245, 158, 11, 0.7); }
+    }
+    .validation-explanation {
+      margin-top: 8px;
+      margin-bottom: 8px;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .validation-explanation.passed {
+      background: #d1fae5;
+      border-left: 3px solid #10b981;
+    }
+    .validation-explanation.failed {
+      background: #fee2e2;
+      border-left: 3px solid #ef4444;
+    }
+    .validation-explanation.not-validated {
+      background: #fef3c7;
+      border-left: 3px solid #f59e0b;
+    }
+    .explanation-text {
+      font-size: 0.85rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .explanation-text.passed {
+      color: #065f46;
+    }
+    .explanation-text.failed {
+      color: #991b1b;
+    }
+    .explanation-text.not-validated {
+      color: #92400e;
+    }
+    .wcag-note {
+      margin-top: 12px;
+      padding: 12px;
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+    }
+    .wcag-note-text {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #1e40af;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .no-results {
+      text-align: center;
+      color: #64748b;
+      padding: 20px;
+      font-style: italic;
+    }
+    .result-item.filter-hidden {
+      display: none;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .result-section { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>${t('exportReport')} - ${t('title')}</h1>
+    
+    <div style="background: #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+      <p style="margin: 5px 0;"><strong>${t('url')}:</strong> ${escapeHtml(String(data.url || 'N/A'))}</p>
+      <p style="margin: 5px 0;"><strong>${t('date')}:</strong> ${data.analyzedAt ? new Date(data.analyzedAt).toLocaleString() : new Date().toLocaleString()}</p>
+    </div>`;
+
+  if (options.exportOptions?.options.includeSummary !== false && data.summary) {
+    htmlContent += `
+    <div class="summary-section">
+      <h2>${t('summary')}</h2>
+      <div class="summary-grid">`;
+
+    if (sectionsVisible.images) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalImages')}</div>
+          <div class="summary-card-value">${data.summary.totalImages || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.imagesWithoutAlt || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('imagesWithoutAlt')}</div>
+          <div class="summary-card-value">${data.summary.imagesWithoutAlt || 0}</div>
+        </div>`;
+      if (data.summary.imagesWithoutFocusState !== undefined) {
+        htmlContent += `
+        <div class="summary-card ${(data.summary.imagesWithoutFocusState || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('imagesWithoutFocusState')}</div>
+          <div class="summary-card-value">${data.summary.imagesWithoutFocusState || 0}</div>
+        </div>`;
+      }
+    }
+
+    if (sectionsVisible.links) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalLinks')}</div>
+          <div class="summary-card-value">${data.summary.totalLinks || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.linksWithoutAccessibility || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('linksWithoutAccessibility')}</div>
+          <div class="summary-card-value">${data.summary.linksWithoutAccessibility || 0}</div>
+        </div>`;
+      if (data.summary.linksWithoutFocusState !== undefined) {
+        htmlContent += `
+        <div class="summary-card ${(data.summary.linksWithoutFocusState || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('linksWithoutFocusState')}</div>
+          <div class="summary-card-value">${data.summary.linksWithoutFocusState || 0}</div>
+        </div>`;
+      }
+    }
+
+    if (sectionsVisible.buttons) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalButtons')}</div>
+          <div class="summary-card-value">${data.summary.totalButtons || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.buttonsWithoutAccessibility || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('buttonsWithoutAccessibility')}</div>
+          <div class="summary-card-value">${data.summary.buttonsWithoutAccessibility || 0}</div>
+        </div>`;
+      if (data.summary.buttonsWithoutFocusState !== undefined) {
+        htmlContent += `
+        <div class="summary-card ${(data.summary.buttonsWithoutFocusState || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('buttonsWithoutFocusState')}</div>
+          <div class="summary-card-value">${data.summary.buttonsWithoutFocusState || 0}</div>
+        </div>`;
+      }
+    }
+
+    if (sectionsVisible.inputs) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalInputs')}</div>
+          <div class="summary-card-value">${data.summary.totalInputs || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.inputsWithoutAccessibility || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('inputsWithoutAccessibility')}</div>
+          <div class="summary-card-value">${data.summary.inputsWithoutAccessibility || 0}</div>
+        </div>`;
+    }
+
+    if (sectionsVisible.roles) {
+      htmlContent += `
+        <div class="summary-card">
+          <div class="summary-card-label">${t('totalRoles')}</div>
+          <div class="summary-card-value">${data.summary.totalRoles || 0}</div>
+        </div>
+        <div class="summary-card ${(data.summary.rolesWithoutAccessibility || 0) > 0 ? 'danger' : 'success'}">
+          <div class="summary-card-label">${t('rolesWithoutAccessibility')}</div>
+          <div class="summary-card-value">${data.summary.rolesWithoutAccessibility || 0}</div>
+        </div>`;
+    }
+
+    htmlContent += `</div></div>`;
+  }
+
+  htmlContent += `
+    <div class="filters-section">
+      <h2>${t('filters')}</h2>
+      <div class="filter-group">
+        <label>
+          <input type="checkbox" id="filter-show-missing" ${showMissing ? 'checked' : ''} onchange="applyFilters()">
+          ${t('showMissing')}
+        </label>
+        <label>
+          <input type="checkbox" id="filter-show-has-attributes" ${showHasAttributes ? 'checked' : ''} onchange="applyFilters()">
+          ${t('showHasAttributes')}
+        </label>
+      </div>
+    </div>
+    <script>
+      function applyFilters() {
+        const showMissing = document.getElementById('filter-show-missing').checked;
+        const showHasAttributes = document.getElementById('filter-show-has-attributes').checked;
+        const items = document.querySelectorAll('.result-item');
+        
+        items.forEach(item => {
+          const isMissing = item.classList.contains('missing');
+          const hasAttributes = item.classList.contains('has-attributes');
+          
+          let shouldShow = false;
+          if (showMissing && showHasAttributes) {
+            shouldShow = true; // Show all
+          } else if (showMissing && isMissing) {
+            shouldShow = true; // Show only missing
+          } else if (showHasAttributes && hasAttributes) {
+            shouldShow = true; // Show only has attributes
+          } else if (!showMissing && !showHasAttributes) {
+            shouldShow = false; // Hide all
+          }
+          
+          if (shouldShow) {
+            item.classList.remove('filter-hidden');
+          } else {
+            item.classList.add('filter-hidden');
+          }
+        });
+      }
+      
+      // Apply filters on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        applyFilters();
+      });
+    </script>`;
+
+  const sections = [
+    {
+      name: t('images'),
+      icon: '🖼️',
+      items: sectionItems.Images,
+      enabled: sectionsVisible.images,
+      type: 'image' as const,
+    },
+    {
+      name: t('links'),
+      icon: '🔗',
+      items: sectionItems.Links,
+      enabled: sectionsVisible.links,
+      type: 'link' as const,
+    },
+    {
+      name: t('buttons'),
+      icon: '🔘',
+      items: sectionItems.Buttons,
+      enabled: sectionsVisible.buttons,
+      type: 'button' as const,
+    },
+    {
+      name: t('inputs'),
+      icon: '📝',
+      items: sectionItems.Inputs,
+      enabled: sectionsVisible.inputs,
+      type: 'input' as const,
+    },
+    {
+      name: t('elementsWithRole'),
+      icon: '🎭',
+      items: sectionItems.Roles,
+      enabled: sectionsVisible.roles,
+      type: 'role' as const,
+    },
+  ];
+
+  for (const section of sections) {
+    if (section.enabled && section.items.length > 0) {
+      const filteredItems = section.items.filter((item) => {
+        if (options.exportOptions) {
+          const hasMissing = item.missingAttributes && item.missingAttributes.length > 0;
+          if (hasMissing && !options.exportOptions.status.failed) return false;
+          if (!hasMissing && !options.exportOptions.status.passed) return false;
+        }
+        return true;
+      });
+
+      if (filteredItems.length > 0) {
+        htmlContent += `
+    <div class="result-section">
+      <h2 class="section-header">
+        <span class="icon">${section.icon}</span>
+        ${section.name}
+        <span class="count">${filteredItems.length}</span>
+      </h2>
+      <div class="results-list">`;
+
+        for (const item of filteredItems) {
+          htmlContent += formatItem(item, section.type);
+        }
+
+        htmlContent += `</div></div>`;
+      }
+    } else if (section.enabled) {
+      const noResultsKey =
+        section.type === 'image'
+          ? 'noImages'
+          : section.type === 'link'
+            ? 'noLinks'
+            : section.type === 'button'
+              ? 'noButtons'
+              : section.type === 'input'
+                ? 'noInputs'
+                : 'noRoles';
+      htmlContent += `
+    <div class="result-section">
+      <h2 class="section-header">
+        <span class="icon">${section.icon}</span>
+        ${section.name}
+        <span class="count">0</span>
+      </h2>
+      <div class="results-list">
+        <p class="no-results">${t(noResultsKey)}</p>
+      </div>
+    </div>`;
+    }
+  }
+
+  htmlContent += `
+  </div>
+  <script>
+    function toggleCode(id) {
+      const shortEl = document.getElementById(id + '-short');
+      const fullEl = document.getElementById(id + '-full');
+      const button = shortEl ? shortEl.nextElementSibling : null;
+      
+      if (!shortEl || !fullEl) return;
+      
+      const isExpanded = button && button.getAttribute('data-expanded') === 'true';
+      
+      if (isExpanded) {
+        shortEl.classList.remove('hidden');
+        fullEl.classList.add('hidden');
+        if (button) {
+          button.setAttribute('data-expanded', 'false');
+          const toggleText = button.querySelector('.toggle-text');
+          if (toggleText) toggleText.textContent = '${t('expand') || 'Expand'}';
+        }
+      } else {
+        shortEl.classList.add('hidden');
+        fullEl.classList.remove('hidden');
+        if (button) {
+          button.setAttribute('data-expanded', 'true');
+          const toggleText = button.querySelector('.toggle-text');
+          if (toggleText) toggleText.textContent = '${t('collapse') || 'Collapse'}';
+        }
+      }
+    }
+  </script>
+</body>
+</html>`;
+
+  const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `accessibility-report-${timestamp}.html`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }

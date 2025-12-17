@@ -30,6 +30,9 @@ export const useLanguageStore = defineStore('language', () => {
       analyzeBtn: 'Analyze',
       analyzing: '🔍 Analyzing page...',
       analysisOptions: 'Analysis Options',
+      fullWcagMode: 'Full WCAG Mode',
+      fullWcagModeHint:
+        'When enabled, applies WCAG rules (visible text, image alt in links). When disabled, only validates selected attributes.',
       elementsToCheck: 'Elements to Check',
       attributesToCheck: 'Attributes to Check',
       images: 'Images',
@@ -118,6 +121,7 @@ export const useLanguageStore = defineStore('language', () => {
       expand: 'Expand',
       collapse: 'Collapse',
       exportAsPDF: 'Export as PDF',
+      exportReport: 'Export Report',
       exporting: 'Exporting...',
       exported: 'Exported',
       errorNoReport: 'No report available to export',
@@ -131,16 +135,59 @@ export const useLanguageStore = defineStore('language', () => {
       analysisCompleted: 'Analysis completed',
       analysisCompletedMessage: 'The page analysis has been completed successfully.',
       exportPDF: 'Export PDF',
+      reportFormat: 'Report Format',
+      pdfFormat: 'PDF',
+      htmlFormat: 'HTML',
+      exportFormatInfo:
+        'Select the format(s) for your report. You can export as PDF, HTML, or both.',
       elementsToInclude: 'Elements to Include',
       resultsStatus: 'Results Status',
       passed: 'Passed',
       failed: 'Failed',
       exportStatusInfo:
-        'Select which results to include in the PDF. You can export only passed items, only failed items, or both.',
+        'Select which results to include in the report. You can export only passed items, only failed items, or both.',
       additionalOptions: 'Additional Options',
       includeSummary: 'Include Summary',
       includeScreenshots: 'Include Screenshots',
       includeHTML: 'Include HTML Code',
+      validationPassedReason:
+        'Validation passed because the required accessibility attribute was found in this element.',
+      validationFailedReason:
+        'Validation failed because the required accessibility attribute(s) are missing from this element.',
+      validationPassedReasonImage:
+        'Validation passed because this image has alternative text (alt, aria-label, or aria-labelledby) as required by WCAG 2.2 AA.',
+      validationFailedReasonImage:
+        'Validation failed because this image is missing alternative text. Images must have alt, aria-label, or aria-labelledby per WCAG 2.2 AA.',
+      validationPassedReasonLink:
+        'Validation passed because this link has an accessible name (aria-label, aria-labelledby, title, or visible text).',
+      validationFailedReasonLink:
+        'Validation failed because this link is missing an accessible name. Links must have aria-label, aria-labelledby, title, or visible text.',
+      validationPassedReasonButton:
+        'Validation passed because this button has an accessible name (aria-label, aria-labelledby, or visible text).',
+      validationFailedReasonButton:
+        'Validation failed because this button is missing an accessible name. Buttons must have aria-label, aria-labelledby, or visible text.',
+      validationPassedReasonInput:
+        'Validation passed because this input has an accessible name (aria-label, aria-labelledby, or associated label).',
+      validationFailedReasonInput:
+        'Validation failed because this input is missing an accessible name. Inputs must have aria-label, aria-labelledby, or an associated label element.',
+      validationPassedReasonRole:
+        'Validation passed because this element with role has an accessible name (aria-label or aria-labelledby).',
+      validationFailedReasonRole:
+        'Validation failed because this element with role is missing an accessible name. Elements with roles must have aria-label or aria-labelledby.',
+      attributeHighlighted: 'Highlighted attribute',
+      elementScreenshot: 'Element Screenshot',
+      analyzedImage: 'Analyzed Image',
+      visibleText: 'Visible Text',
+      noAttributesRequired:
+        'No accessibility attributes required (validation passed because no attributes were checked in analysis options)',
+      notValidatedNoAttributes:
+        'Not validated - No attributes selected for validation in analysis options',
+      notValidatedExplanation:
+        'This element was not validated because no accessibility attributes were selected for validation in the analysis options. Please select at least one attribute to check for this element type.',
+      wcagVisibleTextNote:
+        'ℹ️ WCAG 2.2 AA: Visible text is always a valid accessible name. This element passes because it has visible text content, which meets accessibility requirements.',
+      wcagImageAltInLinkNote:
+        "ℹ️ WCAG 2.2 AA: When a link contains only an image, the alt text of the image becomes the accessible name of the link. This link passes because the image has alt text, which serves as the link's accessible name.",
       cancel: 'Cancel',
       wcagGuidelines: 'WCAG 2.2 AA Accessibility Guidelines',
       close: 'Close',
@@ -336,6 +383,7 @@ export const useLanguageStore = defineStore('language', () => {
       expand: 'Expandir',
       collapse: 'Contraer',
       exportAsPDF: 'Exportar como PDF',
+      exportReport: 'Exportar Reporte',
       exporting: 'Exportando...',
       exported: 'Exportado',
       errorNoReport: 'No hay reporte disponible para exportar',
@@ -349,16 +397,59 @@ export const useLanguageStore = defineStore('language', () => {
       analysisCompleted: 'Análisis completado',
       analysisCompletedMessage: 'El análisis de la página se ha completado exitosamente.',
       exportPDF: 'Exportar PDF',
+      reportFormat: 'Formato de Reporte',
+      pdfFormat: 'PDF',
+      htmlFormat: 'HTML',
+      exportFormatInfo:
+        'Selecciona el formato(s) para tu reporte. Puedes exportar como PDF, HTML, o ambos.',
       elementsToInclude: 'Elementos a Incluir',
       resultsStatus: 'Estado de Resultados',
       passed: 'Aprobado',
       failed: 'Fallido',
       exportStatusInfo:
-        'Selecciona qué resultados incluir en el PDF. Puedes exportar solo elementos aprobados, solo fallidos, o ambos.',
+        'Selecciona qué resultados incluir en el reporte. Puedes exportar solo elementos aprobados, solo fallidos, o ambos.',
       additionalOptions: 'Opciones Adicionales',
       includeSummary: 'Incluir Resumen',
       includeScreenshots: 'Incluir Capturas',
       includeHTML: 'Incluir Código HTML',
+      validationPassedReason:
+        'La validación pasó porque se encontró el atributo de accesibilidad requerido en este elemento.',
+      validationFailedReason:
+        'La validación falló porque faltan los atributos de accesibilidad requeridos en este elemento.',
+      validationPassedReasonImage:
+        'La validación pasó porque esta imagen tiene texto alternativo (alt, aria-label, o aria-labelledby) según lo requerido por WCAG 2.2 AA.',
+      validationFailedReasonImage:
+        'La validación falló porque esta imagen no tiene texto alternativo. Las imágenes deben tener alt, aria-label, o aria-labelledby según WCAG 2.2 AA.',
+      validationPassedReasonLink:
+        'La validación pasó porque este enlace tiene un nombre accesible (aria-label, aria-labelledby, title, o texto visible).',
+      validationFailedReasonLink:
+        'La validación falló porque este enlace no tiene un nombre accesible. Los enlaces deben tener aria-label, aria-labelledby, title, o texto visible.',
+      validationPassedReasonButton:
+        'La validación pasó porque este botón tiene un nombre accesible (aria-label, aria-labelledby, o texto visible).',
+      validationFailedReasonButton:
+        'La validación falló porque este botón no tiene un nombre accesible. Los botones deben tener aria-label, aria-labelledby, o texto visible.',
+      validationPassedReasonInput:
+        'La validación pasó porque este input tiene un nombre accesible (aria-label, aria-labelledby, o label asociado).',
+      validationFailedReasonInput:
+        'La validación falló porque este input no tiene un nombre accesible. Los inputs deben tener aria-label, aria-labelledby, o un elemento label asociado.',
+      validationPassedReasonRole:
+        'La validación pasó porque este elemento con role tiene un nombre accesible (aria-label o aria-labelledby).',
+      validationFailedReasonRole:
+        'La validación falló porque este elemento con role no tiene un nombre accesible. Los elementos con roles deben tener aria-label o aria-labelledby.',
+      attributeHighlighted: 'Atributo resaltado',
+      elementScreenshot: 'Captura del Elemento',
+      analyzedImage: 'Imagen Analizada',
+      visibleText: 'Texto Visible',
+      noAttributesRequired:
+        'No se requieren atributos de accesibilidad (la validación pasó porque no se verificaron atributos en las opciones de análisis)',
+      notValidatedNoAttributes:
+        'No validado - No se seleccionaron atributos para validación en las opciones de análisis',
+      notValidatedExplanation:
+        'Este elemento no fue validado porque no se seleccionaron atributos de accesibilidad para validación en las opciones de análisis. Por favor, seleccione al menos un atributo para verificar para este tipo de elemento.',
+      wcagVisibleTextNote:
+        'ℹ️ WCAG 2.2 AA: El texto visible es siempre un nombre accesible válido. Este elemento pasa porque tiene contenido de texto visible, lo cual cumple con los requisitos de accesibilidad.',
+      wcagImageAltInLinkNote:
+        'ℹ️ WCAG 2.2 AA: Cuando un enlace contiene solo una imagen, el texto alternativo (alt) de la imagen se convierte en el nombre accesible del enlace. Este enlace pasa porque la imagen tiene texto alternativo, que sirve como nombre accesible del enlace.',
       cancel: 'Cancelar',
       wcagGuidelines: 'Guías de Accesibilidad WCAG 2.2 AA',
       close: 'Cerrar',
