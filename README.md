@@ -103,8 +103,8 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - 🎛️ **Configurable Options**: Select exactly what you want to analyze
 - 📊 **Detailed Reports**: See HTML code, screenshots, and missing attributes
 - 🎨 **15+ Visual Themes**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk, and more
-- 📄 **Professional PDF Export**: Generate elegant PDF reports with customizable options (Design 12: Highlight Rows + Design 13: Icon Badges)
-- 🎛️ **Export Modal**: Select which elements and statuses to include in PDF reports
+- 📄 **Professional Report Export**: Generate elegant PDF and HTML reports with customizable options (Design 12: Highlight Rows + Design 13: Icon Badges)
+- 🎛️ **Export Modal**: Select report format (PDF, HTML, or both) and which elements/statuses to include
 - 🌍 **Multi-language**: English and Spanish support
 - 🎯 **Smart Filtering**: Filter by missing or present attributes
 - 📸 **Visual Feedback**: Screenshots of problematic elements
@@ -126,20 +126,25 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - ✅ **Analysis Cancellation Message**: Changed cancellation message from error to success notification in both languages
 - ✅ **Cancellation Notification Fix**: Fixed notification display when analysis is cancelled - now shows success message correctly
 - ✅ **Result Sections Spacing**: Improved spacing between result sections (Images, Links, Buttons, etc.) and between filters and first section for better readability
+- ✅ **HTML Report Export**: New HTML export feature that replicates the app's structure and styling. Includes formatted HTML code with expand/collapse functionality, validation status badges, and descriptive attribute labels
+- ✅ **Export Report Button**: Renamed from "Export as PDF" to "Export Report" with support for multiple formats (PDF, HTML, or both). Button glow effect now adapts to selected theme colors
+- ✅ **HTML Code Attribute Highlighting**: Attributes found in elements are now highlighted in the HTML code section with visual emphasis (yellow background, bold text)
+- ✅ **Validation Explanations**: Detailed explanations in both languages (English/Spanish) explaining why elements passed or failed validation, with context-specific messages for images, links, buttons, inputs, and roles
+- ✅ **Interactive Filters in HTML Report**: "Show Missing" and "Show Has Attributes" filters are now functional in HTML exports, allowing users to filter results dynamically
 
 ## 📖 How to Use
 
 ### Step-by-Step Guide
 
-| Step                 | Description                                                                              |
-| -------------------- | ---------------------------------------------------------------------------------------- |
-| 1. Enter URL         | Enter the URL to analyze (e.g., `http://localhost:3000`)                                 |
-| 2. Select Elements   | Choose which elements to check: ☑ Images ☑ Links ☑ Buttons ☑ Inputs ☑ Roles              |
-| 3. Select Attributes | Choose which attributes to verify: ☑ Alt Text ☑ aria-label ☑ Focus States etc.           |
-| 4. Analyze           | Click the "Analyze" button to start the analysis                                         |
-| 5. Review Report     | Examine the results: • Summary cards • Detailed element analysis • Screenshots of issues |
-| 6. Filter & Export   | Use filters to show missing/present attributes and export as PDF                         |
-| 7. Export PDF        | Click "Export PDF" → Select elements/statuses to include → Generate report               |
+| Step                 | Description                                                                                        |
+| -------------------- | -------------------------------------------------------------------------------------------------- |
+| 1. Enter URL         | Enter the URL to analyze (e.g., `http://localhost:3000`)                                           |
+| 2. Select Elements   | Choose which elements to check: ☑ Images ☑ Links ☑ Buttons ☑ Inputs ☑ Roles                        |
+| 3. Select Attributes | Choose which attributes to verify: ☑ Alt Text ☑ aria-label ☑ Focus States etc.                     |
+| 4. Analyze           | Click the "Analyze" button to start the analysis                                                   |
+| 5. Review Report     | Examine the results: • Summary cards • Detailed element analysis • Screenshots of issues           |
+| 6. Filter & Export   | Use filters to show missing/present attributes and export reports                                  |
+| 7. Export Report     | Click "Export Report" → Choose format (PDF/HTML/both) → Select elements/statuses → Generate report |
 
 ### 🎛️ Configuration Options
 
@@ -419,13 +424,14 @@ The tool verifies compliance with **WCAG 2.2 AA standards**:
 - 📸 **Screenshots**: Visual highlighting of problematic elements
 - 💻 **HTML Code**: Expandable code snippets for each element
 - 🔍 **Smart Filters**: Show only missing or present attributes
-- 📄 **PDF Export**: Professional reports with customizable selection modal
+- 📄 **Report Export**: Professional PDF and HTML reports with customizable selection modal
+  - **Report Format**: Choose PDF, HTML, or both formats
   - Select which elements to include (Images, Links, Buttons, Inputs, Roles)
   - Choose status types (Passed, Failed)
   - Additional options (Summary, Screenshots, HTML code)
   - Pre-selected based on your analysis options
-  - Table design: Highlight Rows with Icon Badges (Design 12 + Design 13)
-  - **Smart Ordering**: Passed elements shown first, then Failed elements
+  - **PDF Features**: Table design with Highlight Rows and Icon Badges (Design 12 + Design 13), smart ordering (Passed first, then Failed)
+  - **HTML Features**: Replicates app's structure and styling, formatted HTML code with expand/collapse, validation status badges, descriptive attribute labels (e.g., "Link Text (visible text)"), always includes screenshots when available, attribute highlighting in HTML code, detailed validation explanations in both languages, interactive filters (Show Missing/Show Has Attributes)
 - 🎨 **15+ Themes**: Light, Dark, Flat, Material, Glassmorphism, Cyberpunk, Minimal, Ocean, Sunset, Forest, Monochrome, High Contrast, Rose, Amber, Teal
 - 🌍 **i18n**: English and Spanish support
 - 📱 **Responsive**: Fully optimized for mobile, tablet, and desktop

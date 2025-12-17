@@ -147,6 +147,31 @@ export const useLanguageStore = defineStore('language', () => {
       includeSummary: 'Include Summary',
       includeScreenshots: 'Include Screenshots',
       includeHTML: 'Include HTML Code',
+      validationPassedReason:
+        'Validation passed because the required accessibility attribute was found in this element.',
+      validationFailedReason:
+        'Validation failed because the required accessibility attribute(s) are missing from this element.',
+      validationPassedReasonImage:
+        'Validation passed because this image has alternative text (alt, aria-label, or aria-labelledby) as required by WCAG 2.2 AA.',
+      validationFailedReasonImage:
+        'Validation failed because this image is missing alternative text. Images must have alt, aria-label, or aria-labelledby per WCAG 2.2 AA.',
+      validationPassedReasonLink:
+        'Validation passed because this link has an accessible name (aria-label, aria-labelledby, title, or visible text).',
+      validationFailedReasonLink:
+        'Validation failed because this link is missing an accessible name. Links must have aria-label, aria-labelledby, title, or visible text.',
+      validationPassedReasonButton:
+        'Validation passed because this button has an accessible name (aria-label, aria-labelledby, or visible text).',
+      validationFailedReasonButton:
+        'Validation failed because this button is missing an accessible name. Buttons must have aria-label, aria-labelledby, or visible text.',
+      validationPassedReasonInput:
+        'Validation passed because this input has an accessible name (aria-label, aria-labelledby, or associated label).',
+      validationFailedReasonInput:
+        'Validation failed because this input is missing an accessible name. Inputs must have aria-label, aria-labelledby, or an associated label element.',
+      validationPassedReasonRole:
+        'Validation passed because this element with role has an accessible name (aria-label or aria-labelledby).',
+      validationFailedReasonRole:
+        'Validation failed because this element with role is missing an accessible name. Elements with roles must have aria-label or aria-labelledby.',
+      attributeHighlighted: 'Highlighted attribute',
       cancel: 'Cancel',
       wcagGuidelines: 'WCAG 2.2 AA Accessibility Guidelines',
       close: 'Close',
@@ -371,6 +396,31 @@ export const useLanguageStore = defineStore('language', () => {
       includeSummary: 'Incluir Resumen',
       includeScreenshots: 'Incluir Capturas',
       includeHTML: 'Incluir Código HTML',
+      validationPassedReason:
+        'La validación pasó porque se encontró el atributo de accesibilidad requerido en este elemento.',
+      validationFailedReason:
+        'La validación falló porque faltan los atributos de accesibilidad requeridos en este elemento.',
+      validationPassedReasonImage:
+        'La validación pasó porque esta imagen tiene texto alternativo (alt, aria-label, o aria-labelledby) según lo requerido por WCAG 2.2 AA.',
+      validationFailedReasonImage:
+        'La validación falló porque esta imagen no tiene texto alternativo. Las imágenes deben tener alt, aria-label, o aria-labelledby según WCAG 2.2 AA.',
+      validationPassedReasonLink:
+        'La validación pasó porque este enlace tiene un nombre accesible (aria-label, aria-labelledby, title, o texto visible).',
+      validationFailedReasonLink:
+        'La validación falló porque este enlace no tiene un nombre accesible. Los enlaces deben tener aria-label, aria-labelledby, title, o texto visible.',
+      validationPassedReasonButton:
+        'La validación pasó porque este botón tiene un nombre accesible (aria-label, aria-labelledby, o texto visible).',
+      validationFailedReasonButton:
+        'La validación falló porque este botón no tiene un nombre accesible. Los botones deben tener aria-label, aria-labelledby, o texto visible.',
+      validationPassedReasonInput:
+        'La validación pasó porque este input tiene un nombre accesible (aria-label, aria-labelledby, o label asociado).',
+      validationFailedReasonInput:
+        'La validación falló porque este input no tiene un nombre accesible. Los inputs deben tener aria-label, aria-labelledby, o un elemento label asociado.',
+      validationPassedReasonRole:
+        'La validación pasó porque este elemento con role tiene un nombre accesible (aria-label o aria-labelledby).',
+      validationFailedReasonRole:
+        'La validación falló porque este elemento con role no tiene un nombre accesible. Los elementos con roles deben tener aria-label o aria-labelledby.',
+      attributeHighlighted: 'Atributo resaltado',
       cancel: 'Cancelar',
       wcagGuidelines: 'Guías de Accesibilidad WCAG 2.2 AA',
       close: 'Cerrar',

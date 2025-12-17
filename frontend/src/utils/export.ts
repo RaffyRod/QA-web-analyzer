@@ -467,15 +467,29 @@ function buildAttributeRows(
     });
   }
 
-  // Text content
+  // Text content - label with context based on element type
   if (item.text) {
     const cleanText = sanitizeText(item.text);
     if (cleanText) {
       const maxLength = 200;
       const truncatedText =
         cleanText.length > maxLength ? cleanText.substring(0, maxLength) + '...' : cleanText;
+
+      // Determine text type label based on element type
+      let textLabel = 'Text';
+      if (item.type === 'Link') {
+        textLabel = 'Link Text (visible text)';
+      } else if (item.type === 'Button') {
+        textLabel = 'Button Text (visible text)';
+      } else if (item.type === 'Input') {
+        textLabel = 'Input Text (visible/label text)';
+      } else if (item.type === 'Role') {
+        textLabel = 'Element Text (visible text)';
+      }
+      // For Images, we don't show text content as it's not relevant
+
       attributeRows.push({
-        name: 'Text',
+        name: textLabel,
         value: truncatedText,
         status: 'normal',
       });
@@ -1645,7 +1659,7 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
   const { data, analysisOptions, showMissing, showHasAttributes, sectionsVisible } = options;
   const languageStore = useLanguageStore();
   const t = languageStore.t;
-  const currentLang = languageStore.currentLanguage.value;
+  const currentLang = languageStore.currentLanguage;
 
   const { items, sectionItems } = processItems(
     data,
@@ -1660,6 +1674,31 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     const div = document.createElement('div');
     div.textContent = String(text);
     return div.innerHTML;
+  }
+
+  function highlightAttributeInHTML(html: string, attributeName: string): string {
+    if (!attributeName || !html) return escapeHtml(html);
+
+    // Escape HTML first to prevent XSS
+    const escapedHtml = escapeHtml(html);
+
+    // Pattern to match the attribute in the HTML
+    // Match: attributeName="value" or attributeName='value' or attributeName=value
+    // Also handle case-insensitive matching
+    const escapedAttrName = escapeHtml(attributeName);
+    const patterns = [
+      new RegExp(`(${escapedAttrName}\\s*=\\s*["'][^"']*["'])`, 'gi'),
+      new RegExp(`(${escapedAttrName}\\s*=\\s*[^\\s>]+)`, 'gi'),
+    ];
+
+    let highlighted = escapedHtml;
+    for (const pattern of patterns) {
+      highlighted = highlighted.replace(pattern, (match) => {
+        return `<span class="highlighted-attribute" title="${escapeHtml(t('attributeHighlighted'))}">${match}</span>`;
+      });
+    }
+
+    return highlighted;
   }
 
   function formatHTML(html: string): string {
@@ -1710,7 +1749,14 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     item: ProcessedItem,
     analysisOptions: AnalysisOptions,
     itemType: 'image' | 'link' | 'button' | 'input' | 'role'
-  ): { status: string; passed: boolean; details: string; passedAttribute: string } {
+  ): {
+    status: string;
+    passed: boolean;
+    details: string;
+    passedAttribute: string;
+    explanation: string;
+    attributeToHighlight: string;
+  } {
     const elem = item.originalData;
     const missingAttrs = item.missingAttributes || [];
 
@@ -1761,6 +1807,79 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
 
     const statusText = passed ? '✓ PASSED' : '✗ FAILED';
 
+    // Determine which attribute to highlight in HTML code
+    let attributeToHighlight = '';
+    if (passed && passedAttribute) {
+      if (passedAttribute.includes('Alt:')) {
+        attributeToHighlight = 'alt';
+      } else if (passedAttribute.includes('aria-label:')) {
+        attributeToHighlight = 'aria-label';
+      } else if (passedAttribute.includes('aria-labelledby:')) {
+        attributeToHighlight = 'aria-labelledby';
+      } else if (passedAttribute.includes('<label>:')) {
+        attributeToHighlight = 'label';
+      } else if (passedAttribute.includes('title:')) {
+        attributeToHighlight = 'title';
+      }
+    } else {
+      // For failed, highlight the first missing required attribute
+      if (itemType === 'image' && analysisOptions.checkAltText) {
+        attributeToHighlight = 'alt';
+      } else if (analysisOptions.checkAriaLabel) {
+        attributeToHighlight = 'aria-label';
+      } else if (analysisOptions.checkAriaLabelledby) {
+        attributeToHighlight = 'aria-labelledby';
+      } else if (itemType === 'input' && analysisOptions.checkLabels) {
+        attributeToHighlight = 'label';
+      } else if (itemType === 'link' && analysisOptions.checkTitle) {
+        attributeToHighlight = 'title';
+      }
+    }
+
+    // Build explanation based on item type and status
+    let explanation = '';
+    if (passed) {
+      switch (itemType) {
+        case 'image':
+          explanation = t('validationPassedReasonImage');
+          break;
+        case 'link':
+          explanation = t('validationPassedReasonLink');
+          break;
+        case 'button':
+          explanation = t('validationPassedReasonButton');
+          break;
+        case 'input':
+          explanation = t('validationPassedReasonInput');
+          break;
+        case 'role':
+          explanation = t('validationPassedReasonRole');
+          break;
+        default:
+          explanation = t('validationPassedReason');
+      }
+    } else {
+      switch (itemType) {
+        case 'image':
+          explanation = t('validationFailedReasonImage');
+          break;
+        case 'link':
+          explanation = t('validationFailedReasonLink');
+          break;
+        case 'button':
+          explanation = t('validationFailedReasonButton');
+          break;
+        case 'input':
+          explanation = t('validationFailedReasonInput');
+          break;
+        case 'role':
+          explanation = t('validationFailedReasonRole');
+          break;
+        default:
+          explanation = t('validationFailedReason');
+      }
+    }
+
     // Build details
     const details: string[] = [];
 
@@ -1768,7 +1887,7 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       details.push(`Found: ${passedAttribute}`);
     }
 
-    if (itemType === 'Image') {
+    if (itemType === 'image') {
       if (analysisOptions.checkAltText) {
         const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
         const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
@@ -1814,6 +1933,8 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
             ? 'All required attributes present'
             : 'Validation failed',
       passedAttribute: passedAttribute,
+      explanation: explanation,
+      attributeToHighlight: attributeToHighlight,
     };
   }
 
@@ -1888,8 +2009,8 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     html += `<div class="attributes-grid">`;
     for (const row of attributeRows) {
       if (row.isHeader || row.isImage) continue; // Skip header and image rows
-      // Skip HTML row for HTML export - it's shown in the code section below
-      if (row.name === 'HTML') continue;
+      // Skip HTML and Selector rows for HTML export - not needed in attributes section
+      if (row.name === 'HTML' || row.name === 'Selector') continue;
       const attrValueClass =
         row.status === 'present'
           ? 'present'
@@ -1912,7 +2033,19 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       const validation = getAttributeStatus(item, analysisOptions, itemType);
       const uniqueId = 'code-' + Math.random().toString(36).substr(2, 9);
       const isLong = formattedHTML.length > 200;
-      const truncated = isLong ? formattedHTML.substring(0, 200) + '...' : formattedHTML;
+
+      // Highlight the attribute in the HTML code
+      const highlightedHTML = validation.attributeToHighlight
+        ? highlightAttributeInHTML(formattedHTML, validation.attributeToHighlight)
+        : escapeHtml(formattedHTML);
+      const truncated = isLong
+        ? validation.attributeToHighlight
+          ? highlightAttributeInHTML(
+              formattedHTML.substring(0, 200) + '...',
+              validation.attributeToHighlight
+            )
+          : escapeHtml(formattedHTML.substring(0, 200) + '...')
+        : highlightedHTML;
 
       html += `<div class="code-section">`;
       html += `<div class="code-header">`;
@@ -1925,18 +2058,21 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       html += `<span class="attribute-status">${escapeHtml(validation.details)}</span>`;
       html += `</div>`;
       html += `</div>`;
+      html += `<div class="validation-explanation ${validation.passed ? 'passed' : 'failed'}">`;
+      html += `<p class="explanation-text ${validation.passed ? 'passed' : 'failed'}">${escapeHtml(validation.explanation)}</p>`;
+      html += `</div>`;
       html += `<div class="code-content">`;
 
       if (isLong) {
         html += `<div class="code-container">`;
-        html += `<code class="code-snippet" id="${uniqueId}-short">${escapeHtml(truncated)}</code>`;
-        html += `<code class="code-snippet hidden" id="${uniqueId}-full">${escapeHtml(formattedHTML)}</code>`;
+        html += `<code class="code-snippet" id="${uniqueId}-short">${truncated}</code>`;
+        html += `<code class="code-snippet hidden" id="${uniqueId}-full">${highlightedHTML}</code>`;
         html += `<button class="code-toggle" onclick="toggleCode('${uniqueId}')" data-expanded="false">`;
         html += `<span class="toggle-text">${t('expand') || 'Expand'}</span>`;
         html += `</button>`;
         html += `</div>`;
       } else {
-        html += `<code class="code-snippet">${escapeHtml(formattedHTML)}</code>`;
+        html += `<code class="code-snippet">${highlightedHTML}</code>`;
       }
 
       html += `</div>`;
@@ -2280,11 +2416,47 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     .code-toggle:hover {
       background: #2563eb;
     }
+    .highlighted-attribute {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-weight: 700;
+      box-shadow: 0 0 0 2px #fbbf24;
+    }
+    .validation-explanation {
+      margin-top: 8px;
+      margin-bottom: 8px;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .validation-explanation.passed {
+      background: #d1fae5;
+      border-left: 3px solid #10b981;
+    }
+    .validation-explanation.failed {
+      background: #fee2e2;
+      border-left: 3px solid #ef4444;
+    }
+    .explanation-text {
+      font-size: 0.85rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .explanation-text.passed {
+      color: #065f46;
+    }
+    .explanation-text.failed {
+      color: #991b1b;
+    }
     .no-results {
       text-align: center;
       color: #64748b;
       padding: 20px;
       font-style: italic;
+    }
+    .result-item.filter-hidden {
+      display: none;
     }
     @media print {
       body { background: white; padding: 0; }
@@ -2395,10 +2567,50 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     <div class="filters-section">
       <h2>${t('filters')}</h2>
       <div class="filter-group">
-        <label>${showMissing ? '✓' : '☐'} ${t('showMissing')}</label>
-        <label>${showHasAttributes ? '✓' : '☐'} ${t('showHasAttributes')}</label>
+        <label>
+          <input type="checkbox" id="filter-show-missing" ${showMissing ? 'checked' : ''} onchange="applyFilters()">
+          ${t('showMissing')}
+        </label>
+        <label>
+          <input type="checkbox" id="filter-show-has-attributes" ${showHasAttributes ? 'checked' : ''} onchange="applyFilters()">
+          ${t('showHasAttributes')}
+        </label>
       </div>
-    </div>`;
+    </div>
+    <script>
+      function applyFilters() {
+        const showMissing = document.getElementById('filter-show-missing').checked;
+        const showHasAttributes = document.getElementById('filter-show-has-attributes').checked;
+        const items = document.querySelectorAll('.result-item');
+        
+        items.forEach(item => {
+          const isMissing = item.classList.contains('missing');
+          const hasAttributes = item.classList.contains('has-attributes');
+          
+          let shouldShow = false;
+          if (showMissing && showHasAttributes) {
+            shouldShow = true; // Show all
+          } else if (showMissing && isMissing) {
+            shouldShow = true; // Show only missing
+          } else if (showHasAttributes && hasAttributes) {
+            shouldShow = true; // Show only has attributes
+          } else if (!showMissing && !showHasAttributes) {
+            shouldShow = false; // Hide all
+          }
+          
+          if (shouldShow) {
+            item.classList.remove('filter-hidden');
+          } else {
+            item.classList.add('filter-hidden');
+          }
+        });
+      }
+      
+      // Apply filters on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        applyFilters();
+      });
+    </script>`;
 
   const sections = [
     {
