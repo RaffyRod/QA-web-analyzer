@@ -183,6 +183,8 @@ export const useLanguageStore = defineStore('language', () => {
         'This element was not validated because no accessibility attributes were selected for validation in the analysis options. Please select at least one attribute to check for this element type.',
       wcagVisibleTextNote:
         'ℹ️ WCAG 2.2 AA: Visible text is always a valid accessible name. This element passes because it has visible text content, which meets accessibility requirements.',
+      wcagImageAltInLinkNote:
+        "ℹ️ WCAG 2.2 AA: When a link contains only an image, the alt text of the image becomes the accessible name of the link. This link passes because the image has alt text, which serves as the link's accessible name.",
       cancel: 'Cancel',
       wcagGuidelines: 'WCAG 2.2 AA Accessibility Guidelines',
       close: 'Close',
@@ -443,6 +445,8 @@ export const useLanguageStore = defineStore('language', () => {
         'Este elemento no fue validado porque no se seleccionaron atributos de accesibilidad para validación en las opciones de análisis. Por favor, seleccione al menos un atributo para verificar para este tipo de elemento.',
       wcagVisibleTextNote:
         'ℹ️ WCAG 2.2 AA: El texto visible es siempre un nombre accesible válido. Este elemento pasa porque tiene contenido de texto visible, lo cual cumple con los requisitos de accesibilidad.',
+      wcagImageAltInLinkNote:
+        'ℹ️ WCAG 2.2 AA: Cuando un enlace contiene solo una imagen, el texto alternativo (alt) de la imagen se convierte en el nombre accesible del enlace. Este enlace pasa porque la imagen tiene texto alternativo, que sirve como nombre accesible del enlace.',
       cancel: 'Cancelar',
       wcagGuidelines: 'Guías de Accesibilidad WCAG 2.2 AA',
       close: 'Cerrar',

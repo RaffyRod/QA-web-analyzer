@@ -1892,6 +1892,22 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       const selectedAttributes: string[] = [];
       const presentAttributes: string[] = [];
 
+      // WCAG Rule: If a link contains only an image, the alt text of the image becomes the accessible name of the link
+      // Check if link contains only an image with alt text
+      let imageAltText = '';
+      if (itemType === 'link' && !hasVisibleText && item.outerHTML) {
+        const htmlContent = String(item.outerHTML);
+        // Check if link contains an <img> tag
+        const imgMatch = htmlContent.match(/<img[^>]*>/i);
+        if (imgMatch) {
+          // Extract alt attribute from the image
+          const altMatch = imgMatch[0].match(/alt\s*=\s*["']([^"']*)["']/i);
+          if (altMatch && altMatch[1] && altMatch[1].trim() !== '') {
+            imageAltText = altMatch[1].trim();
+          }
+        }
+      }
+
       // Check which attributes are selected and which are present
       if (analysisOptions.checkAriaLabel) {
         selectedAttributes.push('aria-label');
@@ -1921,7 +1937,8 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       // Determine if element passes:
       // 1. If any selected attribute is present, it passes
       // 2. OR if visible text exists (WCAG rule: visible text is always valid accessible name)
-      // 3. Otherwise, it fails
+      // 3. OR if link contains image with alt text (WCAG rule: image alt becomes link accessible name)
+      // 4. Otherwise, it fails
 
       if (presentAttributes.length > 0) {
         // At least one selected attribute is present
@@ -1942,8 +1959,13 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         passed = true;
         const textContent = String(item.text).trim();
         passedAttribute = `${t('visibleText')}: "${escapeHtml(textContent.length > 50 ? textContent.substring(0, 50) + '...' : textContent)}"`;
+      } else if (imageAltText) {
+        // WCAG Rule: If a link contains only an image, the alt text of the image becomes the accessible name
+        // Link passes because the image has alt text, which becomes the link's accessible name
+        passed = true;
+        passedAttribute = `Image alt text: "${escapeHtml(imageAltText.length > 50 ? imageAltText.substring(0, 50) + '...' : imageAltText)}"`;
       } else {
-        // No selected attributes present AND no visible text = FAILED
+        // No selected attributes present AND no visible text AND no image alt = FAILED
         passed = false;
       }
     }
