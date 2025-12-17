@@ -423,6 +423,8 @@ export const useLanguageStore = defineStore('language', () => {
       validationFailedReasonRole:
         'La validación falló porque este elemento con role no tiene un nombre accesible. Los elementos con roles deben tener aria-label o aria-labelledby.',
       attributeHighlighted: 'Atributo resaltado',
+      elementScreenshot: 'Captura del Elemento',
+      analyzedImage: 'Imagen Analizada',
       cancel: 'Cancelar',
       wcagGuidelines: 'Guías de Accesibilidad WCAG 2.2 AA',
       close: 'Cerrar',
