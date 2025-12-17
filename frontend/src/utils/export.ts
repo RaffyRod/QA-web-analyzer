@@ -2649,6 +2649,14 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       padding: 4px 8px;
       border-radius: 6px;
     }
+    .failed-attribute {
+      font-size: 0.8rem;
+      color: #991b1b;
+      font-weight: 600;
+      background: #fee2e2;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
     .attribute-status {
       font-size: 0.75rem;
       color: #64748b;
