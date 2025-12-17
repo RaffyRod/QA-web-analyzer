@@ -1,8 +1,8 @@
-# Pull Request Summary: Enhanced Report Export Feature
+# Pull Request Summary: Enhanced HTML Report Export with Attribute Highlighting and Interactive Filters
 
 ## Overview
 
-This PR introduces a comprehensive enhancement to the report export functionality, adding HTML export capability alongside the existing PDF export, with improved formatting, validation display, and better user experience.
+This PR introduces comprehensive enhancements to the HTML report export functionality, including attribute highlighting in HTML code, detailed validation explanations in multiple languages, and interactive filtering capabilities. These improvements make HTML reports more informative, user-friendly, and aligned with the application's accessibility analysis goals.
 
 ## Key Changes
 
@@ -35,6 +35,17 @@ This PR introduces a comprehensive enhancement to the report export functionalit
   - Left-aligned HTML code display
   - Expand/collapse toggle for code snippets longer than 200 characters
   - Validation status integrated into code section header
+  - **Attribute Highlighting**: Found attributes are visually highlighted in the HTML code with yellow background, bold text, and border for easy identification
+  - **Validation Explanations**: Detailed, context-specific explanations in English and Spanish explaining why elements passed or failed validation:
+    - Images: Explains alt text requirements per WCAG 2.2 AA
+    - Links: Explains accessible name requirements
+    - Buttons: Explains accessible name requirements
+    - Inputs: Explains accessible name and label requirements
+    - Roles: Explains accessible name requirements for elements with roles
+- **Interactive Filters**:
+  - Functional "Show Missing" and "Show Has Attributes" checkboxes in HTML reports
+  - Real-time filtering of result items based on validation status
+  - Filters persist user selections and apply automatically on page load
 
 ### 3. UI/UX Improvements
 
@@ -68,10 +79,11 @@ This PR introduces a comprehensive enhancement to the report export functionalit
 
 - `frontend/src/components/Results/Results.vue` - Updated export button and handler
 - `frontend/src/components/ExportModal.vue` - Added report format selection
-- `frontend/src/utils/export.ts` - Added HTML export functionality and helper functions
-- `frontend/src/stores/language.ts` - Added new translation keys
+- `frontend/src/utils/export.ts` - Added HTML export functionality, attribute highlighting, validation explanations, and interactive filters
+- `frontend/src/stores/language.ts` - Added new translation keys for validation explanations
 - `public/css/results.css` - Updated export button styles for theme adaptation
 - `public/css/base.css` - Fixed code snippet visibility across themes
+- `README.md` / `README.es.md` - Updated documentation with new features
 
 ### New Translation Keys
 
@@ -85,15 +97,26 @@ This PR introduces a comprehensive enhancement to the report export functionalit
 - `passed` / `failed` - Validation status labels
 - `present` / `missing` - Attribute status labels
 - `linkText`, `buttonText`, `inputText`, `elementText` - Descriptive text attribute labels
+- `validationPassedReason` / `validationFailedReason` - General validation explanations
+- `validationPassedReasonImage` / `validationFailedReasonImage` - Image-specific explanations
+- `validationPassedReasonLink` / `validationFailedReasonLink` - Link-specific explanations
+- `validationPassedReasonButton` / `validationFailedReasonButton` - Button-specific explanations
+- `validationPassedReasonInput` / `validationFailedReasonInput` - Input-specific explanations
+- `validationPassedReasonRole` / `validationFailedReasonRole` - Role-specific explanations
+- `attributeHighlighted` - Tooltip text for highlighted attributes
 
 ## Benefits
 
 1. **Flexibility**: Users can choose their preferred export format (PDF, HTML, or both)
 2. **Better Readability**: Formatted HTML code with expand/collapse makes code review easier
 3. **Complete Information**: Validation status and attribute details clearly displayed
-4. **Consistency**: HTML export matches the application's visual design
-5. **Accessibility**: Clear labels and status indicators improve report usability
-6. **Theme Consistency**: Export button adapts to user's theme preference
+4. **Visual Clarity**: Highlighted attributes make it easy to identify which attributes were found in the code
+5. **Educational Value**: Detailed explanations help users understand WCAG 2.2 AA requirements and why elements pass or fail
+6. **Interactive Filtering**: Users can dynamically filter results to focus on specific validation statuses
+7. **Multilingual Support**: All explanations and labels available in English and Spanish
+8. **Consistency**: HTML export matches the application's visual design
+9. **Accessibility**: Clear labels and status indicators improve report usability
+10. **Theme Consistency**: Export button adapts to user's theme preference
 
 ## Testing
 
@@ -105,7 +128,13 @@ This PR introduces a comprehensive enhancement to the report export functionalit
 - ✅ Export modal shows correct element selections
 - ✅ HTML code formatting and expand/collapse functionality
 - ✅ Validation status displays correctly
-- ✅ Multilingual support (English/Spanish)
+- ✅ **Attribute highlighting works correctly in HTML code**
+- ✅ **Validation explanations display correctly for all element types**
+- ✅ **Explanations are context-specific and accurate**
+- ✅ **Interactive filters work correctly (Show Missing/Show Has Attributes)**
+- ✅ **Filters apply correctly on page load**
+- ✅ **Filters update results in real-time when toggled**
+- ✅ Multilingual support (English/Spanish) for all new features
 - ✅ Code snippet visibility in all themes
 
 ## Breaking Changes
