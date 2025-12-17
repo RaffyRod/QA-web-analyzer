@@ -1922,6 +1922,12 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
 
     const statusText = passed ? '✓ PASSED' : '✗ FAILED';
 
+    // ENSURE: If passed but no reason found, provide a default explanation
+    if (passed && !passedAttribute) {
+      // This should never happen, but if it does, provide a clear message
+      passedAttribute = t('noAttributesRequired');
+    }
+
     // Determine which attribute to highlight in HTML code
     let attributeToHighlight = '';
     let highlightMissing = false;
