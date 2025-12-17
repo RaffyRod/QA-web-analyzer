@@ -172,6 +172,8 @@ export const useLanguageStore = defineStore('language', () => {
       validationFailedReasonRole:
         'Validation failed because this element with role is missing an accessible name. Elements with roles must have aria-label or aria-labelledby.',
       attributeHighlighted: 'Highlighted attribute',
+      elementScreenshot: 'Element Screenshot',
+      analyzedImage: 'Analyzed Image',
       cancel: 'Cancel',
       wcagGuidelines: 'WCAG 2.2 AA Accessibility Guidelines',
       close: 'Close',

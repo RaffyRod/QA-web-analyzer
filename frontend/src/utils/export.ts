@@ -2014,9 +2014,17 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     html += `</div>`;
 
     // Screenshot - Always show if available (like in the app)
+    // Screenshots are always included in HTML export to provide visual context
     if (item.screenshot) {
       html += `<div class="screenshot-container">`;
+      html += `<div class="screenshot-label">${t('elementScreenshot') || 'Element Screenshot'}</div>`;
       html += `<img src="${escapeHtml(String(item.screenshot))}" alt="Element screenshot" class="element-screenshot" />`;
+      html += `</div>`;
+    } else if (itemType === 'image' && elem.src) {
+      // For image elements, also show the actual image being analyzed
+      html += `<div class="screenshot-container">`;
+      html += `<div class="screenshot-label">${t('analyzedImage') || 'Analyzed Image'}</div>`;
+      html += `<img src="${escapeHtml(String(elem.src))}" alt="Analyzed image" class="element-screenshot" />`;
       html += `</div>`;
     }
 
@@ -2305,19 +2313,33 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       color: #991b1b;
     }
     .screenshot-container {
-      margin-bottom: 12px;
-      border-radius: 6px;
-      overflow: hidden;
+      margin-bottom: 16px;
+      margin-top: 12px;
+      border-radius: 8px;
+      overflow: visible;
+      background: #f8f9fa;
+      padding: 12px;
+      border: 2px solid #e0e5ec;
+      box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+    }
+    .screenshot-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .element-screenshot {
       max-width: 100%;
-      max-height: 400px;
+      max-height: 500px;
       height: auto;
       display: block;
       border: 2px solid #cbd5e1;
       border-radius: 8px;
-      margin-top: 8px;
       box-shadow: 4px 4px 8px #b8bec4, -4px -4px 8px #ffffff;
+      background: #ffffff;
+      padding: 4px;
     }
     .attributes-grid {
       display: grid;
