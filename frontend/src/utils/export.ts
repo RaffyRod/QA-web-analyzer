@@ -1899,6 +1899,17 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         attributeToHighlight = 'label';
       } else if (passedAttribute.includes('title:')) {
         attributeToHighlight = 'title';
+      } else if (passedAttribute.includes(t('visibleText'))) {
+        // For visible text, try to find aria-label if it exists in the element
+        // This helps highlight the attribute even if visible text was the primary reason
+        if (elem.ariaLabel && String(elem.ariaLabel || '').trim() !== '') {
+          attributeToHighlight = 'aria-label';
+        } else if (elem.ariaLabelledby && String(elem.ariaLabelledby || '').trim() !== '') {
+          attributeToHighlight = 'aria-labelledby';
+        } else if (itemType === 'link' && elem.title && String(elem.title || '').trim() !== '') {
+          attributeToHighlight = 'title';
+        }
+        // If none found, attributeToHighlight will remain empty (no highlighting for visible text only)
       }
     } else {
       // For failed, we want to show what's missing
