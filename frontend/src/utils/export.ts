@@ -2825,6 +2825,21 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     .explanation-text.not-validated {
       color: #92400e;
     }
+    .wcag-note {
+      margin-top: 12px;
+      padding: 12px;
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+    }
+    .wcag-note-text {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #1e40af;
+      font-weight: 500;
+      line-height: 1.5;
+    }
     .no-results {
       text-align: center;
       color: #64748b;
