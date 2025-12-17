@@ -1833,13 +1833,8 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         analysisOptions.checkAriaLabel === true || analysisOptions.checkAriaLabelledby === true;
     }
 
-    // Special case: Links and buttons with visible text are always valid per WCAG
-    // Even if no attributes are selected, visible text is a valid accessible name
-    const hasVisibleText = item.text && String(item.text || '').trim() !== '';
-    const canPassWithVisibleText = (itemType === 'link' || itemType === 'button') && hasVisibleText;
-
-    // If no attributes are selected AND element can't pass with visible text, return "not validated"
-    if (!hasAttributesSelected && !canPassWithVisibleText) {
+    // If no attributes are selected, return "not validated"
+    if (!hasAttributesSelected) {
       return {
         status: '⚠ NOT VALIDATED',
         passed: false,
@@ -1852,12 +1847,12 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     }
 
     // STRICT VALIDATION: Only evaluate attributes that were selected by the user
-    // Follow WCAG rules where applicable (e.g., for images: alt, aria-label, or aria-labelledby are all valid)
+    // Pass ONLY if the selected attribute(s) are present, fail otherwise
     let passed = false;
     let passedAttribute = '';
 
     if (itemType === 'image') {
-      // WCAG 2.2 AA Rule: Images must have alt, aria-label, OR aria-labelledby
+      // For images: alt, aria-label, or aria-labelledby are all valid alternative text methods
       // If checkAltText is selected, verify at least one of these exists
       if (analysisOptions.checkAltText) {
         const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
@@ -1865,7 +1860,7 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         const hasAriaLabelledby =
           elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
 
-        // Pass if at least one alternative text method exists (WCAG rule)
+        // Pass if at least one alternative text method exists
         passed = hasAlt || hasAriaLabel || hasAriaLabelledby;
 
         if (passed) {
@@ -1881,32 +1876,9 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       }
     } else {
       // For links, buttons, inputs, roles: Only check selected attributes
-      // WCAG Rule: Links and buttons can have accessible name via:
-      // - aria-label (if checked)
-      // - aria-labelledby (if checked)
-      // - title (for links only, if checked)
-      // - visible text (always valid per WCAG)
-      // - label element (for inputs only, if checked)
-
-      const hasVisibleText = item.text && String(item.text || '').trim() !== '';
+      // Pass ONLY if the selected attribute is present
       const selectedAttributes: string[] = [];
       const presentAttributes: string[] = [];
-
-      // WCAG Rule: If a link contains only an image, the alt text of the image becomes the accessible name of the link
-      // Check if link contains only an image with alt text
-      let imageAltText = '';
-      if (itemType === 'link' && !hasVisibleText && item.outerHTML) {
-        const htmlContent = String(item.outerHTML);
-        // Check if link contains an <img> tag
-        const imgMatch = htmlContent.match(/<img[^>]*>/i);
-        if (imgMatch) {
-          // Extract alt attribute from the image
-          const altMatch = imgMatch[0].match(/alt\s*=\s*["']([^"']*)["']/i);
-          if (altMatch && altMatch[1] && altMatch[1].trim() !== '') {
-            imageAltText = altMatch[1].trim();
-          }
-        }
-      }
 
       // Check which attributes are selected and which are present
       if (analysisOptions.checkAriaLabel) {
@@ -1934,14 +1906,8 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         }
       }
 
-      // Determine if element passes:
-      // 1. If any selected attribute is present, it passes
-      // 2. OR if visible text exists (WCAG rule: visible text is always valid accessible name)
-      // 3. OR if link contains image with alt text (WCAG rule: image alt becomes link accessible name)
-      // 4. Otherwise, it fails
-
+      // STRICT: Pass ONLY if at least one selected attribute is present
       if (presentAttributes.length > 0) {
-        // At least one selected attribute is present
         passed = true;
         // Report the first found attribute (priority order)
         if (presentAttributes.includes('aria-label')) {
@@ -1953,19 +1919,8 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         } else if (presentAttributes.includes('label')) {
           passedAttribute = `<label>: "${escapeHtml(String(elem.label))}"`;
         }
-      } else if (hasVisibleText) {
-        // WCAG Rule: Visible text is always a valid accessible name
-        // Element passes because it has visible text, even if selected attributes are missing
-        passed = true;
-        const textContent = String(item.text).trim();
-        passedAttribute = `${t('visibleText')}: "${escapeHtml(textContent.length > 50 ? textContent.substring(0, 50) + '...' : textContent)}"`;
-      } else if (imageAltText) {
-        // WCAG Rule: If a link contains only an image, the alt text of the image becomes the accessible name
-        // Link passes because the image has alt text, which becomes the link's accessible name
-        passed = true;
-        passedAttribute = `Image alt text: "${escapeHtml(imageAltText.length > 50 ? imageAltText.substring(0, 50) + '...' : imageAltText)}"`;
       } else {
-        // No selected attributes present AND no visible text AND no image alt = FAILED
+        // No selected attributes present = FAILED
         passed = false;
       }
     }
@@ -2128,22 +2083,9 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
           }
         }
 
-        // Check if element has visible text (WCAG rule: visible text is always valid)
-        const hasVisibleText = item.text && String(item.text || '').trim() !== '';
-
-        // If selected attributes are missing AND no visible text, it fails
-        if (missingSelectedAttrs.length > 0 && !hasVisibleText) {
+        // STRICT: If selected attributes are missing, it fails
+        if (missingSelectedAttrs.length > 0) {
           failedReasons.push(`Missing selected attributes: ${missingSelectedAttrs.join(', ')}`);
-          // Also note that visible text is missing (WCAG fallback)
-          if (itemType === 'link' || itemType === 'button') {
-            failedReasons.push('visible text missing');
-          }
-        } else if (missingSelectedAttrs.length > 0) {
-          // Selected attributes are missing, but visible text exists
-          // Note: This should not happen if validation logic is correct, but include for clarity
-          failedReasons.push(
-            `Missing selected attributes: ${missingSelectedAttrs.join(', ')} (but has visible text per WCAG)`
-          );
         }
       }
 
@@ -2406,6 +2348,16 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       ) {
         html += `<div class="wcag-note">`;
         html += `<p class="wcag-note-text">${escapeHtml(t('wcagVisibleTextNote'))}</p>`;
+        html += `</div>`;
+      }
+      // Add WCAG note if link passed because image has alt text
+      if (
+        validation.passed &&
+        validation.passedAttribute &&
+        validation.passedAttribute.includes('Image alt text:')
+      ) {
+        html += `<div class="wcag-note">`;
+        html += `<p class="wcag-note-text">${escapeHtml(t('wcagImageAltInLinkNote'))}</p>`;
         html += `</div>`;
       }
       html += `</div>`;

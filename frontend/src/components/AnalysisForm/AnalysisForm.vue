@@ -554,6 +554,83 @@ function removeSavedUrl(urlToRemove: string) {
   flex-shrink: 0;
 }
 
+.wcag-mode-toggle {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.wcag-mode-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-primary, #1e293b);
+  font-size: 0.9rem;
+  margin: 0;
+  padding: 10px 16px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  box-shadow: var(--shadow, 0 1px 3px rgba(0, 0, 0, 0.05));
+  transition: all 0.3s ease;
+  height: 44px;
+  white-space: nowrap;
+}
+
+.wcag-mode-label:hover {
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: var(--shadow-lg, 0 2px 6px rgba(0, 0, 0, 0.1));
+  transform: translateY(-1px);
+}
+
+.wcag-mode-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--primary-color, #3b82f6);
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.wcag-mode-text {
+  user-select: none;
+  color: var(--text-primary, #1e293b);
+}
+
+.wcag-mode-hint-icon {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  cursor: help;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.wcag-mode-hint-icon:hover {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .wcag-mode-label {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    height: 40px;
+    gap: 6px;
+  }
+  
+  .wcag-mode-label input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .wcag-mode-hint-icon {
+    font-size: 0.75rem;
+  }
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

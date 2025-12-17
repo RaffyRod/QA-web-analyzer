@@ -134,6 +134,7 @@ QA Web Analyzer es una **herramienta web** que analiza páginas web en busca de 
 - ✅ **Explicaciones de Validación**: Explicaciones detalladas en ambos idiomas (Inglés/Español) que explican por qué los elementos pasaron o fallaron la validación, con mensajes específicos según el contexto para imágenes, enlaces, botones, inputs y roles
 - ✅ **Filtros Interactivos en Reporte HTML**: Los filtros "Mostrar Faltantes" y "Mostrar con Atributos" ahora son funcionales en las exportaciones HTML, permitiendo a los usuarios filtrar resultados dinámicamente
 - ✅ **Estado No Validado**: Cuando no se seleccionan atributos para validación, los elementos ahora muestran el estado "⚠ NO VALIDADO" en lugar de mostrar incorrectamente "PASÓ", con mensajes claros en múltiples idiomas que explican por qué se omitió la validación
+- ✅ **Modo de Validación Estricta**: Lógica de validación simplificada - los elementos pasan SOLO si tienen el(los) atributo(s) seleccionado(s), y fallan si no lo tienen. Sin reglas de respaldo WCAG (texto visible, alt text de imágenes en enlaces). La validación ahora se basa estrictamente en los atributos seleccionados por el usuario
 
 ## 🎯 Mejoras Recientes
 

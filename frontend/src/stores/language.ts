@@ -30,6 +30,9 @@ export const useLanguageStore = defineStore('language', () => {
       analyzeBtn: 'Analyze',
       analyzing: '🔍 Analyzing page...',
       analysisOptions: 'Analysis Options',
+      fullWcagMode: 'Full WCAG Mode',
+      fullWcagModeHint:
+        'When enabled, applies WCAG rules (visible text, image alt in links). When disabled, only validates selected attributes.',
       elementsToCheck: 'Elements to Check',
       attributesToCheck: 'Attributes to Check',
       images: 'Images',
