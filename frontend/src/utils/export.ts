@@ -1833,8 +1833,13 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         analysisOptions.checkAriaLabel === true || analysisOptions.checkAriaLabelledby === true;
     }
 
-    // If no attributes are selected, return "not validated" status
-    if (!hasAttributesSelected) {
+    // Special case: Links and buttons with visible text are always valid per WCAG
+    // Even if no attributes are selected, visible text is a valid accessible name
+    const hasVisibleText = item.text && String(item.text || '').trim() !== '';
+    const canPassWithVisibleText = (itemType === 'link' || itemType === 'button') && hasVisibleText;
+
+    // If no attributes are selected AND element can't pass with visible text, return "not validated"
+    if (!hasAttributesSelected && !canPassWithVisibleText) {
       return {
         status: '⚠ NOT VALIDATED',
         passed: false,
