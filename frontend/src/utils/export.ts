@@ -1833,8 +1833,11 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     } else {
       passed = item.hasAccessibility === true;
       if (passed) {
-        // Find which attribute made it pass - check in priority order
-        // For links and buttons, check aria-label first (if checked)
+        // STRICT DETECTION: Only report attributes that actually exist and made the element pass
+        // Check if element has visible text
+        const hasVisibleText = item.text && String(item.text || '').trim() !== '';
+
+        // Priority 1: Check aria-label (must be checked AND present)
         if (
           (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
           analysisOptions.checkAriaLabel &&
@@ -1842,40 +1845,76 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
           String(elem.ariaLabel || '').trim() !== ''
         ) {
           passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
-        } else if (
+        }
+        // Priority 2: Check aria-labelledby (must be checked AND present)
+        else if (
+          !passedAttribute &&
           (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
           analysisOptions.checkAriaLabelledby &&
           elem.ariaLabelledby !== null &&
           String(elem.ariaLabelledby || '').trim() !== ''
         ) {
           passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
-        } else if (
+        }
+        // Priority 3: For links, check title (must be checked AND present)
+        else if (
+          !passedAttribute &&
           itemType === 'link' &&
           analysisOptions.checkTitle &&
           elem.title &&
           String(elem.title || '').trim() !== ''
         ) {
           passedAttribute = `title: "${escapeHtml(String(elem.title))}"`;
-        } else if (itemType === 'input' && analysisOptions.checkLabels && elem.label) {
-          passedAttribute = `<label>: "${escapeHtml(String(elem.label))}"`;
-        } else if (
-          (itemType === 'link' || itemType === 'button') &&
-          item.text &&
-          String(item.text || '').trim() !== ''
+        }
+        // Priority 4: For inputs, check label (must be checked AND present)
+        else if (
+          !passedAttribute &&
+          itemType === 'input' &&
+          analysisOptions.checkLabels &&
+          elem.label &&
+          String(elem.label || '').trim() !== ''
         ) {
-          // If it passed and has visible text, that's what made it pass
+          passedAttribute = `<label>: "${escapeHtml(String(elem.label))}"`;
+        }
+        // Priority 5: Check visible text (only if no checked attributes found)
+        else if (!passedAttribute && hasVisibleText) {
           const textContent = String(item.text).trim();
           passedAttribute = `${t('visibleText')}: "${escapeHtml(textContent.length > 50 ? textContent.substring(0, 50) + '...' : textContent)}"`;
-        } else {
-          // Fallback: check if any accessibility attribute exists (even if not explicitly checked)
-          if (elem.ariaLabel && String(elem.ariaLabel || '').trim() !== '') {
-            passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
-          } else if (elem.ariaLabelledby && String(elem.ariaLabelledby || '').trim() !== '') {
-            passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
-          } else if (itemType === 'link' && elem.title && String(elem.title || '').trim() !== '') {
-            passedAttribute = `title: "${escapeHtml(String(elem.title))}"`;
-          } else {
-            passedAttribute = 'Accessibility attributes present';
+        }
+        // Priority 6: If element passed but we haven't found a reason, check if attributes exist (even if not checked)
+        // This handles cases where the backend determined accessibility but we need to identify the attribute
+        else if (!passedAttribute) {
+          // Check aria-label (exists but not checked)
+          if (
+            (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
+            elem.ariaLabel !== null &&
+            String(elem.ariaLabel || '').trim() !== ''
+          ) {
+            passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}" (not checked in options)`;
+          }
+          // Check aria-labelledby (exists but not checked)
+          else if (
+            (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
+            elem.ariaLabelledby !== null &&
+            String(elem.ariaLabelledby || '').trim() !== ''
+          ) {
+            passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}" (not checked in options)`;
+          }
+          // Check title for links (exists but not checked)
+          else if (itemType === 'link' && elem.title && String(elem.title || '').trim() !== '') {
+            passedAttribute = `title: "${escapeHtml(String(elem.title))}" (not checked in options)`;
+          }
+          // Check aria-describedby for buttons (exists but not checked)
+          else if (
+            itemType === 'button' &&
+            elem.ariaDescribedby &&
+            String(elem.ariaDescribedby || '').trim() !== ''
+          ) {
+            passedAttribute = `aria-describedby: "${escapeHtml(String(elem.ariaDescribedby))}" (not checked in options)`;
+          }
+          // If truly no attributes and no text, it passed because no attributes were required
+          else {
+            passedAttribute = t('noAttributesRequired');
           }
         }
       }

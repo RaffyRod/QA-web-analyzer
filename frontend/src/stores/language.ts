@@ -175,6 +175,8 @@ export const useLanguageStore = defineStore('language', () => {
       elementScreenshot: 'Element Screenshot',
       analyzedImage: 'Analyzed Image',
       visibleText: 'Visible Text',
+      noAttributesRequired:
+        'No accessibility attributes required (validation passed because no attributes were checked in analysis options)',
       cancel: 'Cancel',
       wcagGuidelines: 'WCAG 2.2 AA Accessibility Guidelines',
       close: 'Close',
@@ -427,6 +429,8 @@ export const useLanguageStore = defineStore('language', () => {
       elementScreenshot: 'Captura del Elemento',
       analyzedImage: 'Imagen Analizada',
       visibleText: 'Texto Visible',
+      noAttributesRequired:
+        'No se requieren atributos de accesibilidad (la validación pasó porque no se verificaron atributos en las opciones de análisis)',
       cancel: 'Cancelar',
       wcagGuidelines: 'Guías de Accesibilidad WCAG 2.2 AA',
       close: 'Cerrar',
