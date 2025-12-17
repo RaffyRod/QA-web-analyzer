@@ -2376,6 +2376,16 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
           : 'failed';
       html += `<div class="validation-explanation ${explanationClass}">`;
       html += `<p class="explanation-text ${explanationClass}">${escapeHtml(validation.explanation)}</p>`;
+      // Add WCAG note if element passed because of visible text
+      if (
+        validation.passed &&
+        validation.passedAttribute &&
+        validation.passedAttribute.includes(t('visibleText'))
+      ) {
+        html += `<div class="wcag-note">`;
+        html += `<p class="wcag-note-text">${escapeHtml(t('wcagVisibleTextNote'))}</p>`;
+        html += `</div>`;
+      }
       html += `</div>`;
       html += `<div class="code-content">`;
 
