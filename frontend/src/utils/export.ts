@@ -1833,25 +1833,50 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     } else {
       passed = item.hasAccessibility === true;
       if (passed) {
-        // Find which attribute made it pass
+        // Find which attribute made it pass - check in priority order
+        // For links and buttons, check aria-label first (if checked)
         if (
+          (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
           analysisOptions.checkAriaLabel &&
           elem.ariaLabel !== null &&
           String(elem.ariaLabel || '').trim() !== ''
         ) {
           passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
         } else if (
+          (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
           analysisOptions.checkAriaLabelledby &&
           elem.ariaLabelledby !== null &&
           String(elem.ariaLabelledby || '').trim() !== ''
         ) {
           passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+        } else if (
+          itemType === 'link' &&
+          analysisOptions.checkTitle &&
+          elem.title &&
+          String(elem.title || '').trim() !== ''
+        ) {
+          passedAttribute = `title: "${escapeHtml(String(elem.title))}"`;
         } else if (itemType === 'input' && analysisOptions.checkLabels && elem.label) {
           passedAttribute = `<label>: "${escapeHtml(String(elem.label))}"`;
-        } else if (itemType === 'link' && analysisOptions.checkTitle && elem.title) {
-          passedAttribute = `title: "${escapeHtml(String(elem.title))}"`;
+        } else if (
+          (itemType === 'link' || itemType === 'button') &&
+          item.text &&
+          String(item.text || '').trim() !== ''
+        ) {
+          // If it passed and has visible text, that's what made it pass
+          const textContent = String(item.text).trim();
+          passedAttribute = `${t('visibleText')}: "${escapeHtml(textContent.length > 50 ? textContent.substring(0, 50) + '...' : textContent)}"`;
         } else {
-          passedAttribute = 'Accessibility attributes present';
+          // Fallback: check if any accessibility attribute exists (even if not explicitly checked)
+          if (elem.ariaLabel && String(elem.ariaLabel || '').trim() !== '') {
+            passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
+          } else if (elem.ariaLabelledby && String(elem.ariaLabelledby || '').trim() !== '') {
+            passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+          } else if (itemType === 'link' && elem.title && String(elem.title || '').trim() !== '') {
+            passedAttribute = `title: "${escapeHtml(String(elem.title))}"`;
+          } else {
+            passedAttribute = 'Accessibility attributes present';
+          }
         }
       }
     }
