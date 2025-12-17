@@ -2027,8 +2027,77 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         // Fallback - should never reach here due to check above, but just in case
         details.push(`Reason: ${t('noAttributesRequired')}`);
       }
+    } else {
+      // ALWAYS show why it failed - build a specific reason
+      const failedReasons: string[] = [];
+
+      if (itemType === 'image') {
+        if (analysisOptions.checkAltText) {
+          const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
+          const hasAriaLabel =
+            elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+          const hasAriaLabelledby =
+            elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+          if (!hasAlt && !hasAriaLabel && !hasAriaLabelledby) {
+            failedReasons.push('Alt text missing');
+          }
+        }
+      } else {
+        // For links, buttons, inputs, roles
+        if (analysisOptions.checkAriaLabel) {
+          const hasAriaLabel =
+            elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+          if (!hasAriaLabel) {
+            failedReasons.push('aria-label missing');
+          }
+        }
+        if (analysisOptions.checkAriaLabelledby) {
+          const hasAriaLabelledby =
+            elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+          if (!hasAriaLabelledby) {
+            failedReasons.push('aria-labelledby missing');
+          }
+        }
+        if (itemType === 'link' && analysisOptions.checkTitle) {
+          const hasTitle = elem.title !== null && String(elem.title || '').trim() !== '';
+          if (!hasTitle) {
+            failedReasons.push('title missing');
+          }
+        }
+        if (itemType === 'input' && analysisOptions.checkLabels) {
+          const hasLabel = elem.label !== null && String(elem.label || '').trim() !== '';
+          if (!hasLabel) {
+            failedReasons.push('label missing');
+          }
+        }
+        // Check for visible text if it's a link or button
+        if ((itemType === 'link' || itemType === 'button') && !item.text) {
+          const hasAnyAria =
+            (analysisOptions.checkAriaLabel &&
+              elem.ariaLabel !== null &&
+              String(elem.ariaLabel || '').trim() !== '') ||
+            (analysisOptions.checkAriaLabelledby &&
+              elem.ariaLabelledby !== null &&
+              String(elem.ariaLabelledby || '').trim() !== '');
+          const hasTitle = itemType === 'link' && analysisOptions.checkTitle && elem.title;
+          if (!hasAnyAria && !hasTitle) {
+            failedReasons.push('visible text missing');
+          }
+        }
+      }
+
+      // Use missingAttrs if available, otherwise use failedReasons
+      if (missingAttrs.length > 0) {
+        details.push(`Missing: ${missingAttrs.join(', ')}`);
+      } else if (failedReasons.length > 0) {
+        details.push(`Failed: ${failedReasons.join(', ')}`);
+      } else {
+        // Fallback - should never happen, but provide a clear message
+        details.push('Validation failed: Required accessibility attributes are missing');
+      }
     }
 
+    // Add additional attribute status for context (for both passed and failed)
     if (itemType === 'image') {
       if (analysisOptions.checkAltText) {
         const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
@@ -2036,33 +2105,42 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         const hasAriaLabelledby =
           elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
         if (hasAlt || hasAriaLabel || hasAriaLabelledby) {
-          if (!passedAttribute) {
+          if (passed && !passedAttribute) {
             details.push(
               `Alt: ${hasAlt ? '✓ Present' : '✗ Missing (using aria-label/aria-labelledby)'}`
             );
           }
-        } else {
+        } else if (passed) {
+          // This shouldn't happen if validation is correct, but handle it
           details.push('Alt: ✗ MISSING');
         }
       }
     } else {
       if (analysisOptions.checkAriaLabel) {
         const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
-        if (!passedAttribute || !passedAttribute.includes('aria-label')) {
+        if (passed && (!passedAttribute || !passedAttribute.includes('aria-label'))) {
           details.push(`aria-label: ${hasAriaLabel ? '✓ Present' : '✗ Missing'}`);
         }
       }
       if (analysisOptions.checkAriaLabelledby) {
         const hasAriaLabelledby =
           elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
-        if (!passedAttribute || !passedAttribute.includes('aria-labelledby')) {
+        if (passed && (!passedAttribute || !passedAttribute.includes('aria-labelledby'))) {
           details.push(`aria-labelledby: ${hasAriaLabelledby ? '✓ Present' : '✗ Missing'}`);
         }
       }
-    }
-
-    if (missingAttrs.length > 0) {
-      details.push(`Missing: ${missingAttrs.join(', ')}`);
+      if (itemType === 'link' && analysisOptions.checkTitle) {
+        const hasTitle = elem.title !== null && String(elem.title || '').trim() !== '';
+        if (passed && (!passedAttribute || !passedAttribute.includes('title'))) {
+          details.push(`title: ${hasTitle ? '✓ Present' : '✗ Missing'}`);
+        }
+      }
+      if (itemType === 'input' && analysisOptions.checkLabels) {
+        const hasLabel = elem.label !== null && String(elem.label || '').trim() !== '';
+        if (passed && (!passedAttribute || !passedAttribute.includes('<label>'))) {
+          details.push(`label: ${hasLabel ? '✓ Present' : '✗ Missing'}`);
+        }
+      }
     }
 
     return {
@@ -2073,7 +2151,7 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
           ? details.join(' | ')
           : passed
             ? 'All required attributes present'
-            : 'Validation failed',
+            : 'Validation failed: Required accessibility attributes are missing',
       passedAttribute: passedAttribute,
       explanation: explanation,
       attributeToHighlight: attributeToHighlight,
@@ -2226,6 +2304,18 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         } else {
           // Fallback - show default message
           html += `<span class="passed-attribute">${escapeHtml(t('noAttributesRequired'))}</span>`;
+        }
+      } else {
+        // ALWAYS show why it failed - extract the failure reason from details
+        const failedReason = validation.details
+          .split('|')
+          .find((detail) => detail.includes('Failed:') || detail.includes('Missing:'))
+          ?.trim();
+        if (failedReason) {
+          html += `<span class="failed-attribute">${escapeHtml(failedReason)}</span>`;
+        } else {
+          // Fallback - show generic failure message
+          html += `<span class="failed-attribute">${escapeHtml('Required accessibility attributes are missing')}</span>`;
         }
       }
       html += `<span class="attribute-status">${escapeHtml(validation.details)}</span>`;
