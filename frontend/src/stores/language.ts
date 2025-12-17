@@ -177,6 +177,10 @@ export const useLanguageStore = defineStore('language', () => {
       visibleText: 'Visible Text',
       noAttributesRequired:
         'No accessibility attributes required (validation passed because no attributes were checked in analysis options)',
+      notValidatedNoAttributes:
+        'Not validated - No attributes selected for validation in analysis options',
+      notValidatedExplanation:
+        'This element was not validated because no accessibility attributes were selected for validation in the analysis options. Please select at least one attribute to check for this element type.',
       cancel: 'Cancel',
       wcagGuidelines: 'WCAG 2.2 AA Accessibility Guidelines',
       close: 'Close',
@@ -431,6 +435,10 @@ export const useLanguageStore = defineStore('language', () => {
       visibleText: 'Texto Visible',
       noAttributesRequired:
         'No se requieren atributos de accesibilidad (la validación pasó porque no se verificaron atributos en las opciones de análisis)',
+      notValidatedNoAttributes:
+        'No validado - No se seleccionaron atributos para validación en las opciones de análisis',
+      notValidatedExplanation:
+        'Este elemento no fue validado porque no se seleccionaron atributos de accesibilidad para validación en las opciones de análisis. Por favor, seleccione al menos un atributo para verificar para este tipo de elemento.',
       cancel: 'Cancelar',
       wcagGuidelines: 'Guías de Accesibilidad WCAG 2.2 AA',
       close: 'Cerrar',

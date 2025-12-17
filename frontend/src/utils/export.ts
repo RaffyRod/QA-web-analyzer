@@ -1811,6 +1811,41 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     const elem = item.originalData;
     const missingAttrs = item.missingAttributes || [];
 
+    // Check if any attributes are selected for validation for this element type
+    let hasAttributesSelected = false;
+    if (itemType === 'image') {
+      hasAttributesSelected = analysisOptions.checkAltText === true;
+    } else if (itemType === 'link') {
+      hasAttributesSelected =
+        analysisOptions.checkAriaLabel === true ||
+        analysisOptions.checkAriaLabelledby === true ||
+        analysisOptions.checkTitle === true;
+    } else if (itemType === 'button') {
+      hasAttributesSelected =
+        analysisOptions.checkAriaLabel === true || analysisOptions.checkAriaLabelledby === true;
+    } else if (itemType === 'input') {
+      hasAttributesSelected =
+        analysisOptions.checkAriaLabel === true ||
+        analysisOptions.checkAriaLabelledby === true ||
+        analysisOptions.checkLabels === true;
+    } else if (itemType === 'role') {
+      hasAttributesSelected =
+        analysisOptions.checkAriaLabel === true || analysisOptions.checkAriaLabelledby === true;
+    }
+
+    // If no attributes are selected, return "not validated" status
+    if (!hasAttributesSelected) {
+      return {
+        status: '⚠ NOT VALIDATED',
+        passed: false,
+        details: t('notValidatedNoAttributes'),
+        passedAttribute: '',
+        explanation: t('notValidatedExplanation'),
+        attributeToHighlight: '',
+        highlightMissing: false,
+      };
+    }
+
     // Determine if element passes validation and which attribute made it pass
     let passed = false;
     let passedAttribute = '';
@@ -2296,9 +2331,18 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       html += `<div class="code-header">`;
       html += `<span>${t('htmlCode')}</span>`;
       html += `<div class="validation-status">`;
-      html += `<span class="validation-badge ${validation.passed ? 'validation-passed' : 'validation-failed'}">${escapeHtml(validation.status)}</span>`;
-      // ALWAYS show the reason why it passed or failed
-      if (validation.passed) {
+      // Check if it's "not validated" status
+      const isNotValidated = validation.status.includes('NOT VALIDATED');
+      const badgeClass = isNotValidated
+        ? 'validation-not-validated'
+        : validation.passed
+          ? 'validation-passed'
+          : 'validation-failed';
+      html += `<span class="validation-badge ${badgeClass}">${escapeHtml(validation.status)}</span>`;
+      // ALWAYS show the reason why it passed, failed, or was not validated
+      if (isNotValidated) {
+        html += `<span class="not-validated-attribute">${escapeHtml(validation.details)}</span>`;
+      } else if (validation.passed) {
         if (validation.passedAttribute) {
           html += `<span class="passed-attribute">${escapeHtml(validation.passedAttribute)}</span>`;
         } else {
@@ -2321,8 +2365,13 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       html += `<span class="attribute-status">${escapeHtml(validation.details)}</span>`;
       html += `</div>`;
       html += `</div>`;
-      html += `<div class="validation-explanation ${validation.passed ? 'passed' : 'failed'}">`;
-      html += `<p class="explanation-text ${validation.passed ? 'passed' : 'failed'}">${escapeHtml(validation.explanation)}</p>`;
+      const explanationClass = isNotValidated
+        ? 'not-validated'
+        : validation.passed
+          ? 'passed'
+          : 'failed';
+      html += `<div class="validation-explanation ${explanationClass}">`;
+      html += `<p class="explanation-text ${explanationClass}">${escapeHtml(validation.explanation)}</p>`;
       html += `</div>`;
       html += `<div class="code-content">`;
 
@@ -2641,6 +2690,10 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       background: #fee2e2;
       color: #991b1b;
     }
+    .validation-badge.validation-not-validated {
+      background: #fef3c7;
+      color: #92400e;
+    }
     .passed-attribute {
       font-size: 0.8rem;
       color: #065f46;
@@ -2654,6 +2707,14 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       color: #991b1b;
       font-weight: 600;
       background: #fee2e2;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .not-validated-attribute {
+      font-size: 0.8rem;
+      color: #92400e;
+      font-weight: 600;
+      background: #fef3c7;
       padding: 4px 8px;
       border-radius: 6px;
     }
@@ -2732,6 +2793,10 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       background: #fee2e2;
       border-left: 3px solid #ef4444;
     }
+    .validation-explanation.not-validated {
+      background: #fef3c7;
+      border-left: 3px solid #f59e0b;
+    }
     .explanation-text {
       font-size: 0.85rem;
       margin: 0;
@@ -2742,6 +2807,9 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     }
     .explanation-text.failed {
       color: #991b1b;
+    }
+    .explanation-text.not-validated {
+      color: #92400e;
     }
     .no-results {
       text-align: center;
