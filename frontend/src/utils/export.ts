@@ -1846,112 +1846,100 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       };
     }
 
-    // Determine if element passes validation and which attribute made it pass
+    // STRICT VALIDATION: Only evaluate attributes that were selected by the user
+    // Follow WCAG rules where applicable (e.g., for images: alt, aria-label, or aria-labelledby are all valid)
     let passed = false;
     let passedAttribute = '';
 
     if (itemType === 'image') {
-      passed = elem.hasAlt === true;
-      if (passed) {
+      // WCAG 2.2 AA Rule: Images must have alt, aria-label, OR aria-labelledby
+      // If checkAltText is selected, verify at least one of these exists
+      if (analysisOptions.checkAltText) {
         const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
         const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
         const hasAriaLabelledby =
           elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
-        if (hasAlt) {
-          passedAttribute = `Alt: "${escapeHtml(String(elem.alt))}"`;
-        } else if (hasAriaLabel) {
-          passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
-        } else if (hasAriaLabelledby) {
-          passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+
+        // Pass if at least one alternative text method exists (WCAG rule)
+        passed = hasAlt || hasAriaLabel || hasAriaLabelledby;
+
+        if (passed) {
+          // Report which one made it pass (priority: alt > aria-label > aria-labelledby)
+          if (hasAlt) {
+            passedAttribute = `Alt: "${escapeHtml(String(elem.alt))}"`;
+          } else if (hasAriaLabel) {
+            passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
+          } else if (hasAriaLabelledby) {
+            passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+          }
         }
       }
     } else {
-      passed = item.hasAccessibility === true;
-      if (passed) {
-        // STRICT DETECTION: Only report attributes that actually exist and made the element pass
-        // Check if element has visible text
-        const hasVisibleText = item.text && String(item.text || '').trim() !== '';
+      // For links, buttons, inputs, roles: Only check selected attributes
+      // WCAG Rule: Links and buttons can have accessible name via:
+      // - aria-label (if checked)
+      // - aria-labelledby (if checked)
+      // - title (for links only, if checked)
+      // - visible text (always valid per WCAG)
+      // - label element (for inputs only, if checked)
 
-        // Priority 1: Check aria-label (must be checked AND present)
-        if (
-          (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
-          analysisOptions.checkAriaLabel &&
-          elem.ariaLabel !== null &&
-          String(elem.ariaLabel || '').trim() !== ''
-        ) {
+      const hasVisibleText = item.text && String(item.text || '').trim() !== '';
+      const selectedAttributes: string[] = [];
+      const presentAttributes: string[] = [];
+
+      // Check which attributes are selected and which are present
+      if (analysisOptions.checkAriaLabel) {
+        selectedAttributes.push('aria-label');
+        if (elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '') {
+          presentAttributes.push('aria-label');
+        }
+      }
+      if (analysisOptions.checkAriaLabelledby) {
+        selectedAttributes.push('aria-labelledby');
+        if (elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '') {
+          presentAttributes.push('aria-labelledby');
+        }
+      }
+      if (itemType === 'link' && analysisOptions.checkTitle) {
+        selectedAttributes.push('title');
+        if (elem.title !== null && String(elem.title || '').trim() !== '') {
+          presentAttributes.push('title');
+        }
+      }
+      if (itemType === 'input' && analysisOptions.checkLabels) {
+        selectedAttributes.push('label');
+        if (elem.label !== null && String(elem.label || '').trim() !== '') {
+          presentAttributes.push('label');
+        }
+      }
+
+      // Determine if element passes:
+      // 1. If any selected attribute is present, it passes
+      // 2. OR if visible text exists (WCAG rule: visible text is always valid accessible name)
+      // 3. Otherwise, it fails
+
+      if (presentAttributes.length > 0) {
+        // At least one selected attribute is present
+        passed = true;
+        // Report the first found attribute (priority order)
+        if (presentAttributes.includes('aria-label')) {
           passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
-        }
-        // Priority 2: Check aria-labelledby (must be checked AND present)
-        else if (
-          !passedAttribute &&
-          (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
-          analysisOptions.checkAriaLabelledby &&
-          elem.ariaLabelledby !== null &&
-          String(elem.ariaLabelledby || '').trim() !== ''
-        ) {
+        } else if (presentAttributes.includes('aria-labelledby')) {
           passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
-        }
-        // Priority 3: For links, check title (must be checked AND present)
-        else if (
-          !passedAttribute &&
-          itemType === 'link' &&
-          analysisOptions.checkTitle &&
-          elem.title &&
-          String(elem.title || '').trim() !== ''
-        ) {
+        } else if (presentAttributes.includes('title')) {
           passedAttribute = `title: "${escapeHtml(String(elem.title))}"`;
-        }
-        // Priority 4: For inputs, check label (must be checked AND present)
-        else if (
-          !passedAttribute &&
-          itemType === 'input' &&
-          analysisOptions.checkLabels &&
-          elem.label &&
-          String(elem.label || '').trim() !== ''
-        ) {
+        } else if (presentAttributes.includes('label')) {
           passedAttribute = `<label>: "${escapeHtml(String(elem.label))}"`;
         }
-        // Priority 5: Check visible text (only if no checked attributes found)
-        else if (!passedAttribute && hasVisibleText) {
-          const textContent = String(item.text).trim();
-          passedAttribute = `${t('visibleText')}: "${escapeHtml(textContent.length > 50 ? textContent.substring(0, 50) + '...' : textContent)}"`;
-        }
-        // Priority 6: If element passed but we haven't found a reason, check if attributes exist (even if not checked)
-        // This handles cases where the backend determined accessibility but we need to identify the attribute
-        else if (!passedAttribute) {
-          // Check aria-label (exists but not checked)
-          if (
-            (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
-            elem.ariaLabel !== null &&
-            String(elem.ariaLabel || '').trim() !== ''
-          ) {
-            passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}" (not checked in options)`;
-          }
-          // Check aria-labelledby (exists but not checked)
-          else if (
-            (itemType === 'link' || itemType === 'button' || itemType === 'role') &&
-            elem.ariaLabelledby !== null &&
-            String(elem.ariaLabelledby || '').trim() !== ''
-          ) {
-            passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}" (not checked in options)`;
-          }
-          // Check title for links (exists but not checked)
-          else if (itemType === 'link' && elem.title && String(elem.title || '').trim() !== '') {
-            passedAttribute = `title: "${escapeHtml(String(elem.title))}" (not checked in options)`;
-          }
-          // Check aria-describedby for buttons (exists but not checked)
-          else if (
-            itemType === 'button' &&
-            elem.ariaDescribedby &&
-            String(elem.ariaDescribedby || '').trim() !== ''
-          ) {
-            passedAttribute = `aria-describedby: "${escapeHtml(String(elem.ariaDescribedby))}" (not checked in options)`;
-          }
-          // If truly no attributes and no text, it passed because no attributes were required
-          else {
-            passedAttribute = t('noAttributesRequired');
-          }
-        }
+      } else if (hasVisibleText) {
+        // WCAG Rule: Visible text is always a valid accessible name
+        // Element passes because it has visible text, even if selected attributes are missing
+        passed = true;
+        const textContent = String(item.text).trim();
+        passedAttribute = `${t('visibleText')}: "${escapeHtml(textContent.length > 50 ? textContent.substring(0, 50) + '...' : textContent)}"`;
+      } else {
+        // No selected attributes present AND no visible text = FAILED
+        passed = false;
       }
     }
 
@@ -2063,10 +2051,12 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         details.push(`Reason: ${t('noAttributesRequired')}`);
       }
     } else {
-      // ALWAYS show why it failed - build a specific reason
+      // ALWAYS show why it failed - build a specific reason based ONLY on selected attributes
       const failedReasons: string[] = [];
 
       if (itemType === 'image') {
+        // WCAG Rule: Images need alt, aria-label, OR aria-labelledby
+        // If checkAltText is selected and NONE of these exist, it fails
         if (analysisOptions.checkAltText) {
           const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
           const hasAriaLabel =
@@ -2074,58 +2064,67 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
           const hasAriaLabelledby =
             elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
           if (!hasAlt && !hasAriaLabel && !hasAriaLabelledby) {
-            failedReasons.push('Alt text missing');
+            failedReasons.push(
+              'Alt text missing (alt, aria-label, or aria-labelledby required per WCAG 2.2 AA)'
+            );
           }
         }
       } else {
-        // For links, buttons, inputs, roles
+        // For links, buttons, inputs, roles: Only check selected attributes
+        // Build list of what's missing based on what was selected
+        const missingSelectedAttrs: string[] = [];
+
         if (analysisOptions.checkAriaLabel) {
           const hasAriaLabel =
             elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
           if (!hasAriaLabel) {
-            failedReasons.push('aria-label missing');
+            missingSelectedAttrs.push('aria-label');
           }
         }
         if (analysisOptions.checkAriaLabelledby) {
           const hasAriaLabelledby =
             elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
           if (!hasAriaLabelledby) {
-            failedReasons.push('aria-labelledby missing');
+            missingSelectedAttrs.push('aria-labelledby');
           }
         }
         if (itemType === 'link' && analysisOptions.checkTitle) {
           const hasTitle = elem.title !== null && String(elem.title || '').trim() !== '';
           if (!hasTitle) {
-            failedReasons.push('title missing');
+            missingSelectedAttrs.push('title');
           }
         }
         if (itemType === 'input' && analysisOptions.checkLabels) {
           const hasLabel = elem.label !== null && String(elem.label || '').trim() !== '';
           if (!hasLabel) {
-            failedReasons.push('label missing');
+            missingSelectedAttrs.push('label');
           }
         }
-        // Check for visible text if it's a link or button
-        if ((itemType === 'link' || itemType === 'button') && !item.text) {
-          const hasAnyAria =
-            (analysisOptions.checkAriaLabel &&
-              elem.ariaLabel !== null &&
-              String(elem.ariaLabel || '').trim() !== '') ||
-            (analysisOptions.checkAriaLabelledby &&
-              elem.ariaLabelledby !== null &&
-              String(elem.ariaLabelledby || '').trim() !== '');
-          const hasTitle = itemType === 'link' && analysisOptions.checkTitle && elem.title;
-          if (!hasAnyAria && !hasTitle) {
+
+        // Check if element has visible text (WCAG rule: visible text is always valid)
+        const hasVisibleText = item.text && String(item.text || '').trim() !== '';
+
+        // If selected attributes are missing AND no visible text, it fails
+        if (missingSelectedAttrs.length > 0 && !hasVisibleText) {
+          failedReasons.push(`Missing selected attributes: ${missingSelectedAttrs.join(', ')}`);
+          // Also note that visible text is missing (WCAG fallback)
+          if (itemType === 'link' || itemType === 'button') {
             failedReasons.push('visible text missing');
           }
+        } else if (missingSelectedAttrs.length > 0) {
+          // Selected attributes are missing, but visible text exists
+          // Note: This should not happen if validation logic is correct, but include for clarity
+          failedReasons.push(
+            `Missing selected attributes: ${missingSelectedAttrs.join(', ')} (but has visible text per WCAG)`
+          );
         }
       }
 
-      // Use missingAttrs if available, otherwise use failedReasons
+      // Use missingAttrs from backend if available, otherwise use failedReasons
       if (missingAttrs.length > 0) {
         details.push(`Missing: ${missingAttrs.join(', ')}`);
       } else if (failedReasons.length > 0) {
-        details.push(`Failed: ${failedReasons.join(', ')}`);
+        details.push(`Failed: ${failedReasons.join(' | ')}`);
       } else {
         // Fallback - should never happen, but provide a clear message
         details.push('Validation failed: Required accessibility attributes are missing');
