@@ -2019,8 +2019,14 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     // Build details
     const details: string[] = [];
 
-    if (passed && passedAttribute) {
-      details.push(`Found: ${passedAttribute}`);
+    // ALWAYS show why it passed or failed
+    if (passed) {
+      if (passedAttribute) {
+        details.push(`Found: ${passedAttribute}`);
+      } else {
+        // Fallback - should never reach here due to check above, but just in case
+        details.push(`Reason: ${t('noAttributesRequired')}`);
+      }
     }
 
     if (itemType === 'image') {
@@ -2213,8 +2219,14 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       html += `<span>${t('htmlCode')}</span>`;
       html += `<div class="validation-status">`;
       html += `<span class="validation-badge ${validation.passed ? 'validation-passed' : 'validation-failed'}">${escapeHtml(validation.status)}</span>`;
-      if (validation.passed && validation.passedAttribute) {
-        html += `<span class="passed-attribute">${escapeHtml(validation.passedAttribute)}</span>`;
+      // ALWAYS show the reason why it passed or failed
+      if (validation.passed) {
+        if (validation.passedAttribute) {
+          html += `<span class="passed-attribute">${escapeHtml(validation.passedAttribute)}</span>`;
+        } else {
+          // Fallback - show default message
+          html += `<span class="passed-attribute">${escapeHtml(t('noAttributesRequired'))}</span>`;
+        }
       }
       html += `<span class="attribute-status">${escapeHtml(validation.details)}</span>`;
       html += `</div>`;
