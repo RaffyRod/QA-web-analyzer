@@ -1720,18 +1720,31 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       }
     }
 
-    // Now escape the HTML (this will escape everything except our span tags)
-    const escaped = escapeHtml(highlighted);
+    // Now escape the HTML (this will escape everything including our span tags)
+    let escaped = escapeHtml(highlighted);
 
-    // If we found a match, we need to unescape our span tags
+    // If we found a match, we need to unescape our span tags and their content
     if (foundMatch) {
-      // Unescape the span tags we added
-      return escaped
-        .replace(/&lt;span class="highlighted-attribute"/g, '<span class="highlighted-attribute"')
-        .replace(/&lt;\/span&gt;/g, '</span>')
-        .replace(/title="([^"]*)"/g, (match, title) => {
-          return `title="${escapeHtml(title)}"`;
-        });
+      // Use a more robust approach: find the escaped span tags and unescape them
+      // Pattern to match: &lt;span class="highlighted-attribute" title="..."&gt;...&lt;/span&gt;
+      const spanPattern =
+        /&lt;span class="highlighted-attribute" title="([^"]*)"&gt;([^&]*(?:&[^;]+;[^&]*)*)&lt;\/span&gt;/g;
+
+      escaped = escaped.replace(spanPattern, (match, title, content) => {
+        // Unescape the title and content
+        const unescapedTitle = title
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"');
+        const unescapedContent = content
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/&amp;/g, '&')
+          .replace(/&quot;/g, '"');
+
+        return `<span class="highlighted-attribute" title="${escapeHtml(unescapedTitle)}">${unescapedContent}</span>`;
+      });
     }
 
     // No match found, just return escaped HTML
