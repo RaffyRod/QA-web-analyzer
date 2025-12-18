@@ -518,13 +518,13 @@ watch(
 }
 
 .status-badge.passed {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-color, #10b981);
+  color: #ffffff;
 }
 
 .status-badge.failed {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--danger-color, #ef4444);
+  color: #ffffff;
 }
 
 .modal-footer {

@@ -418,6 +418,14 @@ export class AnalyzerService {
             if (opts.checkAriaDescribedby && !ariaDescribedby)
               missingAttributes.push('aria-describedby');
 
+            // If checkAltText is selected, require aria-label or aria-labelledby (accessible name)
+            // For strict validation, we only check attributes, not visible text
+            if (opts.checkAltText && !ariaLabel && !ariaLabelledby) {
+              missingAttributes.push(
+                'accessible name (aria-label or aria-labelledby required, equivalent to alt text for images)'
+              );
+            }
+
             if (
               opts.checkAriaHidden &&
               ariaHidden === 'true' &&
@@ -449,12 +457,35 @@ export class AnalyzerService {
 
             if (!hasFocusState && opts.checkFocusStates) missingAttributes.push('focus-state');
 
-            const hasAccessibility =
-              missingAttributes.length === 0 &&
-              (!!text ||
-                (opts.checkAriaLabel ? !!ariaLabel : true) ||
-                (opts.checkAriaLabelledby ? !!ariaLabelledby : true) ||
-                (opts.checkAriaDescribedby ? !!ariaDescribedby : true));
+            // STRICT VALIDATION: Only pass if selected attributes are present
+            // Check which attributes are selected for validation
+            const hasAriaLabelSelected = opts.checkAriaLabel === true;
+            const hasAriaLabelledbySelected = opts.checkAriaLabelledby === true;
+            const hasAriaDescribedbySelected = opts.checkAriaDescribedby === true;
+            const hasAltTextSelected = opts.checkAltText === true;
+            // If checkAltText is selected, it's equivalent to requiring accessible name for buttons
+            const hasAnyAttributeSelected =
+              hasAriaLabelSelected ||
+              hasAriaLabelledbySelected ||
+              hasAriaDescribedbySelected ||
+              hasAltTextSelected;
+
+            // If no attributes are selected, hasAccessibility should be false (will be handled as "not validated" in frontend)
+            // If attributes are selected, only pass if at least one selected attribute is present AND no missing attributes
+            let hasAccessibility = false;
+            if (hasAnyAttributeSelected) {
+              // Pass only if at least one selected attribute is present AND no missing attributes
+              const hasSelectedAttribute =
+                (hasAriaLabelSelected && !!ariaLabel) ||
+                (hasAriaLabelledbySelected && !!ariaLabelledby) ||
+                (hasAriaDescribedbySelected && !!ariaDescribedby) ||
+                // If checkAltText is selected, require ONLY aria-label or aria-labelledby (strict validation, no visible text)
+                (hasAltTextSelected && (!!ariaLabel || !!ariaLabelledby));
+              hasAccessibility = missingAttributes.length === 0 && hasSelectedAttribute;
+            } else {
+              // No attributes selected - mark as not accessible (will show as "not validated" in frontend)
+              hasAccessibility = false;
+            }
 
             analysis.buttons.push({
               index: i + 1,

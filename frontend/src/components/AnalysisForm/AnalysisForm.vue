@@ -396,6 +396,9 @@ async function handleAnalyze() {
     return
   }
 
+  // Clear previous results when starting a new analysis
+  analysisStore.reset()
+
   await analysisStore.analyze(url.value)
 }
 

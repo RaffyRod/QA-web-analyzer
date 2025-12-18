@@ -51,6 +51,14 @@ const hasAttributes = computed(() => {
   if (props.type === 'image') {
     return props.item.hasAlt === true
   }
+  // For buttons with checkAltText selected, validate strictly: only pass if hasAccessibility is true
+  // AND if checkAltText is selected, ensure it has aria-label or aria-labelledby (not just visible text)
+  if (props.type === 'button' && props.options.checkAltText) {
+    // Strict validation: only pass if has aria-label or aria-labelledby
+    const hasAriaLabel = props.item.ariaLabel !== null && String(props.item.ariaLabel || '').trim() !== ''
+    const hasAriaLabelledby = props.item.ariaLabelledby !== null && String(props.item.ariaLabelledby || '').trim() !== ''
+    return props.item.hasAccessibility === true && (hasAriaLabel || hasAriaLabelledby)
+  }
   return props.item.hasAccessibility === true
 })
 
