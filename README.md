@@ -133,6 +133,7 @@ QA Web Analyzer is a **web-based tool** that analyzes web pages for **accessibil
 - ✅ **Interactive Filters in HTML Report**: "Show Missing" and "Show Has Attributes" filters are now functional in HTML exports, allowing users to filter results dynamically
 - ✅ **Not Validated Status**: When no attributes are selected for validation, elements now show "⚠ NOT VALIDATED" status instead of incorrectly showing "PASSED", with clear multilingual messages explaining why validation was skipped
 - ✅ **Strict Validation Mode**: Simplified validation logic - elements pass ONLY if they have the selected attribute(s), and fail if they don't. No WCAG fallback rules (visible text, image alt in links). Validation is now strictly based on user-selected attributes
+- ✅ **All Attributes Required**: When multiple attributes are selected for validation, elements must have ALL selected attributes to pass. If any selected attribute is missing, the element is marked as "FAILED". This ensures comprehensive validation when checking multiple accessibility requirements
 
 ## 📖 How to Use
 
