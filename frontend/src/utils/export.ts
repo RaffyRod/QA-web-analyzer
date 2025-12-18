@@ -1821,8 +1821,12 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         analysisOptions.checkAriaLabelledby === true ||
         analysisOptions.checkTitle === true;
     } else if (itemType === 'button') {
+      // For buttons, checkAltText is treated as requiring accessible name (aria-label or aria-labelledby)
+      // This is the equivalent of "alt text" for buttons
       hasAttributesSelected =
-        analysisOptions.checkAriaLabel === true || analysisOptions.checkAriaLabelledby === true;
+        analysisOptions.checkAltText === true ||
+        analysisOptions.checkAriaLabel === true ||
+        analysisOptions.checkAriaLabelledby === true;
     } else if (itemType === 'input') {
       hasAttributesSelected =
         analysisOptions.checkAriaLabel === true ||
@@ -1852,27 +1856,45 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
     let passedAttribute = '';
 
     if (itemType === 'image') {
-      // For images: alt, aria-label, or aria-labelledby are all valid alternative text methods
-      // If checkAltText is selected, verify at least one of these exists
+      // STRICT VALIDATION: Check ALL selected attributes for images
+      const selectedAttributes: string[] = [];
+      const presentAttributes: string[] = [];
+
+      const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
+      const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+      const hasAriaLabelledby =
+        elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+      const hasAlternativeText = hasAlt || hasAriaLabel || hasAriaLabelledby;
+
+      // For checkAltText: requires alt, aria-label, or aria-labelledby (any one is valid)
       if (analysisOptions.checkAltText) {
-        const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
-        const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
-        const hasAriaLabelledby =
-          elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+        selectedAttributes.push('alternative text');
+        if (hasAlternativeText) presentAttributes.push('alternative text');
+      }
+      // For checkAriaLabel: requires aria-label specifically
+      if (analysisOptions.checkAriaLabel) {
+        selectedAttributes.push('aria-label');
+        if (hasAriaLabel) presentAttributes.push('aria-label');
+      }
+      // For checkAriaLabelledby: requires aria-labelledby specifically
+      if (analysisOptions.checkAriaLabelledby) {
+        selectedAttributes.push('aria-labelledby');
+        if (hasAriaLabelledby) presentAttributes.push('aria-labelledby');
+      }
 
-        // Pass if at least one alternative text method exists
-        passed = hasAlt || hasAriaLabel || hasAriaLabelledby;
-
-        if (passed) {
-          // Report which one made it pass (priority: alt > aria-label > aria-labelledby)
-          if (hasAlt) {
-            passedAttribute = `Alt: "${escapeHtml(String(elem.alt))}"`;
-          } else if (hasAriaLabel) {
-            passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
-          } else if (hasAriaLabelledby) {
-            passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
-          }
+      // STRICT: Pass ONLY if ALL selected attributes are present
+      if (presentAttributes.length === selectedAttributes.length && selectedAttributes.length > 0) {
+        passed = true;
+        // Report which attributes made it pass (priority: alt > aria-label > aria-labelledby)
+        if (hasAlt) {
+          passedAttribute = `Alt: "${escapeHtml(String(elem.alt))}"`;
+        } else if (hasAriaLabel) {
+          passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
+        } else if (hasAriaLabelledby) {
+          passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
         }
+      } else {
+        passed = false;
       }
     } else {
       // For links, buttons, inputs, roles: Only check selected attributes
@@ -1881,6 +1903,17 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       const presentAttributes: string[] = [];
 
       // Check which attributes are selected and which are present
+      // If checkAltText is selected for buttons, treat it as requiring accessible name (aria-label or aria-labelledby)
+      // For strict validation, only check attributes, not visible text
+      if (itemType === 'button' && analysisOptions.checkAltText) {
+        selectedAttributes.push('accessible name');
+        if (
+          (elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '') ||
+          (elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '')
+        ) {
+          presentAttributes.push('accessible name');
+        }
+      }
       if (analysisOptions.checkAriaLabel) {
         selectedAttributes.push('aria-label');
         if (elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '') {
@@ -1906,11 +1939,21 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
         }
       }
 
-      // STRICT: Pass ONLY if at least one selected attribute is present
-      if (presentAttributes.length > 0) {
+      // STRICT: Pass ONLY if ALL selected attributes are present
+      if (presentAttributes.length === selectedAttributes.length && selectedAttributes.length > 0) {
         passed = true;
         // Report the first found attribute (priority order)
-        if (presentAttributes.includes('aria-label')) {
+        if (presentAttributes.includes('accessible name')) {
+          // For checkAltText on buttons, show which accessible name method was found (only attributes, not visible text)
+          if (elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '') {
+            passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
+          } else if (
+            elem.ariaLabelledby !== null &&
+            String(elem.ariaLabelledby || '').trim() !== ''
+          ) {
+            passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
+          }
+        } else if (presentAttributes.includes('aria-label')) {
           passedAttribute = `aria-label: "${escapeHtml(String(elem.ariaLabel))}"`;
         } else if (presentAttributes.includes('aria-labelledby')) {
           passedAttribute = `aria-labelledby: "${escapeHtml(String(elem.ariaLabelledby))}"`;
@@ -1966,6 +2009,9 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       highlightMissing = true;
       if (itemType === 'image' && analysisOptions.checkAltText) {
         attributeToHighlight = 'alt';
+      } else if (itemType === 'button' && analysisOptions.checkAltText) {
+        // For buttons with checkAltText, highlight aria-label if missing (preferred over visible text)
+        attributeToHighlight = 'aria-label';
       } else if (analysisOptions.checkAriaLabel) {
         attributeToHighlight = 'aria-label';
       } else if (analysisOptions.checkAriaLabelledby) {
@@ -2037,25 +2083,50 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       const failedReasons: string[] = [];
 
       if (itemType === 'image') {
-        // WCAG Rule: Images need alt, aria-label, OR aria-labelledby
-        // If checkAltText is selected and NONE of these exist, it fails
-        if (analysisOptions.checkAltText) {
-          const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
-          const hasAriaLabel =
-            elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
-          const hasAriaLabelledby =
-            elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
-          if (!hasAlt && !hasAriaLabel && !hasAriaLabelledby) {
-            failedReasons.push(
-              'Alt text missing (alt, aria-label, or aria-labelledby required per WCAG 2.2 AA)'
-            );
-          }
+        // STRICT VALIDATION: Check ALL selected attributes
+        const missingSelectedAttrs: string[] = [];
+        const hasAlt = elem.alt !== null && String(elem.alt || '').trim() !== '';
+        const hasAriaLabel = elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+        const hasAriaLabelledby =
+          elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+        const hasAlternativeText = hasAlt || hasAriaLabel || hasAriaLabelledby;
+
+        // For checkAltText: requires alt, aria-label, or aria-labelledby (any one is valid)
+        if (analysisOptions.checkAltText && !hasAlternativeText) {
+          missingSelectedAttrs.push(
+            'alternative text (alt, aria-label, or aria-labelledby required)'
+          );
+        }
+        // For checkAriaLabel: requires aria-label specifically
+        if (analysisOptions.checkAriaLabel && !hasAriaLabel) {
+          missingSelectedAttrs.push('aria-label');
+        }
+        // For checkAriaLabelledby: requires aria-labelledby specifically
+        if (analysisOptions.checkAriaLabelledby && !hasAriaLabelledby) {
+          missingSelectedAttrs.push('aria-labelledby');
+        }
+
+        if (missingSelectedAttrs.length > 0) {
+          failedReasons.push(`Missing selected attributes: ${missingSelectedAttrs.join(', ')}`);
         }
       } else {
         // For links, buttons, inputs, roles: Only check selected attributes
         // Build list of what's missing based on what was selected
         const missingSelectedAttrs: string[] = [];
 
+        // If checkAltText is selected for buttons, require accessible name (aria-label or aria-labelledby only, strict validation)
+        if (itemType === 'button' && analysisOptions.checkAltText) {
+          const hasAriaLabel =
+            elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
+          const hasAriaLabelledby =
+            elem.ariaLabelledby !== null && String(elem.ariaLabelledby || '').trim() !== '';
+          // For strict validation with checkAltText, only check attributes, not visible text
+          if (!hasAriaLabel && !hasAriaLabelledby) {
+            missingSelectedAttrs.push(
+              'accessible name (aria-label or aria-labelledby required, equivalent to alt text for images)'
+            );
+          }
+        }
         if (analysisOptions.checkAriaLabel) {
           const hasAriaLabel =
             elem.ariaLabel !== null && String(elem.ariaLabel || '').trim() !== '';
@@ -2566,12 +2637,12 @@ export async function exportReportAsHTML(options: ExportOptions, timestamp: stri
       font-weight: 600;
     }
     .status-badge.success {
-      background: #d1fae5;
-      color: #065f46;
+      background: #10b981;
+      color: #ffffff;
     }
     .status-badge.error {
-      background: #fee2e2;
-      color: #991b1b;
+      background: #ef4444;
+      color: #ffffff;
     }
     .screenshot-container {
       margin-bottom: 16px;

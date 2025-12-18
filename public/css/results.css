@@ -460,13 +460,37 @@
 }
 
 .status-badge.success {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-color, #10b981);
+  color: #ffffff;
 }
 
 .status-badge.error {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--danger-color, #ef4444);
+  color: #ffffff;
+}
+
+/* Dark mode adjustments for better contrast */
+body[data-theme='dark'] .status-badge.success,
+body[data-theme='cyberpunk'] .status-badge.success {
+  background: var(--success-color, #10b981);
+  color: #ffffff;
+}
+
+body[data-theme='dark'] .status-badge.error,
+body[data-theme='cyberpunk'] .status-badge.error {
+  background: var(--danger-color, #ef4444);
+  color: #ffffff;
+}
+
+/* Minimal theme: Use explicit green and red colors for badges */
+body[data-theme='minimal'] .status-badge.success {
+  background: #10b981;
+  color: #ffffff;
+}
+
+body[data-theme='minimal'] .status-badge.error {
+  background: #ef4444;
+  color: #ffffff;
 }
 
 .screenshot-container {

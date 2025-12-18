@@ -272,7 +272,41 @@ export class AnalyzerService {
 
             if (!hasFocusState && opts.checkFocusStates) missingAttributes.push('focus-state');
 
-            const hasAccessibility = missingAttributes.length === 0 && hasAlternativeText;
+            // STRICT VALIDATION: Pass ONLY if ALL selected attributes are present
+            const hasAltTextSelected = opts.checkAltText === true;
+            const hasAriaLabelSelected = opts.checkAriaLabel === true;
+            const hasAriaLabelledbySelected = opts.checkAriaLabelledby === true;
+            const hasAnyAttributeSelected =
+              hasAltTextSelected || hasAriaLabelSelected || hasAriaLabelledbySelected;
+
+            let hasAccessibility = false;
+            if (hasAnyAttributeSelected) {
+              let selectedCount = 0;
+              let presentCount = 0;
+
+              // For checkAltText: requires alt, aria-label, or aria-labelledby (any one is valid)
+              if (hasAltTextSelected) {
+                selectedCount++;
+                if (hasAlternativeText) presentCount++;
+              }
+              // For checkAriaLabel: requires aria-label specifically
+              if (hasAriaLabelSelected) {
+                selectedCount++;
+                if (hasAriaLabel) presentCount++;
+              }
+              // For checkAriaLabelledby: requires aria-labelledby specifically
+              if (hasAriaLabelledbySelected) {
+                selectedCount++;
+                if (hasAriaLabelledby) presentCount++;
+              }
+
+              hasAccessibility =
+                missingAttributes.length === 0 &&
+                presentCount === selectedCount &&
+                selectedCount > 0;
+            } else {
+              hasAccessibility = false;
+            }
 
             analysis.images.push({
               index: i + 1,
@@ -358,14 +392,38 @@ export class AnalyzerService {
 
             if (!hasFocusState && opts.checkFocusStates) missingAttributes.push('focus-state');
 
-            const hasAccessibility =
-              missingAttributes.length === 0 &&
-              !!(
-                text ||
-                (opts.checkAriaLabel ? ariaLabel : true) ||
-                (opts.checkAriaLabelledby ? ariaLabelledby : true) ||
-                (opts.checkTitle ? title : true)
-              );
+            // STRICT VALIDATION: Pass ONLY if ALL selected attributes are present
+            const hasAriaLabelSelected = opts.checkAriaLabel === true;
+            const hasAriaLabelledbySelected = opts.checkAriaLabelledby === true;
+            const hasTitleSelected = opts.checkTitle === true;
+            const hasAnyAttributeSelected =
+              hasAriaLabelSelected || hasAriaLabelledbySelected || hasTitleSelected;
+
+            let hasAccessibility = false;
+            if (hasAnyAttributeSelected) {
+              let selectedCount = 0;
+              let presentCount = 0;
+
+              if (hasAriaLabelSelected) {
+                selectedCount++;
+                if (!!ariaLabel) presentCount++;
+              }
+              if (hasAriaLabelledbySelected) {
+                selectedCount++;
+                if (!!ariaLabelledby) presentCount++;
+              }
+              if (hasTitleSelected) {
+                selectedCount++;
+                if (!!title) presentCount++;
+              }
+
+              hasAccessibility =
+                missingAttributes.length === 0 &&
+                presentCount === selectedCount &&
+                selectedCount > 0;
+            } else {
+              hasAccessibility = false;
+            }
 
             analysis.links.push({
               index: i + 1,
@@ -418,6 +476,14 @@ export class AnalyzerService {
             if (opts.checkAriaDescribedby && !ariaDescribedby)
               missingAttributes.push('aria-describedby');
 
+            // If checkAltText is selected, require aria-label or aria-labelledby (accessible name)
+            // For strict validation, we only check attributes, not visible text
+            if (opts.checkAltText && !ariaLabel && !ariaLabelledby) {
+              missingAttributes.push(
+                'accessible name (aria-label or aria-labelledby required, equivalent to alt text for images)'
+              );
+            }
+
             if (
               opts.checkAriaHidden &&
               ariaHidden === 'true' &&
@@ -449,12 +515,54 @@ export class AnalyzerService {
 
             if (!hasFocusState && opts.checkFocusStates) missingAttributes.push('focus-state');
 
-            const hasAccessibility =
-              missingAttributes.length === 0 &&
-              (!!text ||
-                (opts.checkAriaLabel ? !!ariaLabel : true) ||
-                (opts.checkAriaLabelledby ? !!ariaLabelledby : true) ||
-                (opts.checkAriaDescribedby ? !!ariaDescribedby : true));
+            // STRICT VALIDATION: Only pass if selected attributes are present
+            // Check which attributes are selected for validation
+            const hasAriaLabelSelected = opts.checkAriaLabel === true;
+            const hasAriaLabelledbySelected = opts.checkAriaLabelledby === true;
+            const hasAriaDescribedbySelected = opts.checkAriaDescribedby === true;
+            const hasAltTextSelected = opts.checkAltText === true;
+            // If checkAltText is selected, it's equivalent to requiring accessible name for buttons
+            const hasAnyAttributeSelected =
+              hasAriaLabelSelected ||
+              hasAriaLabelledbySelected ||
+              hasAriaDescribedbySelected ||
+              hasAltTextSelected;
+
+            // If no attributes are selected, hasAccessibility should be false (will be handled as "not validated" in frontend)
+            // STRICT VALIDATION: Pass ONLY if ALL selected attributes are present AND no missing attributes
+            let hasAccessibility = false;
+            if (hasAnyAttributeSelected) {
+              // Count how many attributes are selected and how many are present
+              let selectedCount = 0;
+              let presentCount = 0;
+
+              if (hasAriaLabelSelected) {
+                selectedCount++;
+                if (!!ariaLabel) presentCount++;
+              }
+              if (hasAriaLabelledbySelected) {
+                selectedCount++;
+                if (!!ariaLabelledby) presentCount++;
+              }
+              if (hasAriaDescribedbySelected) {
+                selectedCount++;
+                if (!!ariaDescribedby) presentCount++;
+              }
+              if (hasAltTextSelected) {
+                selectedCount++;
+                // For checkAltText on buttons, require aria-label OR aria-labelledby
+                if (!!ariaLabel || !!ariaLabelledby) presentCount++;
+              }
+
+              // Pass ONLY if ALL selected attributes are present AND no missing attributes
+              hasAccessibility =
+                missingAttributes.length === 0 &&
+                presentCount === selectedCount &&
+                selectedCount > 0;
+            } else {
+              // No attributes selected - mark as not accessible (will show as "not validated" in frontend)
+              hasAccessibility = false;
+            }
 
             analysis.buttons.push({
               index: i + 1,
@@ -537,8 +645,38 @@ export class AnalyzerService {
                 }
               }
 
-              const hasAccessibility =
-                missingAttributes.length === 0 && (!!ariaLabel || !!ariaLabelledby || !!label);
+              // STRICT VALIDATION: Pass ONLY if ALL selected attributes are present
+              const hasAriaLabelSelected = opts.checkAriaLabel === true;
+              const hasAriaLabelledbySelected = opts.checkAriaLabelledby === true;
+              const hasLabelSelected = opts.checkLabels === true;
+              const hasAnyAttributeSelected =
+                hasAriaLabelSelected || hasAriaLabelledbySelected || hasLabelSelected;
+
+              let hasAccessibility = false;
+              if (hasAnyAttributeSelected) {
+                let selectedCount = 0;
+                let presentCount = 0;
+
+                if (hasAriaLabelSelected) {
+                  selectedCount++;
+                  if (!!ariaLabel) presentCount++;
+                }
+                if (hasAriaLabelledbySelected) {
+                  selectedCount++;
+                  if (!!ariaLabelledby) presentCount++;
+                }
+                if (hasLabelSelected) {
+                  selectedCount++;
+                  if (!!label) presentCount++;
+                }
+
+                hasAccessibility =
+                  missingAttributes.length === 0 &&
+                  presentCount === selectedCount &&
+                  selectedCount > 0;
+              } else {
+                hasAccessibility = false;
+              }
               const outerHTML = element.outerHTML;
               const selector = generateSelector(element);
 
@@ -632,11 +770,32 @@ export class AnalyzerService {
               }
             }
 
-            const hasAccessibility =
-              missingAttributes.length === 0 &&
-              (!!text ||
-                (opts.checkAriaLabel ? !!ariaLabel : true) ||
-                (opts.checkAriaLabelledby ? !!ariaLabelledby : true));
+            // STRICT VALIDATION: Pass ONLY if ALL selected attributes are present
+            const hasAriaLabelSelected = opts.checkAriaLabel === true;
+            const hasAriaLabelledbySelected = opts.checkAriaLabelledby === true;
+            const hasAnyAttributeSelected = hasAriaLabelSelected || hasAriaLabelledbySelected;
+
+            let hasAccessibility = false;
+            if (hasAnyAttributeSelected) {
+              let selectedCount = 0;
+              let presentCount = 0;
+
+              if (hasAriaLabelSelected) {
+                selectedCount++;
+                if (!!ariaLabel) presentCount++;
+              }
+              if (hasAriaLabelledbySelected) {
+                selectedCount++;
+                if (!!ariaLabelledby) presentCount++;
+              }
+
+              hasAccessibility =
+                missingAttributes.length === 0 &&
+                presentCount === selectedCount &&
+                selectedCount > 0;
+            } else {
+              hasAccessibility = false;
+            }
             const outerHTML = el.outerHTML;
             const selector = generateSelector(el);
 
