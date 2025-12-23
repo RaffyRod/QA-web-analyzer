@@ -5,7 +5,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-import type { AnalysisOptions as AnalysisOptionsType } from '../../../../src/types/index';
+import type { AnalysisOptions as AnalysisOptionsType } from '../../../src/types/index';
 
 export type AnalysisOptions = AnalysisOptionsType;
 
@@ -67,9 +67,23 @@ export const useAnalysisStore = defineStore('analysis', () => {
   /**
    * Verifies that a server is actually our QA Web Analyzer backend
    * by checking if it responds correctly to the /api/analyze endpoint
+   * Uses OPTIONS for faster verification, falls back to POST if needed
    */
-  async function verifyBackendServer(url: string): Promise<boolean> {
+  async function verifyBackendServer(url: string, fastCheck: boolean = true): Promise<boolean> {
     try {
+      // Fast check: Use OPTIONS to quickly verify the endpoint exists
+      if (fastCheck) {
+        const optionsResponse = await fetch(`${url}/analyze`, {
+          method: 'OPTIONS',
+          signal: AbortSignal.timeout(1000),
+        });
+        // If OPTIONS works and returns non-404, likely our backend
+        if (optionsResponse.status !== 404) {
+          return true;
+        }
+      }
+
+      // Fallback: Full POST verification (slower but more reliable)
       const response = await fetch(`${url}/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -86,6 +100,45 @@ export const useAnalysisStore = defineStore('analysis', () => {
   }
 
   /**
+   * Scans a range of ports to find the backend server
+   * @param startPort - Starting port number
+   * @param endPort - Ending port number
+   * @param maxAttempts - Maximum number of ports to try (to avoid infinite loops)
+   * @returns Promise resolving to backend URL if found, null otherwise
+   */
+  async function scanPortRange(
+    startPort: number,
+    endPort: number,
+    maxAttempts: number = 50
+  ): Promise<string | null> {
+    const portsToScan = Math.min(endPort - startPort + 1, maxAttempts);
+    let attempts = 0;
+
+    for (let port = startPort; port <= endPort && attempts < portsToScan; port++, attempts++) {
+      try {
+        const testUrl = `http://localhost:${port}/api`;
+        const response = await fetch(`${testUrl}/analyze`, {
+          method: 'OPTIONS',
+          signal: AbortSignal.timeout(800),
+        });
+
+        // Check if it responds (not 404) and verify it's our backend
+        if (response.status !== 404 && response.status !== 500) {
+          if (await verifyBackendServer(testUrl, true)) {
+            console.log(`✅ Found QA Web Analyzer backend on port ${port}`);
+            return testUrl;
+          }
+        }
+      } catch {
+        // Port not responding, try next
+        continue;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Tries to find the backend server by attempting multiple ports
    * Verifies that it's actually our backend, not another server
    */
@@ -97,7 +150,11 @@ export const useAnalysisStore = defineStore('analysis', () => {
 
     // Try ports in priority order (matches server.ts)
     // Uses ports 4000-4005 and 5000-5005 which are rarely used by common frameworks
-    const portsToTry = [4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005];
+    // Also tries common ports 3000-3005, 6000-6005, 7000-7005 in case backend falls back to them
+    const portsToTry = [
+      4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005, 3000, 3001, 3002,
+      3003, 3004, 3005, 6000, 6001, 6002, 6003, 6004, 6005, 7000, 7001, 7002, 7003, 7004, 7005,
+    ];
 
     // First, try the default proxy endpoint (Vite will handle the proxy)
     try {
@@ -107,8 +164,8 @@ export const useAnalysisStore = defineStore('analysis', () => {
       });
       // If we get any response (not a network error), the proxy is working
       if (testResponse.status !== 500 && testResponse.status !== 404) {
-        // Verify it's actually our backend
-        if (await verifyBackendServer('/api')) {
+        // Verify it's actually our backend (fast check)
+        if (await verifyBackendServer('/api', true)) {
           return '/api';
         }
       }
@@ -116,19 +173,19 @@ export const useAnalysisStore = defineStore('analysis', () => {
       // Proxy failed, try direct ports
     }
 
-    // If proxy fails, try direct connections to backend ports
+    // If proxy fails, try direct connections to known backend ports
     // Verify each one is actually our backend, not another server
     for (const port of portsToTry) {
       try {
         const testUrl = `http://localhost:${port}/api`;
         const response = await fetch(`${testUrl}/analyze`, {
           method: 'OPTIONS',
-          signal: AbortSignal.timeout(500),
+          signal: AbortSignal.timeout(800),
         });
 
         // Check if it responds (not 404) and verify it's our backend
         if (response.status !== 404 && response.status !== 500) {
-          if (await verifyBackendServer(testUrl)) {
+          if (await verifyBackendServer(testUrl, true)) {
             console.log(`✅ Found QA Web Analyzer backend on port ${port}`);
             return testUrl;
           } else {
@@ -141,7 +198,21 @@ export const useAnalysisStore = defineStore('analysis', () => {
       }
     }
 
-    // Fallback to proxy (will show error if backend is not running)
+    // Fallback: Scan wider port ranges if known ports failed
+    console.warn('⚠️ Could not find backend in known ports, scanning wider range...');
+    const fallbackRanges = [
+      { start: 3000, end: 3999, maxAttempts: 100 }, // Common development ports
+      { start: 8000, end: 8999, maxAttempts: 100 }, // Alternative common ports
+    ];
+
+    for (const range of fallbackRanges) {
+      const found = await scanPortRange(range.start, range.end, range.maxAttempts);
+      if (found) {
+        return found;
+      }
+    }
+
+    // Final fallback to proxy (will show error if backend is not running)
     console.warn('⚠️ Could not auto-detect backend, using default proxy');
     return '/api';
   }
@@ -178,26 +249,25 @@ export const useAnalysisStore = defineStore('analysis', () => {
         // First attempt: use the found URL (usually proxy)
         response = await tryRequest(fullUrl);
       } catch (proxyError: any) {
-        console.warn('⚠️ Proxy request failed, trying direct connection:', proxyError.message);
+        console.warn('⚠️ Request failed, trying to find backend again:', proxyError.message);
         lastError = proxyError;
 
-        // If proxy fails, try direct connection to backend ports
-        const portsToTry = [4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005];
-        let directSuccess = false;
+        // If the found URL doesn't work, try to find the backend again
+        // This handles cases where the backend might have moved or the initial detection failed
+        try {
+          const newBackendUrl = await findBackendUrl();
+          const newFullUrl = newBackendUrl.endsWith('/api')
+            ? `${newBackendUrl}/analyze`
+            : newBackendUrl;
 
-        for (const port of portsToTry) {
-          try {
-            const directUrl = `http://localhost:${port}/api/analyze`;
-            response = await tryRequest(directUrl);
-            directSuccess = true;
-            console.log(`✅ Connected directly to backend on port ${port}`);
-            break;
-          } catch (directError) {
-            continue;
+          // Only retry if we found a different URL
+          if (newFullUrl !== fullUrl) {
+            console.log(`🔄 Retrying with backend URL: ${newFullUrl}`);
+            response = await tryRequest(newFullUrl);
+          } else {
+            throw lastError || new Error('Failed to connect to backend server');
           }
-        }
-
-        if (!directSuccess) {
+        } catch (retryError) {
           throw lastError || new Error('Failed to connect to backend server');
         }
       }
