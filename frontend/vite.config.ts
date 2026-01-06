@@ -8,7 +8,11 @@ import { fileURLToPath, URL } from 'node:url';
 
 // Backend ports to try in order (matches server.ts priority)
 // Uses ports 4000-4005 and 5000-5005 which are rarely used by common frameworks on Mac/Windows
-const BACKEND_PORTS = [4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005];
+// Also includes common ports 3000-3005, 6000-6005, 7000-7005 in case backend falls back to them
+const BACKEND_PORTS = [
+  4000, 4001, 4002, 4003, 4004, 4005, 5000, 5001, 5002, 5003, 5004, 5005, 3000, 3001, 3002, 3003,
+  3004, 3005, 6000, 6001, 6002, 6003, 6004, 6005, 7000, 7001, 7002, 7003, 7004, 7005,
+];
 
 /**
  * Gets the default backend port
@@ -59,7 +63,7 @@ export default defineConfig({
             if (!res.headersSent) {
               console.error('❌ Proxy error connecting to backend:', err.message);
               console.error(
-                `💡 Backend should be running on one of these ports: ${BACKEND_PORTS.join(', ')}`
+                `💡 Backend should be running on one of these ports: ${BACKEND_PORTS.slice(0, 12).join(', ')} (or 3000-3005, 6000-6005, 7000-7005)`
               );
               console.error(`💡 The frontend will auto-detect and connect directly if proxy fails`);
             }
